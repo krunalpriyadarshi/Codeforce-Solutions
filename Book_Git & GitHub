@@ -1,0 +1,100 @@
+//  Finds Version of Git
+        $ git --version
+//  Git Help
+        $ git help
+//  Configure Git:
+        $ git config --global user.email "krunalpriyadarshi99@gmail.com"
+        $ git config --global user.name "Krunal Priyadarshi"
+                            --> to setup git
+                            --> Don't use global if you want to set differnet user for current repo.
+____________________________________________________________________________________________________________
+//  Linux commands:
+        mkdir       --> to make folder
+        cd          --> change current working folder
+        cd -        --> return to previous folder
+        ls          --> list of files
+____________________________________________________________________________________________________________
+//  Initialize Git and git will track changes for the current folder.
+        $ git init
+//  Stage all files
+        $ git add .
+        $ git add --all
+        $ git add folderName/.
+//  Unstage all files
+        $ git reset
+//  Status of files
+        $ git status
+        $ git status --short        --> show status in more compact way
+        $ git status -s             --> show status in more compact way
+// Commit all the stagged changes
+        $ git commit -m "message here"
+____________________________________________________________________________________________________________
+//  Shows all availale Branches:
+        $ git branch                --> * represent current branch that you are on
+//  Creates a new Branch
+        $ git branch New_Branch_Name    --> creates new branch and copies everything from source branch
+//  Checkout to another branch. Also, it loads commited changes from branch to local repo.
+        $ git checkout NameOfBranch
+        $ git checkout -b NameOfBranch  
+                --> If branch is not existing, it will create new branch and checkout that newly created branch. else it will checkout existing branch.
+//  Delete a branch
+        $ git branch -d NameOfBranch
+//  Merge changes to Master
+        $ git checkout master   --> checkout to that branch which is main after that merge your branch
+        $ git merge NameOfBranch
+____________________________________________________________________________________________________________
+Git & GitHub:
+// Add remote Repo. as Origin
+        $ git remote add origin https://github.com/repo...
+                --> Only use HTTP url of remote repository. If you use SSH link, you need to set public key.
+// check origin details
+        $ git remote -v
+// Update origin details
+        $ git remote set-url origin NEW_LINK
+// Push change to repo.
+        $ git push --set-upstream origin master         --> to set remote branch to push chnages to repo/defaulting remote branch
+        $ git push
+// Pull all changes from Remote Repo to branch which on you are working
+        $ git pull origin
+// Fetch history of branch/Repo
+        $ git fetch origin
+        $ git fetch BranchName
+____________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+
+
+// "Fork" in GitHub
+
+git init    --> creates a new Git repository
+git status  --> 
+git add
+        git add .           -->
+        git add name.css    -->
+git commit -m "message" -->
+git restore
+git log
+git stash
+git stash pop
+git stash clean
+git reset CommitId
+
+git remote add origin Link_Of_Repo --> this will open remore/online repo to push your changes
+git push origin branchName:master
+
+git branch
+git checkout
+
+git rebase -i --> to merge commits
+    else you can do --> git reset; and git commit;
+
+
+
+
+whats upstream, whats fork
