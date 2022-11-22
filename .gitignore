@@ -1,0 +1,18 @@
+# ignore ALL .log files
+*.log
+
+# ignore ALL files in ANY directory named temp:
+temp/
+
+# VScode files:
+.vscode/
+
+# Main file:
+main.cpp
+main.exe
+
+# Temp. files:
+temp.cpp
+temp.exe
+ruff-work
+Practise Workspace.code-workspace
