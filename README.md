@@ -1,2 +1,3 @@
 # Codeforce-Solutions
-Solution of codeforces problem
+Trying to solve 3 problems max everyday...! 
+:)
