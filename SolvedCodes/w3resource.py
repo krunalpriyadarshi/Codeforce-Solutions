@@ -46,21 +46,39 @@ def Q10(list, x):
 print(Q10([1,10,100,1000,10000]),3)
 '''
 
-def isCommon(l1, l2):
-    '''for i in range(len(l1)):
-        for j in range(len(l2)):
-            if i==j:
-                return True
-    return False'''
+'''
+def Q11_isCommon(l1, l2):
     hashmap= {}
-    flag= False
-    for i in range(len(l1)):
-        hashmap[l1[i]]= i
+    for i in l1:
+        hashmap[l1[i]]= false
     for i in l2:
         if i in hashmap:
-            flag= True
-    return flag
+            return True
+    return False
 
 l1= [1, 2, 3]
 l2= [4, 5, 6, 4]
-print(isCommon(l1, l2))
+print(Q11_isCommon(l1, l2))
+'''
+
+'''
+l= [7,8, 120, 25, 44, 20, 27]
+print([x for x in l if x%2!= 0])
+'''
+
+'''
+print([x*x for x in range(1, 31) if x< 6 or x >25])
+print([x*x for x in range(1, 31) if x> 5])
+'''
+
+
+
+
+
+
+# W3Resources 21st for tomorrow
+
+# learn this..
+    # Write a Python program to generate all permutations of a list in Python.
+    # learn List Comprehensions 
+    # Lambda functions
