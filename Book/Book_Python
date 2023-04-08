@@ -1,0 +1,58 @@
+Difference between Ordered and Unordered data structures in Python is that an ordered data structure preserves the order of its elements, while an unordered data structure does not. This difference affects how you can access and manipulate the elements in the data structure.
+
+
+LIST: 
+    A collection which is ordered, mutable and allow duplication.
+
+    l=[]
+    print(not l) --> true 
+        in python, by default, an empty list is consider as false. Printing it shows "[]" as output.
+        By adding "not", it converts output in boolean value. 
+
+
+Linked List:
+    A collection of nodes. where node is made of "Data" and "Next" field.
+        DATA contains the value of node.
+        While NEXT contains a reference to the next node.
+    First node in linked list is known as "HEAD".
+    End node's NEXT reference pointing to the NONE.
+    Linked list can be used to implement Queues, Stacks and Graphs.
+    Array v/s Linked list{
+        Array uses Dynamic memory and a contiguous block of memory. While Linked List's nodes placed anywhere in memory. 
+        lookup:
+            Array       :    O(1)       For known Index of element in Array can be found in O(1) Time-complexity. [as system automatically calculates Memory location by (memory_location = starting_address + index * element_size).]
+            Linked List :    O(n)       As it has to traverse through list element.
+        Insertion & Deletion:
+            For Array, 
+                Operation	                 Array	            Linked List
+                Insertion at beginning	     O(n)	            O(1)
+                Insertion at end	         O(1)        	    O(1) - assuming the list has a tail pointer 
+                Deletion at beginning	     O(n)	            O(1)
+                Deletion at end	             O(1)        	    O(n)
+            For Linked list, deletion at the end of list requires traversing the entire list to find the 2nd last node.
+    }
+DeQueue:
+    Insertion/Deletion/Access of element at End and First index takes O(1) Time-Complexity.
+
+Built in function:
+    enumerate(iterable, start=0):
+        Enumerate() method adds a counter to an iterable and returns it in a form of enumerating object.
+        ex.,
+            l1 = ["eat", "sleep", "repeat"]
+            print (list(enumerate(l1))) --> [(0, 'eat'), (1, 'sleep'), (2, 'repeat')]
+    isalpha():
+        The isalpha() method returns True if all the characters are alphabet letters (a-z).
+        Note: are not alphabet letters: (space)!#%&? 
+        ex.,
+            txt = "CompanyX"
+            print(txt.isalpha()) --> True
+            txt="a B"
+            print(txt.isalpha()) --> False --> bcz a space is used and it is not alphabet
+    isalnum():
+        The isalnum() method returns True if all the characters are alphanumeric, meaning alphabet letter (a-z) and numbers (0-9).
+        Note: are not alphanumeric: (space)!#%&? 
+        ex.,
+            txt = "Company10"
+            print(txt.isalpha()) --> True
+            txt="company 10"
+            print(txt.isalpha()) --> False --> A space exists in string

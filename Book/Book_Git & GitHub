@@ -1,0 +1,137 @@
+//  Finds Version of Git
+        $ git --version
+//  Git Help
+        $ git help
+//  Configure Git:
+        $ git config --global user.email "krunalpriyadarshi99@gmail.com"
+        $ git config --global user.name "Krunal Priyadarshi"
+                            --> to setup git
+                            --> Don't use global if you want to set differnet user for current repo.
+____________________________________________________________________________________________________________
+//  Linux commands:
+        mkdir       --> to make folder
+        cd          --> change current working folder
+        cd -        --> return to previous folder
+        ls          --> list of files
+____________________________________________________________________________________________________________
+//  Initialize Git and git will track changes for the current folder.
+        $ git init
+//  Stage all files
+        $ git add .
+        $ git add --all
+        $ git add folderName/.
+//  Unstage all files
+        $ git reset
+//  Status of files
+        $ git status
+        $ git status --short        --> show status in more compact way
+        $ git status -s             --> show status in more compact way
+// Commit all the stagged changes
+        $ git commit -m "message here"
+// Logs - all git commit history
+        $ git log		    --> press 'q' to exit the log file.
+        $ git log --oneline         --> shows each log in one line.
+// Revert back to specific stage
+        $ git revert HEAD --no-edit     --> revert to the latest commit.
+        $ git revert HEAD~x             --> x being a number. It really x+1 commit back.
+                                        1 going back one more, 2 going back two more, etc. 
+____________________________________________________________________________________________________________
+Branching is the key concept in Git. And it works around the rule that the master branch is ALWAYS deployable.
+That means, if you want to try something new or experiment, you create a new branch! Branching gives you an environment where you can make changes without affecting the main branch.
+
+//  Shows all availale Branches: * represent current branch that you are on
+        $ git branch                --> Shows local branches
+        $ git branch -r             --> shows Remote branches
+        $ git branch -a
+        $ git branch --all          --> shows all (LOCAL + REMOTE) branches
+//  Creates a new Branch
+        $ git branch New_Branch_Name    --> creates new branch and copies everything from source branch
+//  Checkout to another branch. Also, it loads commited changes from branch to local repo.
+Note:- checkout can be used to catch Remote branch as well.
+        $ git checkout NameOfBranch
+        $ git checkout -b NameOfBranch  
+                --> If branch is not existing, it will create new branch and checkout that newly created branch. else it will checkout existing branch.
+//  Delete a branch
+        $ git branch -d NameOfBranch
+//  Merge changes to Master
+        $ git checkout master   --> checkout to that branch which is main after that merge your branch
+        $ git merge NameOfBranch
+____________________________________________________________________________________________________________
+Git & GitHub:
+// Add remote Repo. as Origin
+        $ git remote add origin https://github.com/repo...
+                --> Only use HTTP url of remote repository. If you use SSH link, you need to set public key.
+// check origin details
+        $ git remote -v
+// Update origin details
+        $ git remote set-url origin NEW_LINK
+// Rename origin to upstream.
+        $ git remote rename origin upstream
+// Push change to repo.
+        $ git push --set-upstream origin<remoteRepo> master<Repo.branchName>         --> to set remote branch to push changes to repo/defaulting remote branch
+        $ git push origin<remoteRepo> testBranch<Repo.branchName>                    --> push changes to remote testBranch
+        $ git push                       
+// Pull all changes from Remote Repo to branch which on you are working
+        $ git pull origin
+// Fetch history of branch/Repo
+        $ git fetch origin
+        $ git fetch BranchName
+____________________________________________________________________________________________________________
+Fork a Repository:-
+A fork is a copy of a repository and it isn't a command in Git. This is useful when you want to contribute to someone else's project or start your own project based on theirs.
+
+// Clone Remote Repo to local
+                $ git clone http://github.com/Link
+                $ git clone http://github.com/Link testFolder    --> it will create a new folder "testFolder" and clone repo into it.
+____________________________________________________________________________________________________________       SSH key:  
+        // SSH is a secure shell network protocol that is used for network management, remote file transfer, and remote system access.
+        // SSH keys are used to initiate a secure "handshake".
+        // It is created so that the public key can be derived from the private key, but not the other way around.
+
+        // $ ssh-keygen -t rsa -b 4096 -C "test@w3schools.com"
+____________________________________________________________________________________________________________   
+gitIgnore:
+There are some files which we do not want to push to remote repo. like vscode_config file..,
+        // touch .gitignore 
+                --> edit newly created file. use $ git Status command to see change.
+                https://www.w3schools.com/git/git_ignore.asp use this link for more info.
+Amend:  
+Here, It combines changes in the staging environment with the latest commit, and creates a new commit.
+This new commit replaces the latest commit entirely.
+        // git commit --amend -m "newMessage"       --> amend is used to modify the most recent commit. like edit commit message
+
+<<<
+        reset??
+        revert??
+        rebase??
+>>>
+
+
+whats upstream
+downstream is local clone
+
+git init    --> creates a new Git repository
+git status  --> 
+git add
+        git add .           -->
+        git add name.css    -->
+git commit -m "message" -->
+git restore
+git log
+git stash
+git stash pop
+git stash clean
+git reset CommitId
+
+git remote add origin Link_Of_Repo --> this will open remore/online repo to push your changes
+git push origin branchName:master
+
+git branch
+git checkout
+
+git rebase -i --> to merge commits
+    else you can do --> git reset; and git commit;
+
+whats upstream, whats fork
+Deploy ??
+When the pull request has been reviewed and everything looks good, it is time for the final testing. GitHub allows you to deploy from a branch for final testing in production before merging with the master branch.
