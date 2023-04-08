@@ -71,14 +71,13 @@ print([x*x for x in range(1, 31) if x< 6 or x >25])
 print([x*x for x in range(1, 31) if x> 5])
 '''
 
-
-
-
-
-
 # W3Resources 21st for tomorrow
 
 # learn this..
     # Write a Python program to generate all permutations of a list in Python.
     # learn List Comprehensions 
     # Lambda functions
+
+###################################################
+# learning Linked list:-
+
