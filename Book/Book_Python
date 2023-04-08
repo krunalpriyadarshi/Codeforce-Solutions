@@ -56,3 +56,7 @@ Built in function:
             print(txt.isalpha()) --> True
             txt="company 10"
             print(txt.isalpha()) --> False --> A space exists in string
+    divmod(dividend, divisor):
+        return a tuple containing quotient and remainder.
+        ex.,
+            x, y =divmod(10,3) --> x=3, y=1 
