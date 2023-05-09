@@ -1,0 +1,2 @@
+Do not find length of array and then check if its empty or not. Do this instead:
+    return True if not stack else False
