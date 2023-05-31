@@ -1,6 +1,7 @@
 Difference between Ordered and Unordered data structures in Python is that an ordered data structure preserves the order of its elements, while an unordered data structure does not. This difference affects how you can access and manipulate the elements in the data structure.
 
 
+#################################################################################
 LIST: 
     A collection which is ordered, mutable and allow duplication.
 
@@ -9,7 +10,15 @@ LIST:
         in python, by default, an empty list is consider as false. Printing it shows "[]" as output.
         By adding "not", it converts output in boolean value. 
 
+#################################################################################
+SET:
+    Union ('|'): return a set with unique elements.
+    DIFFERENCE ('-'): returns a first set's elements which are not present in second set.
+    SYMMETRIC DIFFERENCE (^): returns a set which is non common elements from both sets.
+    SUBSET ('<=', '<'): returns TRUE if all the elements from first set is present in second set.
+    SUPERSET ('>=', '>'): returns TRUE if all elements from second set are present in first set.
 
+#################################################################################
 Linked List:
     A collection of nodes. where node is made of "Data" and "Next" field.
         DATA contains the value of node.
@@ -17,6 +26,7 @@ Linked List:
     First node in linked list is known as "HEAD".
     End node's NEXT reference pointing to the NONE.
     Linked list can be used to implement Queues, Stacks and Graphs.
+    
     Array v/s Linked list{
         Array uses Dynamic memory and a contiguous block of memory. While Linked List's nodes placed anywhere in memory. 
         lookup:
@@ -34,6 +44,7 @@ Linked List:
 DeQueue:
     Insertion/Deletion/Access of element at End and First index takes O(1) Time-Complexity.
 
+#################################################################################
 Built in function:
     enumerate(iterable, start=0):
         Enumerate() method adds a counter to an iterable and returns it in a form of enumerating object.
@@ -60,3 +71,8 @@ Built in function:
         return a tuple containing quotient and remainder.
         ex.,
             x, y =divmod(10,3) --> x=3, y=1 
+    id(x):
+        returns the memeory address of variable x
+        ex.,
+            x= 10
+            print(id(x)) --> output: (memory address: 179420519)
