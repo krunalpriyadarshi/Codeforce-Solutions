@@ -76,3 +76,17 @@ Built in function:
         ex.,
             x= 10
             print(id(x)) --> output: (memory address: 179420519)
+    lambda x: expression(x):
+        A lambda function can take any number of arguments, but can only have one expression.
+        ex.,
+            l1= [1, 2, 3, 4]
+            l2= [1, 2, 3, 4]
+            l3= [1, 2, 3, 4]
+            print(list(map(lambda x, y, z: x+y+z, l1, l2, l3)))
+                        --> output: [3, 6, 9, 12] --> sums all elements of same index from all lists.
+    map(function, list):
+        perform function for each item in iteration.
+        NOTE: print(map(function, list)) always returns memory location so make sure to add list(map()) to view all elements.
+        ex.,
+            l= [1, 2, 3, 4]
+            print(list(map(str, l)))
