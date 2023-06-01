@@ -95,6 +95,11 @@ There are some files which we do not want to push to remote repo. like vscode_co
         // touch .gitignore 
                 --> edit newly created file. use $ git Status command to see change.
                 https://www.w3schools.com/git/git_ignore.asp use this link for more info.
+        NOTE:- you can add a file which is part of gitIgnore file by --force command.
+                ex.,
+                        I have ignore "Main" folder. But I want to include one file from this folder without moving to different
+                        folder. 
+                        // git add -f folder_name/file_name     --> this will add file with force.
 Amend:  
 Here, It combines changes in the staging environment with the latest commit, and creates a new commit.
 This new commit replaces the latest commit entirely.
