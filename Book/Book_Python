@@ -84,6 +84,14 @@ Built in function:
             l3= [1, 2, 3, 4]
             print(list(map(lambda x, y, z: x+y+z, l1, l2, l3)))
                         --> output: [3, 6, 9, 12] --> sums all elements of same index from all lists.
+        NOTE:
+            If this iteration contiues till smallest sized is iterated.
+            ex.,
+                l1= [1, 2]
+                l2= [1, 2, 3, 4, 5, 6]
+                print(list(map(lambda x, y: x+y, l1, l2)))
+                        --> output: [2, 4]
+                        --> As l1 length is 2. 2 number of iteration will occure.
     map(function, list):
         perform function for each item in iteration.
         NOTE: print(map(function, list)) always returns memory location so make sure to add list(map()) to view all elements.
