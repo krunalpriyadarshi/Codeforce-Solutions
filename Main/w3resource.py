@@ -190,10 +190,20 @@ print("Original dictionary of lists:")
 print(marks)
 print("\nSplit said dictionary of lists into list of dictionaries:")
 print(list_of_dicts(marks))
-
 '''
 
+'''
+# get this array
+# [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15], [16, 17, 18, 19, 20], [21, 22, 23, 24, 25]]
+l = [[j for j in range((i-1)*5+1,i*5+1)] for i in range(1,5)]
+'''
 
+'''
+# convert 2D array into unique sorted array.
+L = [(1, 2), (3, 4), (1, 2), (5, 6), (7, 8), (1, 2), (3, 4), (3, 4),(7, 8), (9, 10)]
+arr = list(j for i in L for j in i)
+print(list(set(arr)))
+'''
 
 
 
@@ -211,6 +221,7 @@ print(list_of_dicts(marks))
     # learn List Comprehensions 
     # zip method
     # join method
+    # do list-40
 
 # learn this method:
 '''
