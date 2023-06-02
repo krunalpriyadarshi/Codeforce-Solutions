@@ -205,23 +205,59 @@ arr = list(j for i in L for j in i)
 print(list(set(arr)))
 '''
 
+'''
+# split a list every nth element. 
+#    ex.,
+#       l= [1, 2, 3, 4, 5, 6]
+#       --> l1= [1, 3, 5]
+#           l2= [2, 4, 6]
+C = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n']
+def list_slice(S, step):
+    return [S[i::step] for i in range(step)]
+print(list_slice(C,3))
+'''
 
+'''
+# find different element between two list
+l= ['1', '2', '3', '4', '5', '6']
+m= ['5', '6']
 
+# convert into set and find subtract of set
+l1= set(l)
+m1= set(m)
+print(l1-m1)
+
+# comparing both list --> high time complexity
+l2= [i for i in l if i not in m ]
+print(l2)
+'''
+
+'''
+# replace last element of a list with another list's elements
+num1 = [1, 3, 5, 7, 9, 10]
+num2 = [2, 4, 6, 8]
+num1[-1:] = num2
+print(num1)
+'''
 
 ###################################################
 
 ### W3Resources
-
-# list: no.30 to 45
     # learn itertools:
-        # do list-33
+        # do list-33, list-40, list-53
+    # learn Dict:
+        # do list-50, list-55
     # learn format method 
     # learn from operator import eq
     # Write a Python program to generate all permutations of a list in Python.
     # learn List Comprehensions 
     # zip method
     # join method
-    # do list-40
+    # learn collections
+        # counter:
+            # do list-52
+    # learn ast
+        # do list-56
 
 # learn this method:
 '''
