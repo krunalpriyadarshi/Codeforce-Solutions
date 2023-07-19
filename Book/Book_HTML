@@ -1,0 +1,2 @@
+indentation             :: spaces that you leave in code to increase readability. 
+self-closing tag        :: A element in html that does not need to be close. ex., <br/> <img/> 
