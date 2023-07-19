@@ -1,2 +1,12 @@
 indentation             :: spaces that you leave in code to increase readability. 
 self-closing tag        :: A element in html that does not need to be close. ex., <br/> <img/> 
+
+
+
+Target Tag:- specifies where to open the linked page.
+        VALUE	    ::      DESCRIPTION
+        _self	    ::      Opens the page in the same tab/window. This is the default.
+        _blank	    ::      Opens the page in a new tab.
+        _parent	    ::      Opens the page in the parent iframe. In the same iframe if there is no parent.
+        _top	    ::      Opens the page in the top level frame which always is the full browser tab/window.
+        framename	::      Opens the page in a named iframe.
