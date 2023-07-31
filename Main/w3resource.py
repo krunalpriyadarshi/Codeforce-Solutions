@@ -243,25 +243,19 @@ print(num1)
 
 #76
 def find_count(x):
-    x = x + ('-1') if isinstance(x[0], str) else -x[-1]
-    print("expecting len n+1", x)
-    l= []
-    c= 1
-    p= x[0]
-    for i in x[1:]:
-        if i== p:
-            c+= 1
+    x+='1'
+    prev= x[0]
+    count= 1
+    l=[]
+    for i in range(1, len(x)):
+        if i== prev:
+            count+=1
         else:
-            if c> 1:
-                l.append([c, p])
-            else:
-                l.append(p)
-            c= 1
-        p= i
+            l.append([count, prev])
     return l
-
-x= [1, 1, 2, 3, 4, 4, 5, 1]
-#x= "aabcddddadnss"
+        
+#x= [1, 1, 2, 3, 4, 4, 5, 1]
+x= "aabcddddadnss"
 print(x)
 print(find_count(x))
 

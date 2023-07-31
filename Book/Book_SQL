@@ -1,0 +1,12 @@
+Hot to kill process on port 3306:
+    --  run CMD as administrator: 
+            netstat -ano | findstr :3306
+    -- in last column there will be PID. remember that number.
+            ex.,
+                C:\Windows\System32>netstat -ano | findstr :3306
+                TCP    0.0.0.0:3306           0.0.0.0:0              LISTENING       5296
+                TCP    0.0.0.0:33060          0.0.0.0:0              LISTENING       5296
+                TCP    [::]:3306              [::]:0                 LISTENING       5296
+                TCP    [::]:33060             [::]:0                 LISTENING       5296
+                << HERE PID NUMBER IS "5296" >>
+    --  Go to the Task Manager and go to details. Now search for the PID and kill the process.
