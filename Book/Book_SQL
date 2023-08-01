@@ -1,3 +1,5 @@
+password: 1234567890
+
 Hot to kill process on port 3306:
     --  run CMD as administrator: 
             netstat -ano | findstr :3306
