@@ -9,15 +9,21 @@ self-closing tag        :: A element in html that does not need to be close. ex.
 <figure>                :: Adding additional information/context to picture. Such as annotation (arrows, lines, shapes), description, or other type of metadatas (source, copy rights)
                                 Note: when you add <figure> to an image, it gives indentation to image.
 <figcaption>            :: Add annotation, description, metadatas to <Figure>
+                                ex.,
+                                <figure>
+                                        <img src="image.jpg" alt="A beautiful landscape">
+                                        <figcaption>A serene landscape with mountains and a lake.</figcaption>
+                                </figure>
 
 <form>                  :: to create Form.
                                 ex., 
                                 input type= "{text, radio, checkbox, submit, button}"
-                                placeholder attribute           = provide a hint or example text within an input field
-                                value attribute                 = sets the initial value of an input field. At submission, this value will be send to server.
+                                id attribute                    = helps to identify an HTML element uniquely.
                                 name attribute                  = name is key in key-value pair. when data is sent to server, this key/name is used to dentify the form data.
                                                                 for (radio or checkbox), same name attribute is used to create group of related elements.
                                                                 Note: if 2 radio buttons have diff name; both radio can be selected. But if their name are same; only one of them can be selected.
+                                placeholder attribute           = provide a hint or example text within an input field
+                                value attribute                 = sets the initial value of an input field. At submission, this value will be send to server.
                                 label attribute                 = add associated text to input field. use same id of input inside <label for="same_id_of_input_field">
                                 required attribute              = make field require. throw validation if field empty.
                                 checked attribute               = select value as default for checkbox or radio button.
