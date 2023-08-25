@@ -1,6 +1,11 @@
 indentation             :: spaces that you leave in code to increase readability. 
 self-closing tag        :: A element in html that does not need to be close. ex., <br/> <img/>
 
+
+<!DOCTYPE html>         :: declares that web page is treated as an HTML5 document.
+<html lang="en">        :: declares primary language of HTML document.
+<meta charset="utf-8">  :: used to specify the character encoding of the HTML document
+
 <figure>                :: Adding additional information/context to picture. Such as annotation (arrows, lines, shapes), description, or other type of metadatas (source, copy rights)
                                 Note: when you add <figure> to an image, it gives indentation to image.
 <figcaption>            :: Add annotation, description, metadatas to <Figure>
