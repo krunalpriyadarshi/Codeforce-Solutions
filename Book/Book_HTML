@@ -5,7 +5,17 @@ self-closing tag        :: A element in html that does not need to be close. ex.
 <!DOCTYPE html>         :: declares that web page is treated as an HTML5 document.
 <html lang="en">        :: declares primary language of HTML document.
 <meta charset="utf-8">  :: used to specify the character encoding of the HTML document
+                                ex.,
+                                UTF-8 Characters:
+                                        A is 65
+                                        B is 66
+                                        C is 67
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/> :: ensures that web page looks and works well on various sized screen.
 
+External CSS field      ::      <link rel="stylesheet" href="styles.css">
+Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+<div>                   :: Group or structure content together to apply styling and layout.
 <figure>                :: Adding additional information/context to picture. Such as annotation (arrows, lines, shapes), description, or other type of metadatas (source, copy rights)
                                 Note: when you add <figure> to an image, it gives indentation to image.
 <figcaption>            :: Add annotation, description, metadatas to <Figure>
@@ -44,13 +54,19 @@ self-closing tag        :: A element in html that does not need to be close. ex.
                                                         <label><input id="outdoor" type="radio" name="indoor-outdoor" value="outdoor"> Outdoor</label>
                                         </fieldset>
 
-                                        // Both creats submit button and they will have same action: submitting form
+                                        // All creats button and they can have same action: submitting form
+                                        //       <input type="button"> used to trigger javascript function or action such as show/hide content ore perform client side validation.
+                                        //       <input type="submit"> used only to submit form data to the server.
                                         //       <button> is used flexible when it comes to styling and customization.
-                                        //       because... you can include complex structure like HTML style tag such as <em>, <strong> etc to text of button which is not possible with <input>.
-                                        //                ex., <button type="button">Click <strong>me</strong></button>
+                                        //              because... you can include complex structure like HTML style tag such as <em>, <strong> etc to text of button which is not possible with <input>.
+                                        //                       ex., <button type="button">Click <strong>me</strong></button>
                                         <input type="submit" value="submit">
+                                        <input type="button" value="button">
                                         <button>submit</button>
                                 </form>
+
+<article>       :: not special element; it's self-contained content.
+                        used for blog, Forum, News story...
 
 Target Tag:- specifies where to open the linked page.
         VALUE	    ::      DESCRIPTION
