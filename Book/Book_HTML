@@ -1,7 +1,45 @@
 indentation             :: spaces that you leave in code to increase readability. 
-self-closing tag        :: A element in html that does not need to be close. ex., <br/> <img/> 
+self-closing tag        :: A element in html that does not need to be close. ex., <br/> <img/>
 
+<figure>                :: Adding additional information/context to picture. Such as annotation (arrows, lines, shapes), description, or other type of metadatas (source, copy rights)
+                                Note: when you add <figure> to an image, it gives indentation to image.
+<figcaption>            :: Add annotation, description, metadatas to <Figure>
 
+<form>                  :: to create Form.
+                                ex., 
+                                input type= "{text, radio, checkbox, submit, button}"
+                                placeholder attribute           = provide a hint or example text within an input field
+                                value attribute                 = sets the initial value of an input field. At submission, this value will be send to server.
+                                name attribute                  = name is key in key-value pair. when data is sent to server, this key/name is used to dentify the form data.
+                                                                for (radio or checkbox), same name attribute is used to create group of related elements.
+                                                                Note: if 2 radio buttons have diff name; both radio can be selected. But if their name are same; only one of them can be selected.
+                                label attribute                 = add associated text to input field. use same id of input inside <label for="same_id_of_input_field">
+                                required attribute              = make field require. throw validation if field empty.
+                                checked attribute               = select value as default for checkbox or radio button.
+                                <form action="/.php">
+                                        <label for="fname"> First Name: </label>
+                                        <input required type= "text" id="fname" name="first name" value="Default value"><br>
+                                        <label>
+                                                <input type="radio" name="cat" value="kitty">
+                                                kitty
+                                        </label>
+
+                                        // <fieldset>           = to group related form elements together. 
+                                        //                      fieldset is block-level elements {display: block} with border. so newline will be added before and after this element starts.
+                                        // <legend>             = give context to <fieldset>. Default: Nice looking (border + text)
+                                        <fieldset>
+                                                <legend>Is your cat an indoor or outdoor cat?</legend>
+                                                        <label><input checked id="indoor" type="radio" name="indoor-outdoor" value="indoor"> Indoor</label>
+                                                        <label><input id="outdoor" type="radio" name="indoor-outdoor" value="outdoor"> Outdoor</label>
+                                        </fieldset>
+
+                                        // Both creats submit button and they will have same action: submitting form
+                                        //       <button> is used flexible when it comes to styling and customization.
+                                        //       because... you can include complex structure like HTML style tag such as <em>, <strong> etc to text of button which is not possible with <input>.
+                                        //                ex., <button type="button">Click <strong>me</strong></button>
+                                        <input type="submit" value="submit">
+                                        <button>submit</button>
+                                </form>
 
 Target Tag:- specifies where to open the linked page.
         VALUE	    ::      DESCRIPTION
