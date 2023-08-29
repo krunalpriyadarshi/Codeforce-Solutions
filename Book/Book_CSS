@@ -3,6 +3,9 @@ fallback font family        :: ensures font remains clear enough to read if the 
                                     font-family: "Preferred primary Font", Arial, sans-serif;
                                         if PrimaryFont is not available, system will use Arial font. even if this font is not available it will use avaiable option which is san-serif.
 
+CSS color                   :: rgb(0, 0, 0) -> black color: here 0 represent 0% of red/blue/green color present.
+
+
 overflow??
 linear-gradient??
 
