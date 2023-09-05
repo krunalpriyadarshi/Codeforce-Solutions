@@ -1,20 +1,56 @@
-fallback font family        :: ensures font remains clear enough to read if the desired font is not available by system.
-                                    ex.,
-                                    font-family: "Preferred primary Font", Arial, sans-serif;
-                                        if PrimaryFont is not available, system will use Arial font. even if this font is not available it will use avaiable option which is san-serif.
+fallback font family            :: Ensures font remains clear enough to read if the desired font is not available by system.
+                                        ex., font-family: "Preferred primary Font", Arial, sans-serif;
+                                                if PrimaryFont is not available, system will use Arial font. even if this font is not available it will use avaiable option which is san-serif.
+Border                  :: Every Element has border but it set to "none".
 
-CSS color                   :: rgb(0, 0, 0) -> black color: here 0 represent 0% of red/blue/green color present.
+Background-color -->
+        NOTE: 0 represent NO COLOR is present. 0% of red/blue/green color present.
+
+        HSL (Hue, Saturation, Lightness)        ::      HSL(240, 100%, 50%)
+        RGB (Red, Green, Blue)                  ::      RGB(255, 0, 0)
+        HEX                                     ::      #FF0000
+
+        Alpha channel                           ::      rgba() where a is alpha channel.
+                                                        #rrggbbaa where a is alpha. Where a is a value from 0 to F.
+                                                        hsla() where a is alpha. value from 0 to 1.
+
+        Color Wheel::
+                    Primary Color           ::          Red, Yellow, Blue
+                    Secondary Color         ::          Violet, Orange, Green 
+                    Tertiary Color          ::          Blue-Violet, Red-Violet, Red-Orange, Yellow-Orange, Yellow-Green, Blue-Green 
+
+                    Hue         ::  Adding ORIGINAL Color... (from 0 to 360)
+                                        Hue red is at 0 degree; green is at 120 degree; blue is at 240 degree;
+                    Saturation  ::  Intensity of a color from Grey to Original Color. (from 0% to 100%)
+                    Lightness   ::  Brightness of a color from Complete Black to White; at 50% being netural Grey color. (from 0% to 100%)
+                    Tint        ::  Adding WHITE Color
+                    Shade       ::  Adding BLACK Color
+                    Tone        ::  Adding GREY Color
+
+Background: linear-gradient(45deg, red 75%, green, white);
+        --> 45deg will add angle to linear-gradient.
+        --> 75% represents color stops. ex.,"red 75%",75% of all background will be covered by red color.
+        
+        NOTE:-  linear-gradient produces an image.
+                By default, 180deg is set for linear-gradient.
+
+opacity         :: transparency of element
+                        ex., 0 represent lowest value and 1 represent most transparent element.
+div             :: note: it has Block display type as default.
 
 
-overflow??
-linear-gradient??
 
-/* how??
-background-image: linear-gradient(45deg, red, blue, yellow);
-            font-size: 30px;background-clip: text;
-            -webkit-background-clip: text; color: transparent;
-*/
+-----------------------------------------------------------------------------------------------------------------
+            overflow??
+            linear-gradient??
+                box shadow???
+                border short hand??
+            /* how??
+            background-image: linear-gradient(45deg, red, blue, yellow);
+                    font-size: 30px;background-clip: text;
+                    -webkit-background-clip: text; color: transparent;
+            */
 
-learn how to import fonts from google font site.
+            learn how to import fonts from google font site.
 
-use git as logo
+            use gif as logo
