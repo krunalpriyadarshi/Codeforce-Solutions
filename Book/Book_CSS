@@ -3,7 +3,12 @@ fallback font family            :: Ensures font remains clear enough to read if 
                                                 if PrimaryFont is not available, system will use Arial font. even if this font is not available it will use avaiable option which is san-serif.
 Border                  :: Every Element has border but it set to "none".
 
+an attribute selector           --> input[name="password"]{color:red; font-size:30px;}
+                                        The above selects input elements with a name attribute value of password.
+
 Viewport --> It is visible area of browser where content can be shown.
+        NOTE: When you use viewport for responsive look; make sure to use max and min for height/width. Otherwise content looks strached.
+
         height: 100%;           :: sets the height of an element to 100% of its parent container's height.
                                         NOTE: Usually height of parent element is set by "height: 300px;"
         height: 100vh;          :: sets the height of an element to 100% of the viewport's height.
@@ -53,6 +58,22 @@ opacity         :: transparency of element
                         ex., 0 represent lowest value and 1 represent most transparent element.
 rem (root em)   :: A unit of measurement relative to the root font size of the document
                         NOTE: It is used for responsive look.
+em              :: A unit of measurement relative to the font size of the parent element
+unset           :: This keyword remove all inherited styling. You can apply unset to any property of css style.
+                        ex.,
+                                css: 
+                                        p{
+                                                color: red;
+                                        }
+                                        .example_unset{
+                                                color:unset;
+                                        }
+                                html:
+                                        <p>This is RED colored text.</p>
+                                        <p class="example_unset">This is BLACK colored text.</p>
+vertical-align  ::  align items vertically with respect to each other.
+                        Works best with inline and inline-block elements.
+
 -----------------------------------------------------------------------------------------------------------------
             overflow??
             linear-gradient??

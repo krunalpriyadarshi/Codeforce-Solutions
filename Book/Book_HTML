@@ -30,22 +30,29 @@ Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/
 
 <form>                  :: to create Form.
                                 ex., 
-                                input type= "{ text, radio, checkbox, submit, button, email, password }"
+                                input type= "{ text, radio, checkbox, submit, button, email, password, file, number}"
                                                 NOTE: text is default type.
 
                                                 <input type="password" minlength=8> 
                                                         here, minlength specify minimum length of password string.
                                                 <input id="new-password" type="password" pattern="[a-z0-5]{8,}">
                                                         here, pattern attribute defines regular expression that the password must match. 
-                                                        NOTE:   minimum length of password is {8,} used inside Regular expression.          
+                                                        NOTE:   minimum length of password is {8,} used inside Regular expression.       
+                                                  
+                                                <label ><input name="account-type" type="radio" /> Personal Account</label>
+                                                <label><input name="account-type" type="radio" /> Business Account</label>
+                                                        NOTE: name attribute bind both radio buttons together. if name are not same for both input field. we can select both radio button which is not right.
+
+                                                <label>Upload a profile picture: <input type="file" /></label>
+                                                        here, it will allow user to insert attachment.
 
                                 id attribute                    = helps to identify an HTML element uniquely.
                                 name attribute                  = name is key in key-value pair. when data is sent to server, this key/name is used to dentify the form data.
                                                                 for (radio or checkbox), same name attribute is used to create group of related elements.
-                                                                Note: if 2 radio buttons have diff name; both radio can be selected. But if their name are same; only one of them can be selected.
-                                placeholder attribute           = provide a hint or example text within an input field
+                                                                Note: for 2 radio buttons, they must have diff name; 
+                                                                        both radio can be selected. But if their name are same; only one of them can be selected.
                                 value attribute                 = sets the initial value of an input field. At submission, this value will be send to server.
-                                label attribute                 = add associated text to input field. use same id of input inside <label for="same_id_of_input_field">                 
+                                label attribute                 = add associated text to input field. use same id of input inside label ex.,<label for="same_id_of_input_field">                 
                                                                 NOTE: label is inline element.
                                 required attribute              = make field require. throw validation if field empty.
                                 checked attribute               = select value as default for checkbox or radio button.
@@ -64,6 +71,11 @@ Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/
                                                 <legend>Is your cat an indoor or outdoor cat?</legend>
                                                         <label><input checked id="indoor" type="radio" name="indoor-outdoor" value="indoor"> Indoor</label>
                                                         <label><input id="outdoor" type="radio" name="indoor-outdoor" value="outdoor"> Outdoor</label>
+                                        </fieldset>
+
+                                        // <select> & <option>  = used to create dropdown.
+                                        <fieldset>
+                                                <label></label>
                                         </fieldset>
 
                                         // All creats button and they can have same action: submitting form
