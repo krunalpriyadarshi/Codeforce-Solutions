@@ -3,6 +3,21 @@ fallback font family            :: Ensures font remains clear enough to read if 
                                                 if PrimaryFont is not available, system will use Arial font. even if this font is not available it will use avaiable option which is san-serif.
 Border                  :: Every Element has border but it set to "none".
 
+Viewport --> It is visible area of browser where content can be shown.
+        height: 100%;           :: sets the height of an element to 100% of its parent container's height.
+                                        NOTE: Usually height of parent element is set by "height: 300px;"
+        height: 100vh;          :: sets the height of an element to 100% of the viewport's height.
+                                        NOTE: This element will take up the full height of the user's screen, regardless of the parent container's size
+
+        Viewport Height (vh)    :: A value of 1vh is equal to 1% of the viewport height.
+        Viewport Width (vw)     :: A value of 1vw is equal to 1% of the viewport width.
+        Viewport Minimum (vmin) :: unit is based on the smaller dimension of the viewport
+                                        NOTE: If the viewport height is smaller than the width, the value of 1vmin will be equal to 1% of the viewport height. 
+                                                Similarly, if the viewport width is smaller than the height, the value of 1vmin will be equal to 1% of the viewport width.
+        Viewport Maximum (vmax) :: This unit is based on the larger dimension of the viewport.
+                                        NOTE: If the viewport height is larger than the width, the value of 1vmax will be equal to 1% of viewport height. 
+                                                Similarly, if the viewport width is larger than the height, the value of 1vmax will be equal to 1% of hte viewport width.
+
 Background-color -->
         NOTE: 0 represent NO COLOR is present. 0% of red/blue/green color present.
 
@@ -36,10 +51,8 @@ Background: linear-gradient(45deg, red 75%, green, white);
 
 opacity         :: transparency of element
                         ex., 0 represent lowest value and 1 represent most transparent element.
-div             :: note: it has Block display type as default.
-
-
-
+rem (root em)   :: A unit of measurement relative to the root font size of the document
+                        NOTE: It is used for responsive look.
 -----------------------------------------------------------------------------------------------------------------
             overflow??
             linear-gradient??

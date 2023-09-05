@@ -10,14 +10,17 @@ self-closing tag        :: A element in html that does not need to be close. ex.
                                         A is 65
                                         B is 66
                                         C is 67
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/> :: ensures that web page looks and works well on various sized screen.
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/> :: ensures that web page looks and works well on various sized screen. not using the viewport meta tag can lead to a less user-friendly experience especiallly for mobile version.
 
 External CSS field      ::      <link rel="stylesheet" href="styles.css">
 Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/x-icon">
 
+<body>                  :: NOTE: It adds some margin to content. Better to set margin to 0 while palying with vh/vw/vmin/vmax.
 <div>                   :: Group or structure content together to apply styling and layout.
-<figure>                :: Adding additional information/context to picture. Such as annotation (arrows, lines, shapes), description, or other type of metadatas (source, copy rights)
-                                Note: when you add <figure> to an image, it gives indentation to image.
+                                NOTE: It has Block display type as default.
+<figure>                :: Adding additional information/context to picture same way as image shown in book with "fig 1.2 text" in such format. 
+                                Such as annotation (arrows, lines, shapes), description, or other type of metadatas (source, copy rights)
+                                NOTE: when you add <figure> to an image, it gives indentation to image.
 <figcaption>            :: Add annotation, description, metadatas to <Figure>
                                 ex.,
                                 <figure>
@@ -27,17 +30,26 @@ Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/
 
 <form>                  :: to create Form.
                                 ex., 
-                                input type= "{text, radio, checkbox, submit, button}"
+                                input type= "{ text, radio, checkbox, submit, button, email, password }"
+                                                NOTE: text is default type.
+
+                                                <input type="password" minlength=8> 
+                                                        here, minlength specify minimum length of password string.
+                                                <input id="new-password" type="password" pattern="[a-z0-5]{8,}">
+                                                        here, pattern attribute defines regular expression that the password must match. 
+                                                        NOTE:   minimum length of password is {8,} used inside Regular expression.          
+
                                 id attribute                    = helps to identify an HTML element uniquely.
                                 name attribute                  = name is key in key-value pair. when data is sent to server, this key/name is used to dentify the form data.
                                                                 for (radio or checkbox), same name attribute is used to create group of related elements.
                                                                 Note: if 2 radio buttons have diff name; both radio can be selected. But if their name are same; only one of them can be selected.
                                 placeholder attribute           = provide a hint or example text within an input field
                                 value attribute                 = sets the initial value of an input field. At submission, this value will be send to server.
-                                label attribute                 = add associated text to input field. use same id of input inside <label for="same_id_of_input_field">
+                                label attribute                 = add associated text to input field. use same id of input inside <label for="same_id_of_input_field">                 
+                                                                NOTE: label is inline element.
                                 required attribute              = make field require. throw validation if field empty.
                                 checked attribute               = select value as default for checkbox or radio button.
-                                <form action="/.php">
+                                <form action="/.php" method="GET/POST">
                                         <label for="fname"> First Name: </label>
                                         <input required type= "text" id="fname" name="first name" value="Default value"><br>
                                         <label>
@@ -55,14 +67,14 @@ Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/
                                         </fieldset>
 
                                         // All creats button and they can have same action: submitting form
+                                        <input type="submit" value="submit">
+                                        <input type="button" value="button">
+                                        <button>submit</button>
                                         //       <input type="button"> used to trigger javascript function or action such as show/hide content ore perform client side validation.
                                         //       <input type="submit"> used only to submit form data to the server.
                                         //       <button> is used flexible when it comes to styling and customization.
                                         //              because... you can include complex structure like HTML style tag such as <em>, <strong> etc to text of button which is not possible with <input>.
                                         //                       ex., <button type="button">Click <strong>me</strong></button>
-                                        <input type="submit" value="submit">
-                                        <input type="button" value="button">
-                                        <button>submit</button>
                                 </form>
 
 <article>       :: not special element; it's self-contained content.
