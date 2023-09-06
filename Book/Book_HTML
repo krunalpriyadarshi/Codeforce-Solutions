@@ -39,7 +39,7 @@ Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/
                                                         here, pattern attribute defines regular expression that the password must match. 
                                                         NOTE:   minimum length of password is {8,} used inside Regular expression.       
                                                   
-                                                <label ><input name="account-type" type="radio" /> Personal Account</label>
+                                                <label><input name="account-type" type="radio" /> Personal Account</label>
                                                 <label><input name="account-type" type="radio" /> Business Account</label>
                                                         NOTE: name attribute bind both radio buttons together. if name are not same for both input field. we can select both radio button which is not right.
 
@@ -49,13 +49,37 @@ Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/
                                 id attribute                    = helps to identify an HTML element uniquely.
                                 name attribute                  = name is key in key-value pair. when data is sent to server, this key/name is used to dentify the form data.
                                                                 for (radio or checkbox), same name attribute is used to create group of related elements.
-                                                                Note: for 2 radio buttons, they must have diff name; 
+                                                                NOTE: for 2 radio buttons, they must have diff name; 
                                                                         both radio can be selected. But if their name are same; only one of them can be selected.
                                 value attribute                 = sets the initial value of an input field. At submission, this value will be send to server.
                                 label attribute                 = add associated text to input field. use same id of input inside label ex.,<label for="same_id_of_input_field">                 
                                                                 NOTE: label is inline element.
                                 required attribute              = make field require. throw validation if field empty.
                                 checked attribute               = select value as default for checkbox or radio button.
+                                
+                                All Attribute list:        
+                                        <input 
+                                        type="text"                     <!-- Specifies the input type as text -->
+                                        id="myText"                     <!-- Specifies a unique ID for the element -->
+                                        name="myTextField"              <!-- Specifies the name for the form field -->
+                                        value="Initial Value"           <!-- Specifies the initial value of the input -->
+                                        placeholder="Enter your text"   <!-- Provides a placeholder text -->
+                                        size="30"                       <!-- Specifies the visible width of the input field -->
+                                        maxlength="50"                  <!-- Specifies the maximum number of characters allowed -->
+                                        readonly                        <!-- Makes the input field read-only -->
+                                        disabled                        <!-- Disables the input field -->
+                                        autofocus                       <!-- Automatically focuses on the input when the page loads -->
+                                        required                        <!-- Makes the input field mandatory -->
+                                        pattern="[a-zA-Z]+"             <!-- Specifies a regular expression pattern for validation -->
+                                        title="Please enter only letters" <!-- Provides a tooltip or advisory message -->
+                                        autocomplete="off"              <!-- Controls browser autocomplete behavior -->
+                                        spellcheck="true"               <!-- Enables or disables browser spell checking -->
+                                        tabindex="1"                    <!-- Specifies the tab order for keyboard navigation -->
+                                        style="color: red; font-size: 16px;" <!-- Defines inline CSS styles -->
+                                        class="custom-style"            <!-- Assigns a CSS class for styling purposes -->
+                                        data-custom="value"             <!-- Custom data attribute for JavaScript or CSS purposes -->
+                                        >
+
                                 <form action="/.php" method="GET/POST">
                                         <label for="fname"> First Name: </label>
                                         <input required type= "text" id="fname" name="first name" value="Default value"><br>
@@ -78,6 +102,37 @@ Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/
                                                 <label></label>
                                         </fieldset>
 
+                                        // <select>             = Creates picklist
+                                                <label>How did you hear about us?
+                                                        <select>
+                                                                <option>(select one)</option>
+                                                                <option>freeCodeCamp News</option>
+                                                                <option>freeCodeCamp YouTube Channel</option>
+                                                                <option>freeCodeCamp Forum</option>
+                                                                <option>Other</option>
+                                                        </select>
+                                                </label>
+
+                                        // checkbox: Radio:
+                                                NOTE: make sure to give each field same name attribute to group them. otherwise they will not work as per expectation.
+                                                <fieldset>
+                                                        <label for="personal-account">
+                                                                <input id="personal-account" type="radio" name="account-type" /> Personal Account
+                                                        </label>
+                                                        <label for="business-account">
+                                                                <input id="business-account" type="radio" name="account-type" /> Business Account
+                                                        </label>
+                                                        <label for="terms-and-conditions">
+                                                                <input id="terms-and-conditions" type="checkbox" required name="terms-and-conditions" /> I accept the <a href="https://www.freecodecamp.org/news/terms-of-service/">terms and conditions</a>
+                                                        </label>
+                                                </fieldset>
+
+                                        // textarea field
+                                        <label for="bio">Provide a bio:
+                                                <textarea id="bio" name="bio" rows="3" cols="30" placeholder="I like coding on the beach..."></textarea>
+                                        </label>
+
+
                                         // All creats button and they can have same action: submitting form
                                         <input type="submit" value="submit">
                                         <input type="button" value="button">
@@ -88,7 +143,7 @@ Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/
                                         //              because... you can include complex structure like HTML style tag such as <em>, <strong> etc to text of button which is not possible with <input>.
                                         //                       ex., <button type="button">Click <strong>me</strong></button>
                                 </form>
-
+                                
 <article>       :: not special element; it's self-contained content.
                         used for blog, Forum, News story...
 
