@@ -6,6 +6,8 @@ Border                  :: Every Element has border but it set to "none".
 an attribute selector           --> input[name="password"]{color:red; font-size:30px;}
                                         The above selects input elements with a name attribute value of password.
 
+CSS Box Model           :: Every element has Margin -> Border -> Padding -> Content
+
 Viewport --> It is visible area of browser where content can be shown.
         NOTE: When you use viewport for responsive look; make sure to use max and min for height/width. Otherwise content looks strached.
 

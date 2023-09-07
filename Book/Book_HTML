@@ -97,11 +97,6 @@ Favicon                 ::      <link rel="icon" href="favicon.ico" type="image/
                                                         <label><input id="outdoor" type="radio" name="indoor-outdoor" value="outdoor"> Outdoor</label>
                                         </fieldset>
 
-                                        // <select> & <option>  = used to create dropdown.
-                                        <fieldset>
-                                                <label></label>
-                                        </fieldset>
-
                                         // <select>             = Creates picklist
                                                 <label>How did you hear about us?
                                                         <select>
