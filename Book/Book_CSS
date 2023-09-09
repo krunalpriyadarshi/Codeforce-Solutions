@@ -1,12 +1,9 @@
-fallback font family            :: Ensures font remains clear enough to read if the desired font is not available by system.
+Fallback font family            :: Ensures font remains clear enough to read if the desired font is not available by system.
                                         ex., font-family: "Preferred primary Font", Arial, sans-serif;
                                                 if PrimaryFont is not available, system will use Arial font. even if this font is not available it will use avaiable option which is san-serif.
-Border                  :: Every Element has border but it set to "none".
 
-an attribute selector           --> input[name="password"]{color:red; font-size:30px;}
+An attribute selector           --> input[name="password"]{color:red; font-size:30px;}
                                         The above selects input elements with a name attribute value of password.
-
-CSS Box Model           :: Every element has Margin -> Border -> Padding -> Content
 
 Viewport --> It is visible area of browser where content can be shown.
         NOTE: When you use viewport for responsive look; make sure to use max and min for height/width. Otherwise content looks strached.
@@ -24,7 +21,40 @@ Viewport --> It is visible area of browser where content can be shown.
         Viewport Maximum (vmax) :: This unit is based on the larger dimension of the viewport.
                                         NOTE: If the viewport height is larger than the width, the value of 1vmax will be equal to 1% of viewport height. 
                                                 Similarly, if the viewport width is larger than the height, the value of 1vmax will be equal to 1% of hte viewport width.
+rem (root em)   :: A unit of measurement relative to the root font size of the document
+                        NOTE: It is used for responsive look.
+em              :: A unit of measurement relative to the font size of the parent element
+%               :: A unit of measurement relative to the % of parent property
+                        ex.,
+                                if a div="parent" has width:1000px and height:500px;
+                                then div="child" whose width is set to width:30% will convert to width:300px as parent width was 1000px.
+                                same with height as height:50% --> height:250px;
 
+
+CSS Box Model           :: Every element has Margin -> Border -> Padding -> Content
+
+Border                  :: Every Element has border but it set to "none".
+border-style            :: specify type of border such as {dotted, dashed, solid, double, groove, ridge, inset, outset, none, hidden}
+                                NOTE: You can mix borders.
+                                                ex., border-style: solid dash double solid;
+                                NOTE: You can specify each border individually.
+                                        border-top-style: solid;
+                                        border-right-style: dash;
+                                        border-bottom-style: double;
+                                        border-left-style: solid; 
+                                        
+border-Width            :: specify width of border
+                                ex., border-width: 2px 5px 2px 5px;
+border-color            :: set color of border  
+                                ex., border-color: red green blue yellow;
+
+box-shodow              :: Attach one or more shadows to element.
+                                syntax: box-shoadow: non\horizontal vertical blur spread color inset
+                                        horizontal-offset       : adds shadows to the right side of element.
+                                        vertical-offset         : adds shadows to the bottom side of the element.
+                                        blur    : blur radious  
+                                        spread  : higher the value, bigger the shadow. Note: negative value make shadow smaller.
+                                        inset   : adds shadow inside the element
 Background-color -->
         NOTE: 0 represent NO COLOR is present. 0% of red/blue/green color present.
 
@@ -49,18 +79,84 @@ Background-color -->
                     Shade       ::  Adding BLACK Color
                     Tone        ::  Adding GREY Color
 
-Background: linear-gradient(45deg, red 75%, green, white);
-        --> 45deg will add angle to linear-gradient.
-        --> 75% represents color stops. ex.,"red 75%",75% of all background will be covered by red color.
-        
-        NOTE:-  linear-gradient produces an image.
-                By default, 180deg is set for linear-gradient.
+Background      :: linear-gradient(45deg, red 75%, green, white);
+                        --> 45deg will add angle to linear-gradient.
+                        --> 75% represents color stops. ex.,"red 75%",75% of all background will be covered by red color.
+                        
+                        NOTE:-  linear-gradient produces an image.
+                                By default, 180deg is set for linear-gradient.
 
-opacity         :: transparency of element
-                        ex., 0 represent lowest value and 1 represent most transparent element.
-rem (root em)   :: A unit of measurement relative to the root font size of the document
-                        NOTE: It is used for responsive look.
-em              :: A unit of measurement relative to the font size of the parent element
+Opacity         :: transparency of element
+                        NOTE:   0 represent lowest value and 1 represent most transparent element.
+
+Filter          :: Adds visual effects just like photoshop does to images.
+                        grayscale()     ::      Adds grey to input image.
+                                                        0% Original --> 100% Grey (B&W)
+                                                        ex.,
+                                                                filter: grayscale(45%)
+                                                                filter: grayscale(0.45)
+                                                        NOTE: Negative values are not allowed.
+                        sepia()         ::      Adds sepia (the reddish-brown colour) to input image.
+                                                        0% Original --> 100% sepia
+                                                        ex.,
+                                                                filter: sepia(45%)
+                                                                filter: sepia(0.45)
+                                                        NOTE: Negative values are not allowed.
+                        saturation()    ::      Adds saturation to un-saturated image.
+                                                        0% B&W/un-saturated image --> 50% Original --> 100% Saturated image
+                                                        ex.,
+                                                                filter: saturation(45%)
+                                                                filter: saturation(0.45)
+                                                        NOTE: Negative values are not allowed.
+                        invert()        ::      Adds invert effect to an image.
+                                                        0% original image --> 100% inverted image
+                                                        ex.,
+                                                                filter: invert(45%)
+                                                                filter: invert(0.45)
+                                                        NOTE: Negative values are not allowed.
+                        opacity()        ::      Adds transparency to an image.
+                                                        100% original image/unchanged image
+                                                        ex.,
+                                                                filter: opacity(45%)
+                                                                filter: opacity(0.45)
+                                                        NOTE: Negative values are not allowed.
+                        
+                        brightness()    ::      Adjust brightness of an image.
+                                                        0% complete black image --> 100% Original image --> 150% increased brightness image 
+                                                        ex.,
+                                                                filter: brightness(45%)
+                                                                filter: brightness(0.45)
+                                                        NOTE: Values over 100% accepted but Negative values are not allowed.
+                        contrast()      ::      Adjust contrast of an image.
+                                                        0% complete black image --> 100% Original image --> 150% increased contrast image 
+                                                        ex.,
+                                                                filter: contrast(45%)
+                                                                filter: contrast(0.45)
+                                                        NOTE: Values over 100% accepted but Negative values are not allowed.
+
+                        blur()          ::      Applies blur to an image.
+                                                        ex., 
+                                                                filter: blur(5px);    
+                                                                filter: blur(1rem);                            
+
+                        hue-rotate()    ::      Adds hue to input image.
+                                                        0deg Original --> 180deg hue added --> 360deg original
+                                                        ex.,
+                                                                filter: hue-rotate(180deg)
+                                                                filter: hue-rotate(0.5turn)
+                                                
+
+overflow        :: Controls the behaviour of content which is too big to fit in area.
+                        Overflow: {visible/ hidden/ scroll/ auto}
+                                        Visible - Renders content outside the area.
+                                        Hidden  - Hides content which is outside of the area.
+                                        Scroll  - Adds a scrollbar both horizontally and vertically (even if you do not need it)
+                                        Auto    - Adds scrollbars only when necessary.
+                        Overflow-x: {visible/ hidden/ scroll/ auto}
+                                It controls content behaviour of x-axis.
+                        Overflow-y: {visible/ hidden/ scroll/ auto}
+                                It controls content behaviour of y-axis.
+
 unset           :: This keyword remove all inherited styling. You can apply unset to any property of css style.
                         ex.,
                                 css: 
@@ -73,6 +169,7 @@ unset           :: This keyword remove all inherited styling. You can apply unse
                                 html:
                                         <p>This is RED colored text.</p>
                                         <p class="example_unset">This is BLACK colored text.</p>
+
 vertical-align  ::  align items vertically with respect to each other.
                         Works best with inline and inline-block elements.
 
