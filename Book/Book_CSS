@@ -1,3 +1,5 @@
+Html and body tag has some margin/padding added to it by browser's user stylesheet.
+
 Fallback font family            :: Ensures font remains clear enough to read if the desired font is not available by system.
                                         ex., font-family: "Preferred primary Font", Arial, sans-serif;
                                                 if PrimaryFont is not available, system will use Arial font. even if this font is not available it will use avaiable option which is san-serif.
@@ -30,31 +32,6 @@ em              :: A unit of measurement relative to the font size of the parent
                                 then div="child" whose width is set to width:30% will convert to width:300px as parent width was 1000px.
                                 same with height as height:50% --> height:250px;
 
-
-CSS Box Model           :: Every element has Margin -> Border -> Padding -> Content
-
-Border                  :: Every Element has border but it set to "none".
-border-style            :: specify type of border such as {dotted, dashed, solid, double, groove, ridge, inset, outset, none, hidden}
-                                NOTE: You can mix borders.
-                                                ex., border-style: solid dash double solid;
-                                NOTE: You can specify each border individually.
-                                        border-top-style: solid;
-                                        border-right-style: dash;
-                                        border-bottom-style: double;
-                                        border-left-style: solid; 
-                                        
-border-Width            :: specify width of border
-                                ex., border-width: 2px 5px 2px 5px;
-border-color            :: set color of border  
-                                ex., border-color: red green blue yellow;
-
-box-shodow              :: Attach one or more shadows to element.
-                                syntax: box-shoadow: non\horizontal vertical blur spread color inset
-                                        horizontal-offset       : adds shadows to the right side of element.
-                                        vertical-offset         : adds shadows to the bottom side of the element.
-                                        blur    : blur radious  
-                                        spread  : higher the value, bigger the shadow. Note: negative value make shadow smaller.
-                                        inset   : adds shadow inside the element
 Background-color -->
         NOTE: 0 represent NO COLOR is present. 0% of red/blue/green color present.
 
@@ -78,16 +55,81 @@ Background-color -->
                     Tint        ::  Adding WHITE Color
                     Shade       ::  Adding BLACK Color
                     Tone        ::  Adding GREY Color
-
 Background      :: linear-gradient(45deg, red 75%, green, white);
                         --> 45deg will add angle to linear-gradient.
                         --> 75% represents color stops. ex.,"red 75%",75% of all background will be covered by red color.
                         
                         NOTE:-  linear-gradient produces an image.
                                 By default, 180deg is set for linear-gradient.
-
 Opacity         :: transparency of element
                         NOTE:   0 represent lowest value and 1 represent most transparent element.
+
+CSS Box Model           :: Every element has Margin -> Border -> Padding -> Content
+                        Border-collapsing: 
+                                When x2 <div> are sequentially present in page with "margin:10px;".
+                                Instead of showing 20px margin between two <div> :: { 10px bottom margin of 1st <div> and 10px top margin of 2nd <div> }
+                                It shows 10px because bottom margin of 1st <div> and top-margin of 2nd <div> will collapse.  
+
+                                For ex., if <div1 margin:20px> <div2 margin:10px> --> so margin will be 20px, not 10px because of Margin Collapsing
+
+Border                  :: Every Element has border but it set to "none".       
+                        SHORT HAND:
+                        ex.,
+                                border: 2px soild red;
+                                border-left: 2px solid red;
+                                        border-radious  :: to add rounded borders.
+                                                ex.,    border-radious: 5px;
+                                                NOTE: You can set any corner of border.
+                                                        ex., 
+                                                                border-radious: top-left top-right bottom-right bottom-left;
+                                                                border-radious: 5px 6px 4px 7px;
+                                        border-style    :: specify type of border such as {dotted, dashed, solid, double, groove, ridge, inset, outset, none, hidden}
+                                                                        NOTE: You can mix borders.
+                                                                                        ex., border-style: solid dash double solid;
+                                                                        NOTE: You can specify each border individually.
+                                                                                border-top-style: solid;
+                                                                                border-right-style: dash;
+                                                                                border-bottom-style: double;
+                                                                                border-left-style: solid;                                                                                 
+                                        border-Width    :: specify width of border
+                                                                        ex., border-width: 2px 5px 2px 5px;
+                                        border-color    :: set color of border  
+                                                                        ex., border-color: red green blue yellow;
+
+box-shodow              :: Attach one or more shadows to element.
+                                syntax: box-shoadow: non\horizontal vertical blur spread color inset
+                                        horizontal-offset       : adds shadows to the right side of element.
+                                        vertical-offset         : adds shadows to the bottom side of the element.
+                                        blur    : blur radious  
+                                        spread  : higher the value, bigger the shadow. Note: negative value make shadow smaller.
+                                        inset   : adds shadow inside the element
+                                          
+overflow        :: Controls the behaviour of content which is too big to fit in area.
+                        Overflow: {visible/ hidden/ scroll/ auto}
+                                        Visible - Renders content outside the area.
+                                        Hidden  - Hides content which is outside of the area.
+                                        Scroll  - Adds a scrollbar both horizontally and vertically (even if you do not need it)
+                                        Auto    - Adds scrollbars only when necessary.
+                        Overflow-x: {visible/ hidden/ scroll/ auto}
+                                It controls content behaviour of x-axis.
+                        Overflow-y: {visible/ hidden/ scroll/ auto}
+                                It controls content behaviour of y-axis.
+
+unset           :: This keyword remove all inherited styling. You can apply unset to any property of css style.
+                        ex.,
+                                css: 
+                                        p{
+                                                color: red;
+                                        }
+                                        .example_unset{
+                                                color:unset;
+                                        }
+                                html:
+                                        <p>This is RED colored text.</p>
+                                        <p class="example_unset">This is BLACK colored text.</p>
+
+vertical-align  ::  align items vertically with respect to each other.
+                        Works best with inline and inline-block elements.
 
 Filter          :: Adds visual effects just like photoshop does to images.
                         grayscale()     ::      Adds grey to input image.
@@ -144,34 +186,26 @@ Filter          :: Adds visual effects just like photoshop does to images.
                                                         ex.,
                                                                 filter: hue-rotate(180deg)
                                                                 filter: hue-rotate(0.5turn)
-                                                
-
-overflow        :: Controls the behaviour of content which is too big to fit in area.
-                        Overflow: {visible/ hidden/ scroll/ auto}
-                                        Visible - Renders content outside the area.
-                                        Hidden  - Hides content which is outside of the area.
-                                        Scroll  - Adds a scrollbar both horizontally and vertically (even if you do not need it)
-                                        Auto    - Adds scrollbars only when necessary.
-                        Overflow-x: {visible/ hidden/ scroll/ auto}
-                                It controls content behaviour of x-axis.
-                        Overflow-y: {visible/ hidden/ scroll/ auto}
-                                It controls content behaviour of y-axis.
-
-unset           :: This keyword remove all inherited styling. You can apply unset to any property of css style.
-                        ex.,
-                                css: 
-                                        p{
-                                                color: red;
-                                        }
-                                        .example_unset{
-                                                color:unset;
-                                        }
-                                html:
-                                        <p>This is RED colored text.</p>
-                                        <p class="example_unset">This is BLACK colored text.</p>
-
-vertical-align  ::  align items vertically with respect to each other.
-                        Works best with inline and inline-block elements.
+ 
+ex.1    Give <div> 100% of viewport height and width:
+                To-do so we have to make sure parent elements <html> and <body> have 100% of viewport screen.
+                As we know, these tag have some spacing associated with them by default by browser. so lets remove it.
+                        html, body{
+                                margin: 0px;
+                                padding: 0px;
+                        }
+                Also, make sure to give these tag 100% of screen height. 
+                If we do not do that parent element won't have 100% of screen so inherent element <div> won't have 100% of screen.
+                        html, bodyy{
+                                margin:0px;
+                                padding: 0px;
+                                height: 100vh;
+                        }
+                For <div>, we just gonna give it height because <div> is block level element so it has width=100% by default.
+                        div{
+                                height:100vh; or height:100%;
+                                background-color: blue; /* to make div visible */
+                        }
 
 -----------------------------------------------------------------------------------------------------------------
             overflow??

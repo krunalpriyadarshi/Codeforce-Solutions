@@ -12,3 +12,17 @@ Hot to kill process on port 3306:
                 TCP    [::]:33060             [::]:0                 LISTENING       5296
                 << HERE PID NUMBER IS "5296" >>
     --  Go to the Task Manager and go to details. Now search for the PID and kill the process.
+
+// MySQL database connection
+$servername = "localhost";
+$username = "root";
+$password = "1234567890";
+$dbname = "";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
