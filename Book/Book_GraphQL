@@ -1,0 +1,45 @@
+Rest API - It is a set of rules that defines how applications/devices are connected and communicates with each other.
+
+With Rest API, Underfetching and Overfetching issue comes:
+    for ex.,
+        we have 2 tables. 
+            Books(id, name, desc, price, author_id, image)
+            Author(id, name, desc)
+
+            when we request for data and we get less data than we accepted creates underfetching issue. 
+            ex., 
+                I request "kpriyadarshi.ca/Books/1" --> it will give record of id_book=1 from Books table. Hence we receive (id, name, desc, price, author_id, image) data.
+
+                unfortunetly, we also need data of Auhor but all we have is author_id.
+
+                Hence we have to send another request for Author details.
+                "kpriyadarshi.ca/Authors/author_id=1"
+
+                This issue is Underfetching.
+
+            When we request for data and we get lot more data than we need creates Overfetching issue.
+            ex.,
+                I request "kpriyadarshi.ca/Books/1" --> it will give record of id_book=1 from Books table. Hence we receive (id, name, desc, price, author_id, image) data.
+
+                But we only needed name and image from this Json. Other information such as desc, price, author_id etc., we got waste as we are not going to use it in our application. This issue is Overfetching.
+
+To overcome with this, we can use GraphQL:
+    Query{
+        Books(id:"1"){
+            id,
+            title,
+            image,
+            Author{
+                name,
+                id,
+                Books{
+                    id,
+                    title,
+                    image
+                }
+            }
+        }
+    }
+    --> In single request, we are getting a Book's id, title, image, author's details and all books which were contributed by the author.
+
+    It's not only reduce number of query but eliminated Overfetching and Underfetching issue.

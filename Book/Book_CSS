@@ -72,6 +72,27 @@ CSS Box Model           :: Every element has Margin -> Border -> Padding -> Cont
 
                                 For ex., if <div1 margin:20px> <div2 margin:10px> --> so margin will be 20px, not 10px because of Margin Collapsing
 
+box-sizing              :: By default, all elements have 'content-box' as default value.
+                                Content-box: 
+                                        When you set an element's width and height, it refers to the content area's dimensions only. Note: Padding and Borders are not included.
+                                        But now, Padding and borders are added to the specified width and height. This can cause the total size of the element to be larger than expected.
+                                        ex.,
+                                                width: 200px;
+                                                height: 100px;
+                                                padding: 20px;
+                                                border: 2px solid #000;
+                                                --> Now, here element's width= width + padding + border = 200px + 40px + 4px = 244px
+                                border-box:
+                                        When you set an element's width and height, it includes the content area, padding, and borders in the specified dimensions.
+                                        Padding and borders are accounted for within the specified width and height, ensuring that the total size of the element remains constant.
+                                        ex.,
+                                                width: 200px;
+                                                height: 100px;
+                                                padding: 20px;
+                                                border: 2px solid #000;
+                                                box-sizing: border-box;
+                                                --> Now, here element's width = width = 200px
+                                                It won't exceed this set width.
 Border                  :: Every Element has border but it set to "none".       
                         SHORT HAND:
                         ex.,
@@ -196,7 +217,7 @@ ex.1    Give <div> 100% of viewport height and width:
                         }
                 Also, make sure to give these tag 100% of screen height. 
                 If we do not do that parent element won't have 100% of screen so inherent element <div> won't have 100% of screen.
-                        html, bodyy{
+                        html, body{
                                 margin:0px;
                                 padding: 0px;
                                 height: 100vh;
