@@ -44,3 +44,5 @@ Rest API:
         --> In single request, we are getting a Book's id, title, image, author's details and all books which were contributed by the author.
 
         It's not only reduce number of query but eliminated Overfetching and Underfetching issue.
+
+        NOTE: Books table here is called Resource/Graph because it has records. And above Query connects with Resource/Graph to give results. 

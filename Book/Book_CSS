@@ -1,10 +1,10 @@
-Html and body tag has some margin/padding added to it by browser's user stylesheet.
+By default, Browser's user stylesheet has some margin/padding added to <HTML> and <Body> tag.
 
 Fallback font family            :: Ensures font remains clear enough to read if the desired font is not available by system.
                                         ex., font-family: "Preferred primary Font", Arial, sans-serif;
                                                 if PrimaryFont is not available, system will use Arial font. even if this font is not available it will use avaiable option which is san-serif.
 
-An attribute selector           --> input[name="password"]{color:red; font-size:30px;}
+An attribute selector           --> input[name="password"] {color:red;}
                                         The above selects input elements with a name attribute value of password.
 
 Viewport --> It is visible area of browser where content can be shown.
@@ -39,9 +39,9 @@ Background-color -->
         RGB (Red, Green, Blue)                  ::      RGB(255, 0, 0)
         HEX                                     ::      #FF0000
 
-        Alpha channel                           ::      rgba() where a is alpha channel.
-                                                        #rrggbbaa where a is alpha. Where a is a value from 0 to F.
-                                                        hsla() where a is alpha. value from 0 to 1.
+        Alpha channel                           ::      rgba()          where a is alpha channel.
+                                                        #rrggbbaa       where a is alpha. Where a is a value from 0 to F.
+                                                        hsla()          where a is alpha. value from 0 to 1.
 
         Color Wheel::
                     Primary Color           ::          Red, Yellow, Blue
@@ -68,7 +68,7 @@ CSS Box Model           :: Every element has Margin -> Border -> Padding -> Cont
                         Border-collapsing: 
                                 When x2 <div> are sequentially present in page with "margin:10px;".
                                 Instead of showing 20px margin between two <div> :: { 10px bottom margin of 1st <div> and 10px top margin of 2nd <div> }
-                                It shows 10px because bottom margin of 1st <div> and top-margin of 2nd <div> will collapse.  
+                                It shows 10px because bottom margin of 1st <div> and top-margin of 2nd <div> is collapsed.  
 
                                 For ex., if <div1 margin:20px> <div2 margin:10px> --> so margin will be 20px, not 10px because of Margin Collapsing
 
@@ -126,11 +126,15 @@ box-shodow              :: Attach one or more shadows to element.
                                         inset   : adds shadow inside the element
                                           
 overflow        :: Controls the behaviour of content which is too big to fit in area.
-                        Overflow: {visible/ hidden/ scroll/ auto}
+                        Overflow: {visible (DEFAULT)/ hidden/ scroll/ auto}
                                         Visible - Renders content outside the area.
+                                                        NOTE:   If you have two elements of 200px heigth and both elements have a child element with height of 300px.
+                                                                        In this case, first and second element will be rended in same way as normal. 
                                         Hidden  - Hides content which is outside of the area.
                                         Scroll  - Adds a scrollbar both horizontally and vertically (even if you do not need it)
-                                        Auto    - Adds scrollbars only when necessary.
+                                        Auto    - Adds scrollbars only when necessary. 
+                                                        If heigth of child element is larger than parent element. It will add scroll to y-axis.
+                                                        If width of child element is larger than parent element. It will add scroll to x-axis.
                         Overflow-x: {visible/ hidden/ scroll/ auto}
                                 It controls content behaviour of x-axis.
                         Overflow-y: {visible/ hidden/ scroll/ auto}
@@ -230,6 +234,16 @@ ex.1    Give <div> 100% of viewport height and width:
 
 -----------------------------------------------------------------------------------------------------------------
             overflow??
+                        --> secret method
+                        Creates Block Formatting Context
+                        Clears Floats
+                
+                
+         -->z-index;
+
+
+
+
             linear-gradient??
                 box shadow???
                 border short hand??
@@ -240,5 +254,3 @@ ex.1    Give <div> 100% of viewport height and width:
             */
 
             learn how to import fonts from google font site.
-
-            use gif as logo
