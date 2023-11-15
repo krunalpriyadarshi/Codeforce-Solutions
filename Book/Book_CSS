@@ -132,27 +132,30 @@ Flex-box                :: Flex-container is parent while Flex-item is child.
                                 flex-flow       :: SHORTHAND way for setting both the flex-direction and flex-wrap properties.
                                                 flex-flow: flex-direction flex-wrap;
                                                         ex., flex-flow: row wrap;                
-                                        Flex-direction  :: { row (default) / row-reverse / column / column-reverse }
-                                                Defines the order of items to be visible on flex.
-                                                        row             : (default) show flex-items in a row. 
-                                                                                ex.,    {1, 2, 3, 4}
-                                                        row-reverse     : show flex-items in a row with reverse order. 
-                                                                                ex.,    {4, 3, 2, 1}
-                                                        column          : show items in a column 
-                                                                                ex.,    { 1,
-                                                                                        2,
-                                                                                        3,
-                                                                                        4 }
-                                                        column-reverse  : show flex-items in a column with reverse order.
-                                                                                ex.,    { 4,
-                                                                                        3,
-                                                                                        2,
-                                                                                        1 }
+                                        flex-direction  :: { row (default) / row-reverse / column / column-reverse }
+                                                        Defines the order of items to be visible on flex.
+                                                row             : (default) show flex-items in a row. 
+                                                                        ex.,    {1, 2, 3, 4}
+                                                row-reverse     : show flex-items in a row with reverse order. 
+                                                                        ex.,    {4, 3, 2, 1}
+                                                column          : show items in a column 
+                                                                        ex.,    { 1,
+                                                                                2,
+                                                                                3,
+                                                                                4 }
+                                                column-reverse  : show flex-items in a column with reverse order.
+                                                                        ex.,    { 4,
+                                                                                3,
+                                                                                2,
+                                                                                1 }
                                         flex-wrap       :: { nowrap (default) / wrap / wrap-reverse }
-                                                Defines wrapping of flex-items. Should it wrap or not.
-                                                        nowrap          : When flex-container is not large enough to fit all flex-items. It reduce the size of flex-items and try to fit all flex-items in single row.
-                                                        wrap            : It will create wrap all flex-items in flex-container with their original defined size. It will create new rows and show flex-items if needed.
-                                                        wrap-reverse    : Works same as wrap but all flex-items are starting to displayed from bottom-left instead of top-left.
+                                                        Defines wrapping of flex-items. Should it wrap or not.
+                                                nowrap          :: (Default) When flex-container is not large enough to fit all flex-items. 
+                                                        It reduce the size of flex-items and try to fit all flex-items in single row.
+                                                warp            :: 
+                                                        It will create wrap all flex-items in flex-container with their original defined size. It will create new rows and show flex-items if needed.
+                                                wrap-reverse    ::
+                                                        Works same as wrap but all flex-items are starting to displayed from bottom-left instead of top-left.
 
 overflow        :: Controls the behaviour of content which is too big to fit in area.
                         Overflow: { visible (DEFAULT) / hidden / scroll / auto }
