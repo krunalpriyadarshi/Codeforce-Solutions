@@ -156,7 +156,17 @@ Flex-box                :: Flex-container is parent while Flex-item is child.
                                                         It will create wrap all flex-items in flex-container with their original defined size. It will create new rows and show flex-items if needed.
                                                 wrap-reverse    ::
                                                         Works same as wrap but all flex-items are starting to displayed from bottom-left instead of top-left.
-
+                                justify-contect :: Align the flex items.
+                                                justify-content: { flex-start(default) /flex-end /center /space-around /space-between }
+                                                flex-start      :: (default) fits flex items without any modification.
+                                                                From left to right.
+                                                flex-end        :: fits flex-items from right to left. Reverse order of flex-start.
+                                                                From right to left.
+                                                center          :: center all flex-items. 
+                                                                leave spaces on right side and left side of flex-item.
+                                                space-around    :: add extra space around flex-item based on remaing space.
+                                                space-between   :: add extra space only between 2 flex-items.
+                                                space-evenly    :: Smart way. Add spaces based in remaining space. 
 overflow        :: Controls the behaviour of content which is too big to fit in area.
                         Overflow: { visible (DEFAULT) / hidden / scroll / auto }
                                         Visible - Renders content outside the area.
