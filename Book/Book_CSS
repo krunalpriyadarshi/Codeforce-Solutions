@@ -156,7 +156,7 @@ Flex-box                :: Flex-container is parent while Flex-item is child.
                                                         It will create wrap all flex-items in flex-container with their original defined size. It will create new rows and show flex-items if needed.
                                                 wrap-reverse    ::
                                                         Works same as wrap but all flex-items are starting to displayed from bottom-left instead of top-left.
-                                justify-contect :: Align the flex items.
+                                justify-contect :: Manage space around and between flex items.
                                                 justify-content: { flex-start(default) /flex-end /center /space-around /space-between }
                                                 flex-start      :: (default) fits flex items without any modification.
                                                                 From left to right.
@@ -167,6 +167,11 @@ Flex-box                :: Flex-container is parent while Flex-item is child.
                                                 space-around    :: add extra space around flex-item based on remaing space.
                                                 space-between   :: add extra space only between 2 flex-items.
                                                 space-evenly    :: Smart way. Add spaces based in remaining space. 
+                                align-items     :: Align the flex items on y-axis. Move items to up or down.
+                                                align-items: { streach(default) /flex-start /flex-end /center /baseline}
+                                                Check online for examples.      
+                                                        https://www.w3schools.com/css/css3_flexbox_container.asp
+                                
 overflow        :: Controls the behaviour of content which is too big to fit in area.
                         Overflow: { visible (DEFAULT) / hidden / scroll / auto }
                                         Visible - Renders content outside the area.

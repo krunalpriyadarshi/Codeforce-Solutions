@@ -1,3 +1,6 @@
+learn about arithmetic opertion priority<3
+
+
 print(True if not stack else False)
     --> To find length of Stack/array, do not use length() function. You can use above method. 
 
