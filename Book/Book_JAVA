@@ -1,1 +1,26 @@
-Scanner -> takes inputs from user!
+Scanner         :: Used for get User input.
+                        eg.,
+                            import java.util.scanner; 
+                            Scanner sc= new Scanner(system.in);
+                            String s= sc.nextLine();
+                            --------------------------------------------
+                                nextLine()      :: reads String value
+                                nextInt()       :: reads int value
+                                nextFloat()     :: reads float value
+                                nextBoolean()   :: reads bool value
+                                nextLong()      :: reads long value
+                                nextShort()     :: reads short value
+                                nextByte()      :: reads byte value
+                                nextDouble()    :: reads double value
+
+                                NOTE: 
+                                A common issue when using the Scanner class in Java:
+                                    nextInt() method only reads Integer and which result in, not reading "enter" or "new line" character.
+                                    which was pressed after entring number. Hence use another nextLine() to read it before reading another line.
+                                        ex.,
+                                             Scanner scanner = new Scanner(System.in);
+                                             int num = scanner.nextInt();
+                                             scanner.nextLine();    // Consume the newline character
+                                             String s= scanner.nextLine();
+                                    
+                    
