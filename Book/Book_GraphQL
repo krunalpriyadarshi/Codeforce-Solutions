@@ -71,7 +71,6 @@ ReviewQuery ::
             }
         }
 
-
 Setup GraphQL:
     npm install @apollo/server graphql
             --> Install all dependencies.
@@ -157,11 +156,6 @@ Setup GraphQL:
                 }
         Resolver Chain: 
 
-
-
-
-
-
         import { typeDefs } from './schema.js'
                 --> importing typeDefs from JS file where structure is defined.
         
@@ -169,8 +163,6 @@ Setup GraphQL:
             listen: { port: 4000 }
         })
         console.log('Server ready at port', 4000)
-
-
 
 NodeJS commands:
     npm init
