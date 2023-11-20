@@ -11,7 +11,7 @@ Rest API:
                 ex., 
                     I request "kpriyadarshi.ca/Books/1" --> it will give record of id_book=1 from Books table. Hence we receive (id, name, desc, price, author_id, image) data.
 
-                    unfortunetly, we also need data of Auhor but all we have is author_id.
+                    unfortunetly, we also need data of Author but all we have is author_id.
 
                     Hence we have to send another request for Author details.
                     "kpriyadarshi.ca/Authors/author_id=1"
@@ -46,3 +46,141 @@ Rest API:
         It's not only reduce number of query but eliminated Overfetching and Underfetching issue.
 
         NOTE: Books table here is called Resource/Graph because it has records. And above Query connects with Resource/Graph to give results. 
+
+GraphQL:
+    GraphQL does not fetch all data from Resource/Graph instead only request resource will be fetched.
+        ex.,
+            query findGame{
+                game{
+                    id,
+                    name,
+                    company
+                }
+            }
+            --> above query will return "id, name, company name of game from available 'Game' resource/graph".
+            But restAPI will send all data of 'Game' table. And we have to do some sort of sorting to get only desired columns.
+
+ReviewQuery ::
+        Retrive requested column/value from Resource/ Graph.
+
+        query NameOfQuery{
+            TableName{
+                Col1,
+                Col2,
+                Col3,..
+            }
+        }
+
+
+Setup GraphQL:
+    npm install @apollo/server graphql
+            --> Install all dependencies.
+    
+    In Server Setup file:
+        import { ApolloServer } from '@apollo/server';
+        import { startStandaloneServer } from '@apollo/server/standalone';
+                --> Used to create Server and assign a port to it.
+        
+        const server = new ApolloServer({
+            // typeDefs
+            // resolvers
+        })
+            -> Adviced to create 2 seperate files for typeDefs and Resolvers.
+                typeDefs    :   To create schema and entry points.
+                Resolvers   :   Contains function which used to handle all request. 
+        
+        typeDefs:
+            schema definition:
+                type GraphName{
+                    colName: {int/ string/ boolean/ float/ ID}!
+                }
+                        --> data types          :   { int/ string/ boolean/ float/ ID }
+                            ! (Exclamation mark):   not-null. 
+                            []                  :   array definition
+
+                            book_id: ID!
+                                ID datatype with not null value.
+                            [book_name]
+                                An array of Book_name.
+                            [book_name!]
+                                An array of non-empty Book_name. But array can be empty.
+                            [book_name!]!
+                                A non-empty array of non-empty Book_name.
+
+                            ex., 
+                                // Resource/Graph defined:
+                                type Review{
+                                    id: ID!,
+                                    rating: Int!
+                                }
+
+            Entry points definition:
+                We have to define return type.
+                    type Query{
+                        GraphName: type-to-return
+                    }        
+
+                    ex.,    
+                        type NameOfTheQuery{  
+                            // An array of Review will be sent for a query to this entry point.
+                            reviews: [Review] 
+                            // Single result will be sent as response for given paramter value
+                            review(id: ID!): Review
+                        }
+
+        Resolvers:
+                Define an object which will be used to create ApolloServer.
+
+                const resolver{
+                    Query:{
+                        reviews(){
+                            return db.reviews   // Returning whole resource here:
+                        }
+
+                        review(_, args){        // 3 parameters: (parent_resolver, args ->Which is parameters object. , context)
+                            return db.reviews.find((review)=> review.id=== args.id)
+                        }
+                        //based on value, we will match with resource value and it will be return:
+                            // check on apollo server by:
+                                // takes id and execute resolver's defined method
+                                query reviews($id: ID!) {
+                                    review(id: $id){
+                                        id,
+                                        rating
+                                       }
+                                   }
+                                   // On variable tab of Apolloserver: pass id that will be used in above query
+                                   {
+                                       "id":"1",
+                                   }
+                    }
+                }
+        Resolver Chain: 
+
+
+
+
+
+
+        import { typeDefs } from './schema.js'
+                --> importing typeDefs from JS file where structure is defined.
+        
+        const { url } = await startStandaloneServer(server, {
+            listen: { port: 4000 }
+        })
+        console.log('Server ready at port', 4000)
+
+
+
+NodeJS commands:
+    npm init
+        ->  Initialize nodejs. But you have to provide information in Command line for package.json file.
+    npm init -y 
+    npm init --yes
+        ->  Set default value of package.json file instead of entering.
+    npm pkg set type= "module"   
+        ->  To set type= "module" in package.json file.
+            Because of this, we can use ES6 module.
+    nodemon index.js
+        ->  Rerun the specific file when changes are made. 
+            For backend side, when changes are made. we need to rerun backend. To avoid that we gonna use nodemon.

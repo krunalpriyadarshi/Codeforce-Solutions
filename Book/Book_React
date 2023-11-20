@@ -1,0 +1,6 @@
+DOM     :: Document Object Model
+                DOM represents the content of XML and HTML in tree structure.
+
+                For instance, open element tab of Inspect mode (Ctrl + Shift + i) for any website. 
+                And you will see tree strcture which is DOM.
+                Every browser uses some type of DOM structure.
