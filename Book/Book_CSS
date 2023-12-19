@@ -187,6 +187,13 @@ overflow        :: Controls the behaviour of content which is too big to fit in 
                         Overflow-y: { visible / hidden / scroll / auto }
                                 It controls content behaviour of y-axis.
 
+Position        :: Positioning methods used for an element- Static, Relative, Fixed, Absolute, Sticky...
+                        Static          ::      Default. Elements will be position on normal flow of page.
+                        Relative        ::      It will adjust elements from its normal flow by applying Top, Bottom, Right and Left.
+                        Fixed           ::      Positioned relative to the viewport. Stays same place even if the page scrolled.
+                        Absolute        ::      Positioned its self respect to the parent component.
+                        Sticky          ::      Nice Effect: A sticky element toggles between relative and fixed, depending on the scroll position.
+
 unset           :: This keyword remove all inherited styling. You can apply unset to any property of css style.
                         ex.,
                                 css: 

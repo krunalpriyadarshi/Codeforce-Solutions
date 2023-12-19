@@ -23,4 +23,4 @@ Scanner         :: Used for get User input.
                                              scanner.nextLine();    // Consume the newline character
                                              String s= scanner.nextLine();
                                     
-                    
+NumberFormat    :: Used to convert it into currency format.

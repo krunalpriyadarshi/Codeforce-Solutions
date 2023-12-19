@@ -4,3 +4,24 @@ DOM     :: Document Object Model
                 For instance, open element tab of Inspect mode (Ctrl + Shift + i) for any website. 
                 And you will see tree strcture which is DOM.
                 Every browser uses some type of DOM structure.
+
+declarative vs imperative programming:
+    Imperative: Focuses on how to achieve a result, step by step.
+    Declarative: Focuses on what result is desired, without specifying the step-by-step process.
+
+react ->
+        npx create-react-app app_name
+            NOTE: app name must have all lowercase.
+
+npm start -> to run react app.
+
+
+
+ReactDOM.render(
+        {parent node}, 
+        document.getElementById("root")
+      )
+
+      --> if you try to insert 2 parent nodes inside first parameter. you will get error "wrap in enclosing tag". It occurs because one parent expected. you can have mulitple childs inside it without any problem.
+      ex., <p>hi</p><p>no way</p>  -> error: enclosing needed
+      ex., <div><p>hi</p><p>no way</p></div>  --> it will run nicely. without any problem.
