@@ -74,6 +74,16 @@ CSS Box Model           :: Every element has Margin -> Border -> Padding -> Cont
 
                                 For ex., if <div1 margin:20px> <div2 margin:10px> --> so margin will be 20px, not 10px because of Margin Collapsing
 
+Pseudo Elements         :: 
+                                p::first-letter         -> adds Style to the first letter of <p>
+                                p::first-line           -> adds style to the first line of <p>
+                                p::before               -> insert content before <p>
+                                p::after                -> insert content after <p> 
+                                ::selection             -> apply styling to elements when it is selected by user.
+                                ::marker                -> adds style to the bullet markers of list item <li>
+
+Pseudo Classes          ::
+
 box-sizing              :: By default, all elements have 'content-box' as default value.
                                 Content-box: 
                                         When you set an element's width and height, it refers to the content area's dimensions only. Note: Padding and Borders are not included.
@@ -194,6 +204,18 @@ Position        :: Positioning methods used for an element- Static, Relative, Fi
                         Absolute        ::      Positioned its self respect to the parent component.
                         Sticky          ::      Nice Effect: A sticky element toggles between relative and fixed, depending on the scroll position.
 
+Transition      :: Add CSS Transition effects.
+                        ease                    :: Default - Effect slow start, then fast, then end slowly.
+                        linear                  :: specifies a transition effect with the same speed from start to end
+                        ease-in                 :: starts effect with slow start
+                        ease-out                :: starts effect with a slow end
+                        ease-in-out             :: starts effect with a slow start and slow end
+                        cubic-bezier(n,n,n,n)   :: (learn) lets you define your own values in a cubic-bezier function
+
+                transition-delay        :: The transition-delay property specifies a delay (in seconds) for the transition effect.
+
+Transform       :: (learn)
+
 unset           :: This keyword remove all inherited styling. You can apply unset to any property of css style.
                         ex.,
                                 css: 
@@ -207,7 +229,7 @@ unset           :: This keyword remove all inherited styling. You can apply unse
                                         <p>This is RED colored text.</p>
                                         <p class="example_unset">This is BLACK colored text.</p>
 
-vertical-align  ::  align items vertically with respect to each other.
+vertical-align  :: Align items vertically with respect to each other.
                         Works best with inline and inline-block elements.
 
 Filter          :: Adds visual effects just like photoshop does to images.
