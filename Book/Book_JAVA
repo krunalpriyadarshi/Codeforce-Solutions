@@ -1,3 +1,24 @@
+String          ::
+                        isEmpty() method is safe to use even if the string is null. It returns true if the string is empty or null.
+                        equals("") could throw a NullPointerException if the string is null.
+                                String str = null;
+                                System.out.println(str.isEmpty());      // No exception, prints 'true'
+                                System.out.println(str.equals(""));     // NullPointerException
+
+substring       ::
+                        A substring of a string is a contiguous block of characters in the string
+                            ex., the substrings of abc are a, b, c, ab, bc, and abc.
+
+StringBuilder   :: In loop, "StringBuilder" is better to use inplace of String Concatenation:
+                        Strings are immutale while StringBuilder are mutable.
+                            ex.,
+                                String Concatenation:
+                                    String str= a+ b+ c; //a,b,c are string variable.
+                                StringBuilder: 
+                                    StringBuilder str.append(a).append(b).append(c).append(" ");
+
+                        // using setLength(0) to reset the StringBuilder or creating a new one in each iteration.
+
 Scanner         :: Used for get User input.
                         eg.,
                             import java.util.scanner; 
@@ -22,5 +43,38 @@ Scanner         :: Used for get User input.
                                              int num = scanner.nextInt();
                                              scanner.nextLine();    // Consume the newline character
                                              String s= scanner.nextLine();
-                                    
+                                             scanner.close();
+                                Make sure to close "scanner" at the end.
+                                    Scanner sc= new Scannner();
+                                    sc.close();
+
+                        Integer.valueOf(scanner.nextLine()); ------------------- vs ------------------- scanner.nextInt();
+                                User will enter some value in input stream Which will be read by Scanner.
+
+                                Integer.valueOf(scanner.nextLine());
+                                        It will read whole line and convert it into Integer Value. And input stream will be empty after that.
+                                        For Empty or non-interger value, it will throw NumberFormatException.
+                                scanner.nextInt();
+                                        It will read only INT part from input stream and leave remaining white spaces in input stream. Which will causing error in subsequent input reading. 
+                                        For Empty or non-interger value, it will throw InputMismatchException.
+
+
+For-Each loop   :: iterate thorugh each element of array or collection.
+                        ex.,
+                            int arr[]= {1, 2, 3, 4};
+                            // for-Each loop
+                            for(int i: arr){
+                                System.out.print(i);
+                            }
+
+
+ArrayList       :: ArrayLists are updatable while built-in arrays are not updatable.
+                        ArrayList<String> arr= new ArrayList<String> ();
+                        arr.get(0);                 -   return arratList element
+                        arr.add("new");             -   add new element at the end
+                        arr.set(0, "newValue");     -   update value of element
+                        arr.remove(1);              -   remove element at index 1.
+                        arr.clear();                -   remove all elements
+                        arr.size();                 -   return size
+
 NumberFormat    :: Used to convert it into currency format.

@@ -7,3 +7,9 @@ counterclockwise    :: opposite direction of clock wise movement.
 acronym             :: an abbreviation formed from the initial letters of other words ex., NASA, ASCII
 abbreviation        :: a shortened form of a word or phrase
 Jargon              :: special words or expressions that are used by a particular profession or group and are difficult for others to understand.
+indices             :: indexes/ plural of index
+
+lexicographical order       ::  alphabetic or dictionary order.
+                                Note: ASCII code for 'A' is 65 but for 'a' is 98.
+                                ex.,
+                                    A < B < ... < Y < Z < a < b < .. < z
