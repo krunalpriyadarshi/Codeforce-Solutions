@@ -58,6 +58,25 @@ Scanner         :: Used for get User input.
                                         It will read only INT part from input stream and leave remaining white spaces in input stream. Which will causing error in subsequent input reading. 
                                         For Empty or non-interger value, it will throw InputMismatchException.
 
+                :: Read content of File using Scanner.
+                        eg.,
+                            import java.io.File;
+                            import java.io.FileNotFoundException;
+                            import java.util.Scanner;
+
+                            -- pass file name in object of File in parameter...
+                            Scanner sc = new Scanner (new File("fileName.txt"));
+                                                " OR "
+                            File myFile = new File("fileName.txt); 
+                            Scanner sc = new Scanner (myFile);
+
+                            try{
+                                -- make sure to check end of file before reading content.
+                                while(sc.hasNextLine()){
+                                    String s = sc.nextLine();
+                                }
+                            }
+
 
 For-Each loop   :: iterate thorugh each element of array or collection.
                         ex.,
@@ -67,14 +86,16 @@ For-Each loop   :: iterate thorugh each element of array or collection.
                                 System.out.print(i);
                             }
 
-
 ArrayList       :: ArrayLists are updatable while built-in arrays are not updatable.
                         ArrayList<String> arr= new ArrayList<String> ();
                         arr.get(0);                 -   return arratList element
                         arr.add("new");             -   add new element at the end
                         arr.set(0, "newValue");     -   update value of element
-                        arr.remove(1);              -   remove element at index 1.
+                        arr.remove();
+                            > arr.remove(int index)     -   removes the element from specific position.                                    
+                            > arr.remove(object)        -   removes the first occurence of specified element.
                         arr.clear();                -   remove all elements
                         arr.size();                 -   return size
+
 
 NumberFormat    :: Used to convert it into currency format.
