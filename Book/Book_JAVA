@@ -5,6 +5,48 @@ String          ::
                                 System.out.println(str.isEmpty());      // No exception, prints 'true'
                                 System.out.println(str.equals(""));     // NullPointerException
 
+equals          ::
+                    Sign "==" is used to compare primitive datatypes.
+                    ex.,
+                        int a = 10, b = 10;
+                        System.out.println( a == b );   // true
+
+                    For non-primitive datatypes such as objects (String,Integer), Sign "==" will compare references not values. 
+                    Because these datatypes' addresses are saved there.
+                    ex.,
+                        String str1 = "abc";
+                        String str2 = "abc";
+                        System.out.println( str1.equals(str2) );    // true
+                        System.out.println( str1 == str2 );         // false --> references are checked.
+                                      
+equals for custom objects   ::
+                        Step1:
+                            Check references of both objects, if they are same return true.
+                                ex., 
+                                    public boolean equals(Object obj) {
+                                        // Step 1: Check for reference equality 
+                                        if (this == obj) {
+                                            return true;
+                                        }
+                                    }
+                        Step2:
+                            Check instance/ Object type of both objects. (instanceOf/ getClass() methods)
+                                ex.,
+                                    public boolean equals(Object obj) {                                        
+                                        // Step 2: Check if the parameter is not null and is an instance of MyClass
+                                        if (obj == null || !(obj instanceof MyClass)) {
+                                            return false;
+                                        }
+                                    }
+                        Step3:
+                            If not, Type cast and check each values of objects.
+                                ex.,
+                                    public boolean equals(Object obj) {
+                                        // Step 3: Type cast the parameter to MyClass
+                                        MyClass otherObject = (MyClass) obj;
+                                        return id == otherObject.id && name.equals(otherObject.name);
+                                    }
+
 substring       ::
                         A substring of a string is a contiguous block of characters in the string
                             ex., the substrings of abc are a, b, c, ab, bc, and abc.
@@ -96,6 +138,5 @@ ArrayList       :: ArrayLists are updatable while built-in arrays are not updata
                             > arr.remove(object)        -   removes the first occurence of specified element.
                         arr.clear();                -   remove all elements
                         arr.size();                 -   return size
-
 
 NumberFormat    :: Used to convert it into currency format.
