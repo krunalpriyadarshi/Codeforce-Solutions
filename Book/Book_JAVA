@@ -47,6 +47,15 @@ equals for custom objects   ::
                                         return id == otherObject.id && name.equals(otherObject.name);
                                     }
 
+                NOTE:
+                    this equals() method automatically executes when list of object is comparing a object.
+                    ex.,
+                        ArrayList<animal> animals;
+                        // when contains method is executes, it will look for objects' equals() method to compare object and their values.
+                        if(animals.contains(animal a)){
+                            sout("Value already exist in ArrayList");
+                        }
+
 substring       ::
                         A substring of a string is a contiguous block of characters in the string
                             ex., the substrings of abc are a, b, c, ab, bc, and abc.
