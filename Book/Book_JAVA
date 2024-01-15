@@ -139,14 +139,19 @@ For-Each loop   :: iterate thorugh each element of array or collection.
 
 ArrayList       :: ArrayLists are updatable while built-in arrays are not updatable.
                         ArrayList<String> arr= new ArrayList<String> ();
-                        arr.get(0);                 -   return arratList element
+                        arr.get(0);                 -   return ArrayList element
                         arr.add("new");             -   add new element at the end
                         arr.set(0, "newValue");     -   update value of element
                         arr.remove();
-                            > arr.remove(int index)     -   removes the element from specific position.                                    
-                            > arr.remove(object)        -   removes the first occurence of specified element.
+                            > arr.remove(int index)     -   removes the element from a specific position.                                    
+                            > arr.remove(object)        -   removes the first occurrence of the specified element.
                         arr.clear();                -   remove all elements
-                        arr.removeAll(object arrayList)             -   removes all elements from given arrayList object as parameter.
+                        arr.removeAll(object arrayList)             -   removes all elements from the given arrayList object as a parameter.
                         arr.size();                 -   return size
+
+                        ArrayList.clear() vs ArrayList.removeAll()
+                                    Both methods remove elements from ArrayList with a time complexity of O(1) for clear() and O(n) for the removeAll() method.
+                                    Note: removeAll() methods remove one by one element from List because its main use is to find subset (A - B) of two sets A and B. 
+                        Hence it removes elements from the given ArrayList/Object as a parameter.
 
 NumberFormat    :: Used to convert it into currency format.
