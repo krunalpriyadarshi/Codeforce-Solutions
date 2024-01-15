@@ -146,6 +146,7 @@ ArrayList       :: ArrayLists are updatable while built-in arrays are not updata
                             > arr.remove(int index)     -   removes the element from specific position.                                    
                             > arr.remove(object)        -   removes the first occurence of specified element.
                         arr.clear();                -   remove all elements
+                        arr.removeAll(object arrayList)             -   removes all elements from given arrayList object as parameter.
                         arr.size();                 -   return size
 
 NumberFormat    :: Used to convert it into currency format.
