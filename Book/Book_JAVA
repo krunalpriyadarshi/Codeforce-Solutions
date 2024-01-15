@@ -1,3 +1,12 @@
+Note:  
+      How to create a new line:
+          String.format("%n", "");
+              creates a new line.
+          System.getProperty("line.separator")
+              Creates a new line (actually it is a system-dependent newline)
+
+----------------------------------------------------------------------------------------------------------------
+
 String          ::
                         isEmpty() method is safe to use even if the string is null. It returns true if the string is empty or null.
                         equals("") could throw a NullPointerException if the string is null.
