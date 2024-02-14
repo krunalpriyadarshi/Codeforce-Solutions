@@ -20,39 +20,98 @@ ________________________________________________________________________________
         $ git add .
         $ git add --all
         $ git add folderName/.
+
 //  Unstage all files
         $ git reset
+        $ git reset fileName
+                --> If you added multiple file with "$ git add ." command but you did not want to add some specific file then you can use this command to undo.
 //  Status of files
         $ git status
         $ git status --short        --> show status in more compact way
         $ git status -s             --> show status in more compact way
 // Commit all the stagged changes
         $ git commit -m "message here"
+        $ git commit -m "Messgae here" -m "Description regarding commit that you did"
+        $ git commit -am "Message here"         // when you modify a file/files and want to do "add" and "commit" all once, use "-am" command.
 // Logs - all git commit history
         $ git log		    --> press 'q' to exit the log file.
         $ git log --oneline         --> shows each log in one line.
 // Revert back to specific stage
-        $ git revert HEAD --no-edit     --> revert to the latest commit.
+        $ git revert HEAD --no-edit     --> revert to the latest commit. but note, those changes are still there but they are unstage.
         $ git revert HEAD~x             --> x being a number. It really x+1 commit back.
                                         1 going back one more, 2 going back two more, etc. 
+                                        but note, those changes are still there but they are unstage.
+        $ git reset <log_id>    
+                                        --> it will revert back to specific git commit. but those changes will be there but it will be unstaged.
+        $ git reset --hard <log_id>     
+                                        --> it will revert back to the specific place and you won't be seeing changes. Excepts file that were created-it will be empty though.
 ____________________________________________________________________________________________________________
 Branching is the key concept in Git. And it works around the rule that the master branch is ALWAYS deployable.
 That means, if you want to try something new or experiment, you create a new branch! Branching gives you an environment where you can make changes without affecting the main branch.
 
-//  Shows all availale Branches: * represent current branch that you are on
+The main repository will always hold two evergreen branches:
+        master  - 
+                Main branch of development. "Head" points to latest delivered development changes for next release.
+        stable  - 
+                When the source code in the master branch is stable and has been deployed, all of the changes will be merged into stable and tagged with a release number.
+
+Supporting Branches:
+        Feature Branch  : 
+                Created from Current Master branch when developing new feature.
+                Feature Branch must branch from MASTER and merge back into MASTER branch.
+                Naming convention: "feature-<JIRA.number>"
+                When Feature is developed. PR is made and once approved, it will merge to Master branch. And Feature Branch is removed and switch back to main branch. 
+        Bug Branch      :
+                Created from Current Master branch when there is a bug on the live site. 
+                When bug is fixed. PR is made and once approved, it will merge to Master branch. And Bug Branch is removed and switch back to main branch.  
+        HotFix Branch   :
+                Created from latest Stable branch when there is a Critical bug on the live site.
+                When critical bug is fixed, new push to stable branch is done.
+
+//  Shows all availale Branches: * represent current branch that you are on...
         $ git branch                --> Shows local branches
         $ git branch -r             --> shows Remote branches
         $ git branch -a
         $ git branch --all          --> shows all (LOCAL + REMOTE) branches
+
 //  Creates a new Branch
         $ git branch New_Branch_Name    --> creates new branch and copies everything from source branch
-//  Checkout to another branch. Also, it loads commited changes from branch to local repo.
+                ex., git branch newFeature-A
+
+//  Checkout/switched to another branch. Also, it loads commited changes from branch to local repo.
 Note:- checkout can be used to catch Remote branch as well.
         $ git checkout NameOfBranch
+                --> creates new Branch but it does not checkout this newly created branch.
         $ git checkout -b NameOfBranch  
-                --> If branch is not existing, it will create new branch and checkout that newly created branch. else it will checkout existing branch.
+                --> It will create new branch and checkout that newly created branch. If exist, it will thorws a fatal error.
+
+                ex., 
+                        git checkout newFeature-B       // it will create one new branch and checkout it.
+                        git checkout -b newFeature-A    // Throws fatal error saying branch exists.
+
+//      Check difference between two branches.
+        $ git diff newBranch.
+                -->     Checks difference between current branch and given branch.
+                        ex.,
+                                assume 2 branches are there: branchA and branchB.
+                                You are now on * branchA
+                                Now type branch name with you want to check difference. 
+                                $ git diff branchB -> it will check diff between branchA and branchB.
+
 //  Delete a branch
         $ git branch -d NameOfBranch
+                        ex.,
+                                $ git branch -d branchB         // deletes branchB
+        $ git push origin -d master   
+                        removes Remote branch
+        
+// create new remote branch from local branch.
+        $ git push --set-upstream origin <same-name-as-local-branch>
+        OR SHORTHAND
+        $ git push -u origin <same-name-as-local-branch>
+                        ex.,
+                                $ git push --set-upstream origin branchA        // creates new remote branchA.
+
 //  Merge changes to Master
         $ git checkout master   --> checkout to that branch which is main after that merge your branch
         $ git merge NameOfBranch
@@ -62,7 +121,7 @@ Git & GitHub:
         $ git remote add origin https://github.com/repo...
                 --> Only use HTTP url of remote repository. If you use SSH link, you need to set public key.
 // check origin details
-        $ git remote -v
+        $ git ermote -v
 // Update origin details
         $ git remote set-url origin NEW_LINK
 // Rename origin to upstream.
@@ -78,7 +137,7 @@ Git & GitHub:
         $ git fetch BranchName
 ____________________________________________________________________________________________________________
 Fork a Repository:-
-A fork is a copy of a repository and it isn't a command in Git. This is useful when you want to contribute to someone else's project or start your own project based on theirs.
+A fork is a copy of a repository with all existing branches. This isn't a command in Git. This is useful when you want to contribute to someone else's project or start your own project based on theirs.
 
 // Clone Remote Repo to local
                 $ git clone http://github.com/Link

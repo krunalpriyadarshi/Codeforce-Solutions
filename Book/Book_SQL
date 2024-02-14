@@ -12,7 +12,7 @@ Hot to kill process on port 3306:
                 TCP    [::]:33060             [::]:0                 LISTENING       5296
                 << HERE PID NUMBER IS "5296" >>
     --  run below terminal code to kill task with PID 5296
-            taskkill /PID 5296
+            taskkill /PID xxxx
         <OR>
         Go to the Task Manager and go to details. Now search for the PID and kill the process.
 

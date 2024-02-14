@@ -1,0 +1,279 @@
+MongoDB database >> Collection >> Document
+        ex. Books Database >> Author table >> {Name, age, birthPlace}
+
+        MongoDb is configured such way it will only retreive small number of documents in one request. and to see more documents of that list, you have to use "it" command which stand for iterate.
+                ex., create db with more than 20 entries and try to fetch details using "db.books.find({})"  and then use command "it" to see more of list. 
+
+Arrays  -
+                document = { genres: ["action", "romance", "sci-fi"] }
+Boolean field -
+                docuemnt = { isActive: true }
+                docuemnt = { isActive: false }
+
+Mongodb Shell -
+        mongosh:
+                Initialize MongoDB shell on command line.
+                NOTE:
+                        To exit mongodb shell enter "exit" command on prompt.
+
+                Commands:
+                        show dbs
+                                - show all available database.
+                        use <name_of_Db>
+                                - switch to given database.
+                        show collection
+                                - shows all collection avilable for current selected database.
+                        var name = "krunal Priyadarshi"
+                                - creates variable
+
+                        insertOne():
+                                db.books.insertOne( {} )
+                                ex.,
+                                        db.books.insertOne( {title:"cmd", author:"kp", pages: "30", genres: ["fun", "horror"]} )
+
+                        insertMany():
+                                db.books.insertMany( [{}, {}, ... ] )
+                                ex.,
+                                        db.books.insertMany( [{title: "one"}, {title: "two}] )
+
+                        deleteOne():
+                                db.books.deleteOne( { _id: ObjectId('') })
+                        deleteMany( {} ): 
+                                Filter is must else you will receive error "invalidInputError".
+                                delete all records:
+                                        db.books.deleteMany( {} )
+
+                                delete those records which has number of pages >300.
+                                        db.books.deleteMany({page: {$gt: 300}})
+
+                        updateOne( { }, { $set: { } } ):
+                                it has 2 parameters (One id and 2nd is object of newly updated value).
+                                Only update first matching.
+                                ex.,
+                                        db.books.updateOne( {_id: ObjectId('')}, {$set: { page: 220, rating: 4 }} )
+                                        db.books.updateOne( {author: "Krunal Priyadarshi"}, {$set: { page: 220, rating: 4 }} )
+                        updateMany( {}, {$set: {}}):
+                                same as updateOne() but this updates multiple matched documents.
+                                ex.,
+                                        db.books.updateMany({author: {$in: ["Krunal", "J.D. Salinger"]}}, {$set:{author:"KP"}})
+                                        db.books.updateMany({author: "KP"}, {$set: {author: "Krunal Priyadarshi"}})
+
+                        Inc(): used with updateOne and updateMany. Increament by the number provided.
+                                ex.,
+                                        db.books.updateMany({author: "Krunal Priyadarshi"}, {$inc: {page: 2}});
+                                                Page count incresed by 2. 
+                                                So if page count was 200 then new count will be 202.
+                                                
+                                        db.books.updateMany({author: "Krunal Priyadarshi"}, {$inc: {page: -112}});
+                                                reduce by 112.
+
+                        Pull() and Push():
+                                remove or add an element inside array.
+                                ex.,
+                                        remove an entry from genres array.
+                                        db.books.updateMany( {_id: ObjectId('')}, {$pull: {genres:"newGenre"}})
+                                        add an entry to genres array.
+                                        db.books.updateMany( {_id: ObjectId('')}, {$push: {genres:"newGenre"}})
+                        each():
+                                iterate through list
+                                ex.,
+                                        db.books.updateOne({_id: ObjectId('')}, {$push: {genres: {$each: ["one", "two", "three"]}}})
+                                        this will add 3 new genres to document
+
+                        find():
+                                retrieve matched entries from database.
+                                ex.,
+                                        db.books.find()
+                                                - filter is empty so it will return all documents found.
+                                        db.books.find( {title: "Krunal"} )
+                                                - show documents which has Krunal as title.
+                                                - You can add multiple filters here.
+                                        db.books.find( {title: "Krunal"}, {title: 1})
+                                                - 2nd parameter is Projection which will be return columns. 
+                                                Note that _id is added default parameter. use _id: 0 to exclude it.                                       
+                                        db.books.find( {title: "Krunal"}, {_id:0, title: 1}) 
+                                                - 0 represents to exclude.
+                                                - 1 represents to include.
+                                                NOTE:
+                                                        db.books.find( {title: "Krunal"}, {title: 1, page: 0})
+                                                                - ERROR here we define inclusion column
+                                                                to exclude a column just do not include in 2nd parameter.
+                                        NOTE: it also works same for array value.
+                                                db.books.find( {genres: "action"}, {genres: 1})
+                                                        returns every document which has "action" as genre in array. 
+                                                db.books.find( {genres: ["action"]}, {genres: 1})
+                                                        returns exact match of given array in genres array.
+                                                db.books.find( {genres: {$in: ["love", "Fantasy"]}}, {genres:1})
+                                                        returns all documents with genres eithor "love", "fantast" or "both" inside genres array.
+                                                db.books.find( {genres: {$all: ["love", "Fantasy"]}}, {genres:1})
+                                                        returns all documents which has "love" and "fantasy" inside the genres array. If there is extra genre inside it, it will still pass the document. ex., (pass) ["love", "action", "Fantasy"] but (fail) ["love", "action"], ["fantasy"], ["fantasy", "play"] 
+
+                                        >>>
+                                        db.books.findOne()
+                                                - same as find() method but only return one entry whichever is matched first.
+                Chaining methods:
+                        Count()
+                                ex., 
+                                        db.books.find().count() 
+                                        return existing numbers of documents from books collection
+
+                        limit(integerValue)
+                                ex., 
+                                        db.books.find().limit(3) 
+                                        returns only 3 documents from collection
+                        sort( {column : 1 or -1} )
+                                1 for Ascending Order
+                                -1 for Descending Order
+                                ex.,
+                                        db.books.find().sort( {title: 1} )
+                                                return all columns of documents but in ascending order of title
+                                        db.books.find().sort( {title: -1} )
+                                                return in descending order
+                                        db.books.find( {}, {_id: 1}).sort( {_id: -1} )
+                                                return only _id column because of Projection but sorted in descending order of _id value
+                
+                Nested Documents:
+                        Books { Reviews: [ {review1}, {review2},...] }
+                        
+                        - create one document
+                        db.books.insertOne( 
+                                {
+                                        title: "book1", 
+                                        review: [ {name: "Jack", comment: "gg"}, {name: "Meet", comment: "nt"}], 
+                                        genres: ["action", "romance"]} 
+                        )
+
+                        -find nested document where reviewers name is Jack.
+                        db.books.find({"reviews.name": "Jack"}, {title:1, reviews:1})
+
+                Operators:
+                        $gt, $gte, $lt, $lte -
+                                ex.,
+                                find docuemnts which has rating above 8.5
+                                db.books.find( {rating: {$gt: 8.5}} )
+                                        we use "{$gt: 8.5}" object to represent ">8.5" 
+                                db.books.find( {rating: {$gt: 8.5}}, {rating: 1} )
+                                db.books.find( {rating: {$gt: 8.5}, author: "Jane Austen"}, {_id: 0, title: 1, rating: 1, author: 1})
+
+                        $or -
+                                find documents' title and number of pages where page >200 and page <400.
+                                        db.books.find( {}, {_id: 0, title: 1, page: 1} )
+                                                this will show expected columns
+                                        db.books.find( { $or: [ {page: {$gt: 200}}, {page: {$lt: 400}} ] }, {_id: 0, title: 1, page: 1} )
+                                                filter is applied for $or with a array. 
+                                                upper bound is <400 and lower bound is >200.
+
+                        $in - 
+                                have to provide an array of value like.,
+                                rating: {$rating: [value1, value2, ...]}
+                                ex.,
+                                        show documents which has value 3, 7 and 8.
+                                        >> db.books.find( { $or: [ {rating: 3}, {rating: 7}, {rating: 8} ] }, {_id: 0, title:1, rating: 1} )
+                                        >> db.books.find( { rating: {$in: [3, 7, 8]} }, {_id: 0, title: 1, rating: 1} )
+                        
+                        $nin - 
+                                same as $in but not is applied.
+
+
+in app, query changed with this syntex:
+        db.collection('books') for db.books
+                array is returned but mongodb send documents in batchs.
+                when current batch is empty, new batch is requested.
+
+        db.collection('books').find().sort({author: 1})
+                It will return array in sorted way.
+                now we can iterate through this array with forEach or toArray method. Which are cursor.
+
+                NOTE:    that mongodb retrieve data in batch form so it is advice to collect data in json form.
+
+        db.collection('books').find().sort({author: 1}).forEach(book => books.push( book ))
+                This will add each document to books[] array.
+
+        db.collection('books').find({}, { projection: { _id: 0 } })
+                It is same as db.books.find( {}, {_id: 0} ) but we have to include "projection" keyword here.
+
+        db.collection('books').findOne({_id: new ObjectId(req.params.id)})
+                finds document base on id retreived from url.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------try local mongodb server to run local mongodb
+
+
+
+Connect to Cluster MongoDB:
+//app.js
+        const express = require('express');
+        const { connectToDb, getDb } = require('./db');
+        const app = express();
+        let db;
+
+        console.log("--------------------------------------")
+        connectToDb()
+        .then(() => {
+                app.listen(3000, () => {
+                console.log('App is running on port 3000');
+                });
+                db = getDb();
+        })
+        .catch(err => {
+                console.error('Error connecting to the database:', err);
+        });
+        console.log("--------------------------------------")
+
+        app.get('/books', (req, res) => {
+                // if you have collection name "employeeList" then replace it with "books" to access that employee name.
+        db.collection('books')
+                .find()
+                .sort({ autor: 1 })
+                .toArray() // Convert cursor to array
+                .then((books) => {
+                res.status(200).json(books);
+                })
+                .catch((err) => {
+                console.log(err);
+                res.status(500).json({ error: 'Could not fetch the documents' });
+                });
+        });
+
+        app.get('/', (req, res) => {
+        res.json({ msg: "Welcome to the API" });
+        });
+// db.js
+        const { MongoClient } = require('mongodb');
+        let dbConnection;
+
+        module.exports = {
+        connectToDb: () => {
+                const url = 'mongodb+srv://krunal:qwertyuiop@cluster0.4ej0mg8.mongodb.net/bookstore?retryWrites=true&w=majority';
+                
+                console.log('Attempting to connect to MongoDB...');
+                return MongoClient.connect(url)
+                .then((client) => {
+                        dbConnection = client.db();
+                        console.log('Connected to MongoDB successfully!');
+                        console.log('Connected to database:', dbConnection.databaseName);
+                })
+                .catch((err) => {
+                        console.error('Failed to connect to MongoDB:', err);
+                        throw err; // Rethrow the error
+                });
+        },
+        getDb: () => dbConnection
+        };

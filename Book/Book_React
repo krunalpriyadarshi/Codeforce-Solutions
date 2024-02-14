@@ -1,3 +1,14 @@
+vite tool : 
+            It is bundling tool. Build project by "npm run build"
+            main use of vite is:
+            1) Vite helps to serve project to local host. (faster run-time) 
+                ex., when you change content of page. it will make changes to webpage without losing state/original page.
+                just like it will render only new changes without rending un-changed components. 
+            2) bundle JS, Html and Css for production.
+            
+            Most production project takes half a mintues to perform "npm install" which is slow. Hence, bundling needs to do.
+                Vite generally made all Http request to import statement. it will fetch all data and then 
+
 DOM     :: Document Object Model
                 DOM represents the content of XML and HTML in tree structure.
 
@@ -7,7 +18,9 @@ DOM     :: Document Object Model
 
 declarative vs imperative programming:
     Imperative: Focuses on how to achieve a result, step by step.
+                    ex., like telling dad to make dosa but you have to give recipy as dad does not know.
     Declarative: Focuses on what result is desired, without specifying the step-by-step process.
+                    ex., like telling mom to make dosa and she make for you.
 
 react ->
         npx create-react-app app_name
@@ -15,7 +28,18 @@ react ->
 
 npm start -> to run react app.
 
+Components are independent and reusable bits of code. They serve the same purpose as JavaScript functions, but work in isolation and return HTML.
+note: you can not return multiple child component without parent component. You have to have a parent component and wrap those childs.
 
+components must follow camal case otherwise error will be thrown.
+
+Tip:
+    -- use export default in definition of component to reduce line of code.
+    export default function footer{
+        return(
+            <code>
+        )
+    }
 
 ReactDOM.render(
         {parent node}, 
