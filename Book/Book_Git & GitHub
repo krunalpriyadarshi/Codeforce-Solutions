@@ -21,6 +21,10 @@ ________________________________________________________________________________
         $ git add --all
         $ git add folderName/.
 
+// Perfect Commit - patch level stageing
+        $ git add -p index.html
+                --> this will start patch level staging. When you want to only push certain line of code from a file. you can use this.
+
 //  Unstage all files
         $ git reset
         $ git reset fileName
@@ -31,7 +35,7 @@ ________________________________________________________________________________
         $ git status -s             --> show status in more compact way
 // Commit all the stagged changes
         $ git commit -m "message here"
-        $ git commit -m "Messgae here" -m "Description regarding commit that you did"
+        $ git commit -m "Subject Messgae here" -m "Description message regarding commit that you did"
         $ git commit -am "Message here"         // when you modify a file/files and want to do "add" and "commit" all once, use "-am" command.
 // Logs - all git commit history
         $ git log		    --> press 'q' to exit the log file.
@@ -115,6 +119,11 @@ Note:- checkout can be used to catch Remote branch as well.
 //  Merge changes to Master
         $ git checkout master   --> checkout to that branch which is main after that merge your branch
         $ git merge NameOfBranch
+
+// merge Conflict:
+        $ git merge --abort
+                --> revert merge and go back to previous commit.
+        $ git rebase --abort
 ____________________________________________________________________________________________________________
 Git & GitHub:
 // Add remote Repo. as Origin

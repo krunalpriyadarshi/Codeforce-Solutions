@@ -1,0 +1,16 @@
+Asymptotic Notations:
+    The efficiency of an algorithm depends on the amount of time, storage and other resources required to execute the algorithm. The efficiency is measured with the help of asymptotic notations.
+
+    There are mainly three asymptotic notations:
+        Big-O notation  -   Worst case complexity of an algorithm
+        Theta notation  -   average-case complexity of an algorithm
+        Omega notation  -   best case complexity of an algorithm
+
+
+
+questions:
+    Reverse an Array
+    Find Second Maximum value in an Array
+    move Zeroes to end of an Array
+    resize an Array
+    Find the Missing Number in an Array
