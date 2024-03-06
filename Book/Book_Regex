@@ -1,0 +1,23 @@
+lookahead   :: 
+                Used to check whether a character/string comes after a certain character/string.
+                It allows Regex within its syntex.
+                    Syntex: 
+                        (?= (REGEX))
+                        (?! (REGEX))
+                    ex.,
+                        a(?=b)
+                            a followed by b.
+                        a(?!b)
+                            a not followed by b.
+
+lookbehind  ::  
+                Used to check whether a character/string comes before a certain character/string.
+                It does not allow Regex to be used within its syntex.
+                    Syntex:
+                        (?<= (TEXT))
+                        (?<! (TEXT))
+                    ex.,
+                        (?<= a)b
+                            b proceed by a.
+                        (?<! a)b
+                            b not proceed by a.
