@@ -44,7 +44,7 @@ equals          ::
                         System.out.println( a == b );   // true
 
                     For non-primitive datatypes such as objects (String,Integer), Sign "==" will compare references not values. 
-                    Because these datatypes' addresses are saved there.
+                    Because these datatypes addresses are saved there.
                     ex.,
                         String str1 = "abc";
                         String str2 = "abc";
@@ -195,3 +195,35 @@ ArrayList       :: ArrayLists are updatable while built-in arrays are not updata
                         Hence it removes elements from the given ArrayList/Object as a parameter.
 
 NumberFormat    :: Used to convert it into currency format.
+
+Hashing         ::
+                    Synchronized data structure     :: 
+                            HashTable
+                    Non-Synchronized data structure :: 
+                            HashMap, HashTree, HashSet, TreeSet
+
+                            NOTE:
+                                HashMap and HashSet do not preserve insert order means when you printing order is different.
+                                To preserve insert order, use HashTree and TreeSet which are replacement of HashMap and HashSet.
+
+                    HashTable is synchronized, which means it is thread-safe and can be shared between multiple threads.
+                    While HashMap, HashTree and HashSet do not have in-built synchronization method. we have to builde method for it.
+
+                    NOTE:
+                    TIME COMPEXITY for operations like adding, updating, deleting are O(1) for avg cases.
+                    For worst case, TL increased to O(n) because of hash collisions or when resizing occurs.
+
+                    Data Structure      Add (Average)   Remove (Average)    Contains (Average)  Update (Average)
+                    --------------------------------------------------------------------------------------------
+                    HashSet             O(1)            O(1)                O(1)                O(n)
+                    HashMap             O(1)            O(1)                O(1)                O(1)
+                    LinkedHashSet       O(1)            O(1)                O(1)                O(n)
+                    LinkedHashMap       O(1)            O(1)                O(1)                O(1)
+                    TreeSet             O(log n)        O(log n)            O(log n)            O(n)
+                    Hashtable           O(1)            O(1)                O(1)                O(1)
+
+                    HashMap vs HashSet  ::
+                            HashMap is like dictonary where unique key has a value. Different Keys can have same value but keys are unique.
+                            HashSet is a set where each key is unique and mainly used to check if keys are unique or not in CP.
+
+                

@@ -3,7 +3,7 @@
 //  Git Help
         $ git help
 //  Configure Git:
-        $ git config --global user.email "krunalpriyadarshi99@gmail.com"
+        $  git config--global user.email "krunalpriyadarshi99@gmail.com"
         $ git config --global user.name "Krunal Priyadarshi"
                             --> to setup git
                             --> Don't use global if you want to set differnet user for current repo.
