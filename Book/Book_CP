@@ -1,3 +1,27 @@
+CP-Terms            ::
+                    Method calls    :
+                                Method calls are a fundamental concept in programming where one method (or function) invokes another.
+                                
+                                | Week | Topic                   |
+                                |------|-------------------------|
+                                | 1    | Array & String          |
+                                | 2    | Linked List             |
+                                | 3    | Stack & Queue           |
+                                | 4    | Binary Tree             |
+                                | 5    | Binary Search Tree      |
+                                | 6    | Heap & Priority Queue   |
+                                | 7    | Recursion & Backtracking|
+                                | 8    | Dynamic Programming     |
+                                | 9    | Dynamic Programming (Continued) |
+                                | 10   | Graphs & Trees          |
+                                | 11   | Graph Algorithms        |
+                                | 12   | Bit Manipulation        |
+                                | 13   | Sorting & Searching     |
+                                | 14   | Greedy Algorithms       |
+                                | 15   | Advanced Topics         |
+                                | 16   | Mock Interviews & Review|
+
+--------------------------------------------------------------------------------------------------------------
 Asymptotic Notations:
     The efficiency of an algorithm depends on the amount of time, storage and other resources required to execute the algorithm. The efficiency is measured with the help of asymptotic notations.
 
@@ -6,25 +30,15 @@ Asymptotic Notations:
         Theta notation  -   average-case complexity of an algorithm
         Omega notation  -   best case complexity of an algorithm
 
+Algorithms  ::
+                Kadane’s Algorithm - To find maximum subarray in single pass. Dynamic Programming.
+
 Sorting:
     Merge Sort:
 
 
     do LL: 1669 problem statement
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
+    do: 131
 
 questions:
     Reverse an Array
@@ -32,3 +46,7 @@ questions:
     move Zeroes to end of an Array
     resize an Array
     Find the Missing Number in an Array
+
+
+    reverse a Linked List
+    find nth node from the end of a Singly Linked List
