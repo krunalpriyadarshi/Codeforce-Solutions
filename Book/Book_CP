@@ -32,6 +32,7 @@ Asymptotic Notations:
 
 Algorithms  ::
                 Kadane’s Algorithm - To find maximum subarray in single pass. Dynamic Programming.
+                Sieve of Eratosthenes -  To find prime numbers with fastest way
 
 Sorting:
     Merge Sort:
@@ -50,3 +51,7 @@ questions:
 
     reverse a Linked List
     find nth node from the end of a Singly Linked List
+
+
+HackerRank -> 
+    flipping bits 
