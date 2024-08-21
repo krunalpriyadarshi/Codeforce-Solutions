@@ -26,7 +26,25 @@ Operations:
                 Shift Operator          :   <<, >>, >>>
                         note: 
                             << and <<< are both same. 
-                            ~ is
+                            ~ is NOT operation or 1's complement.
+
+                            >> and >>> move bits to the right side but.,
+                            >>> takes sign bit as a part.
+                            ex.,
+                                8 >>> 1 = 2
+                                -8 >>> 1 = 1073741822
+                            
+                1's complement      :
+                                Converting every binary bits where 1 -> 0 and 0 -> 1.
+
+                                NOTE: 
+                                    For any number N's 1's complement is negative number plus one (-(N+ 1)). 
+                                    ex., 
+                                    (35)    ->  1's complement is (-36)
+                                    (-12)   ->  1's complement is (11).
+
+                2's complement      :
+                                (1's complement + 1)
 
 String          ::
                         isEmpty() method is safe to use even if the string is null. It returns true if the string is empty or null.
@@ -213,21 +231,21 @@ Collections.sort()   ::
                                 // do this wile comparing:
                                 // Lambda function to do comparison and sort: null has highest priority. sort base on date then title (desc).
                                 Collections.sort(events, (e1, e2)->{
-                                int dateComparison;
-                                if(e1.getDate()== null && e2.getDate()== null)
-                                    dateComparison= 0;
-                                else if(e1.getDate()== null)
-                                    dateComparison= -1;
-                                else if(e2.getDate()== null)
-                                    dateComparison= 1;
-                                else
-                                    dateComparison= e1.getDate().compareTo(e2.getDate());
-                                
-                                    if(dateComparison!= 0)
-                                    return dateComparison;
+                                    int dateComparison;
+                                    if(e1.getDate()== null && e2.getDate()== null)
+                                        dateComparison= 0;
+                                    else if(e1.getDate()== null)
+                                        dateComparison= -1;
+                                    else if(e2.getDate()== null)
+                                        dateComparison= 1;
+                                    else
+                                        dateComparison= e1.getDate().compareTo(e2.getDate());
+                                    
+                                        if(dateComparison!= 0)
+                                        return dateComparison;
 
-                                return e2.getTitle().compareTo(e1.getTitle());
-                            });
+                                    return e2.getTitle().compareTo(e1.getTitle());
+                                });
                             
 Arrays.sort()   V/S     Collections.sort()      ::
                         Collections.sort() is slower than Arrays.sort() when it is used for primitive data-types.                        
@@ -286,6 +304,9 @@ Hashing         ::
                             HashMap is like dictonary where unique key has a value. Different Keys can have same value but keys are unique.
                             HashSet is a set where each key is unique and mainly used to check if keys are unique or not in CP.
 
+                    HashMap ::
+                                map.getOrDefault() method.
+                                map.merge() method.
 ----------------------------------------------------------------------------------------------------------------
 Assertion       ::
                     Assertion is a mechanism to check if the code is working as expected. 
