@@ -43,8 +43,11 @@ Operations:
                                     (35)    ->  1's complement is (-36)
                                     (-12)   ->  1's complement is (11).
 
-                2's complement      :
-                                (1's complement + 1)
+                                Perfoming 1's complement on Decimal Values (float/ double) is not meaningful in real world. 
+
+                2's complement      : 
+                                To find negative number of given number, 2's complement is being used.
+                                2's complement= (1's complement + 1)
 
 String          ::
                         isEmpty() method is safe to use even if the string is null. It returns true if the string is empty or null.
