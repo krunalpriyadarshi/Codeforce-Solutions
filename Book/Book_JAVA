@@ -189,6 +189,21 @@ For-Each loop   :: iterate thorugh each element of array or collection.
                                 System.out.print(i);
                             }
 
+Labeled loops   :: Loop can have a label which will be used inside continue or break statement.
+                    syntex:
+                           { Label assigned to loop + colon }
+                           ex.,
+                                innerLoop :
+                                outerLoop :
+
+                    ex.,
+                        outerLoop:
+                        for(int i= 0-> n)
+                            innerLoop:
+                            for(int j= 0-> n)
+                                if(j> 5)
+                                    break outerLoop;
+
 Array           ::
                     int[] arr= new int[5];
                     int arr[]= new int[5];
