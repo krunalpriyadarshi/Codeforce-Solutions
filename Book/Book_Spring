@@ -1,0 +1,116 @@
+Loosely Coupling V/S Tightly Coupling:
+            When A classes are highly depedent on each other, making changes difficult adn requires more testing and less resuable.
+            ex.,
+                main class directly initiats JSON class and uses CreateDoc method.
+
+            When Classes are independent of each other, making changes are more flexible and require less testing and more resuable.
+            ex.,
+                main class uses interface which allow dev to use any class.
+
+            NOTE:
+                    To create Loosely coupling:
+                        - implment Interface/ Abstract classes
+                        - Dependency Injection { In constructor, Setter or Interface }
+                        - FActory pattern
+                        (many more)
+
+            -> If dev team are using AWS as cloud service and later they found AWS is charging much higher than it used to and client can not afford it. So dev team have to use another cloud service like GCS. 
+                So, if devs initiate classes directly and want to change make change then it will be so difficult as it is tightly coupling case.
+                But if dev used interfaces and passing classes as parameters. it will be easy to make changes as we need to create new method in interface. It is loosely coupling example.
+
+            EXAMPLE:
+                    Tightly Coupling:
+                            Class PDF{
+                                String print(){
+                                    return "PDF has been created";
+                                }
+                            }
+
+                            main{
+                                PDF pdf= new PDF();
+                                System.out.println(pdf.print());
+                            }
+
+                    Loosely Coupling:
+                            interface generator(){
+                                public void output();
+                            }
+
+                            class PDF implements generator{
+                                String print(){
+                                    return "PDF has been created";
+                                }
+                            }
+
+                            class WORD implements generator{
+                                Stirng print(){
+                                    return "WORD has been created";
+                                }
+                            }
+
+                            Class docs{
+                                private generator();
+
+                                public docGenerate(generator Gen){
+                                    this.generator= Gen;
+                                }
+
+                                void print(){
+                                    System.out.println(Gen.print());
+                                }
+                            } 
+
+                            main{
+                                generator pdf= new generator();
+                                docs D1= new docs(pdf);
+                                // return PDF
+                                D1.print();
+
+                                generator word= new generator();
+                                docs D2= new docs(word);
+                                // return WORD
+                                D2.print();
+                            }
+
+           
+            Loosely Coupling V/S Tightly Coupling:
+                | Aspect              | 
+                Tight Coupling | 
+                Loose Coupling |
+                |---------------------|----------------|----------------|
+                | Definition          | 
+                Classes or modules are highly dependent on each other.
+                Classes or modules are independent and rely on abstractions. 
+                | Flexibility         | 
+                Low. Changes in one class require changes in others. 
+                High. Components can be easily swapped or modified. |
+                | Maintainability     | 
+                Difficult. Harder to update, fix bugs, or add features. 
+                Easier. Changes are isolated, reducing the impact on the system. |
+                | Testing             | 
+                Challenging. Difficult to isolate and mock components.
+                Easier. Components can be easily tested in isolation. |
+                | Reusability         | 
+                Low. Reusing a class in a different context is difficult.
+                High. Components are more modular and can be reused easily. |
+                | Performance         | 
+                Often better, as there's no overhead from abstraction. 
+                Potential overhead due to abstraction layers or DI frameworks. |
+                | Simplicity          | 
+                Simpler to implement for small-scale projects.
+                More complex, requires careful design and use of patterns. |
+                | Dependency Management | 
+                Direct. Classes explicitly instantiate and manage dependencies. | 
+                Indirect. Dependencies are managed through interfaces or DI. |
+                | Design Effort       | 
+                Requires less upfront design. | 
+                Requires more upfront design and architectural planning. As we need to create interfaces and classes as well.
+                | Code Change Impact  | 
+                High. A change in one module can affect many others. | 
+                Low. Changes in one module have minimal impact on others. Just need to change parameter in main method.
+                | Examples            | 
+                Direct instantiation of objects within a class. | 
+                Use of interfaces, abstract classes, or dependency injection. |
+                | Risk of Over-Engineering | 
+                Low. Fewer abstractions lead to simpler code. | 
+                Higher. Abstractions can sometimes lead to unnecessary complexity. Unneccessary implementation of interface when it can be done easily by classes only.
