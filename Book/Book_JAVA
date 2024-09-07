@@ -230,6 +230,29 @@ ArrayList       :: ArrayLists are updatable while built-in arrays are not updata
                                     Note: removeAll() methods remove one by one element from List because its main use is to find subset (A - B) of two sets A and B. 
                         Hence it removes elements from the given ArrayList/Object as a parameter.
 
+sorting         ::  A sorting algorithm to arrange elements of an array in specific order.
+
+                    Stability   :   Algorithm is stable if it preserves the order of elements.
+                                    ex., if 2 elements have same relative order then after sorting it will maintain same order.
+
+                                Sorting Algorithm    Stability
+                                Bubble Sort          Yes
+                                Selection Sort       No
+                                Insertion Sort       Yes
+                                Merge Sort           Yes
+                                Quicksort            No
+                                Counting Sort        Yes
+                                Radix Sort           Yes
+                                Bucket Sort          Yes
+                                Heap Sort            No
+                                Shell Sort           No
+
+                    Bubble sort ::  This algorithm based on bubble traveling to surface. 
+                                    Where each element is compared with other elements of Array.
+                                    
+                                    NOTE:   In bubble sort, we often see that elements adjusted in sorted order and it is unneccessary to perform all n^2 comparision. 
+                                            Use boolean value to stop.
+
 Arrays.sort()        ::
                         Arrays.sort() is used to sort the array in ascending order.
                         It uses Dual-pivot Quicksort algorithm which has O(N logN) time complexity.
