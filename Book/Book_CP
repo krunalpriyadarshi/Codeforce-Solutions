@@ -50,8 +50,12 @@ questions:
     reverse a Linked List
     find nth node from the end of a Singly Linked List
 
-
 HackerRank -> 
     flipping bits 
 
 --------------------------------------------------------------------------------------------------------------
+TIPS:
+        -->     In binary search, Overflow can be occured while calculating mid value.
+                    so use (left+ (right- left)/2) instead of (left+ right)/2 or (left+ right)>>>1.
+                it will avoid overflow situation for boundary values.
+        -->     

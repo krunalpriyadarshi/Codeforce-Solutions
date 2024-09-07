@@ -114,3 +114,5 @@ Loosely Coupling V/S Tightly Coupling:
                 | Risk of Over-Engineering | 
                 Low. Fewer abstractions lead to simpler code. | 
                 Higher. Abstractions can sometimes lead to unnecessary complexity. Unneccessary implementation of interface when it can be done easily by classes only.
+
+                
