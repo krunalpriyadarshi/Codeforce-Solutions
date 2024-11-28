@@ -367,9 +367,11 @@ Hardcorded dependency/ Thight Coupling ::
 Wiring beans/ Loose Coupling   ::
             Remeber, with one constructor we do not need to use @Autowired. It is optional.
 
-                Wiring beans without parameter  :
+                Wiring beans without parameter  : 
+                        { Not a Good way to wire components as when change occures, We have to make changes everywhere. }
+                            
                             In productConfig file, we will have person() method. 
-                            here we will use setVehicle() and pass existing vehicle method from "productConfig" file.
+                            Where we will use setVehicle() method from Person class and pass existing vehicle method from "productConfig" file.
                             ex., 
                                 public Vehicle veh_Method(){
                                     Vehicle v = new Vehicle();
@@ -383,7 +385,9 @@ Wiring beans/ Loose Coupling   ::
                                     return p;
                                 }
 
-                            NOTE: We won't face any ambiguity as we are passing method name inside person method.
+                            NOTE:
+                                ->  Spring framework will be create multiple instance of Vehicle bean as default behaviour.
+                                ->  We won't face any ambiguity as we are passing method name inside person method.
 
                 Wiring beans with parameter :
                             Here, we will pass parameter "Vehicle veh_Temp". and everything is wired by spring. 
