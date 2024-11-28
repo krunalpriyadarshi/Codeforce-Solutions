@@ -1,3 +1,18 @@
+Spring takes components from Jakartaka if concept is helpful to developers. / Spring borrows the annotations from Java EE.
+
+How to create a project in IntelliJ:
+            Open new Project -> Name project -> Select Location to be stored -> Build system: Maven -> Java JDK 17 -> Create it.
+
+            To use Spring Framework in our project, we need to include it "pom.xml" file. Copy "GAV" from mvnRepository website.
+            
+            Note:
+                To identify a project uniquely "GAV" is used. 
+                {"GroupID", "ArtifactID" and "Version" are combined to create a key.}
+                    GroupID     -   It represents that which organization's project is this. 
+                                    If it is Google.com then Group ID will be com.Google
+                    ArtifactID  -   It's project name which you decide while creating a project.
+                    Version     -   Release version of Project. ex., V3.0.1 
+
 Loosely Coupling V/S Tightly Coupling:
             When A classes are highly depedent on each other, making changes difficult adn requires more testing and less resuable.
             ex.,
@@ -11,7 +26,7 @@ Loosely Coupling V/S Tightly Coupling:
                     To create Loosely coupling:
                         - implment Interface/ Abstract classes
                         - Dependency Injection { In constructor, Setter or Interface }
-                        - FActory pattern
+                        - Factory pattern (implement Interface so subClasses can be changed.)
                         (many more)
 
             -> If dev team are using AWS as cloud service and later they found AWS is charging much higher than it used to and client can not afford it. So dev team have to use another cloud service like GCS. 
@@ -74,13 +89,9 @@ Loosely Coupling V/S Tightly Coupling:
 
            
             Loosely Coupling V/S Tightly Coupling:
-                | Aspect              | 
-                Tight Coupling | 
-                Loose Coupling |
-                |---------------------|----------------|----------------|
-                | Definition          | 
-                Classes or modules are highly dependent on each other.
-                Classes or modules are independent and rely on abstractions. 
+                Definition :
+                            ->  Classes or modules are highly dependent on each other.
+                            ->  Classes or modules are independent and rely on abstractions. 
                 | Flexibility         | 
                 Low. Changes in one class require changes in others. 
                 High. Components can be easily swapped or modified. |
@@ -115,4 +126,378 @@ Loosely Coupling V/S Tightly Coupling:
                 Low. Fewer abstractions lead to simpler code. | 
                 Higher. Abstractions can sometimes lead to unnecessary complexity. Unneccessary implementation of interface when it can be done easily by classes only.
 
-                
+How execution is performed: 
+        Your main logic is separated from the object creation/configuration logic. 
+        Spring handles the instantiation of beans, making your code more modular and maintainable.
+
+        Conversion in main.java file:
+            IoC container (context) --> Extract Bean component --> perform action
+            ex.,
+                var context = new AnnotationConfigApplicationContext(projectConfig.java);
+                var beanComponent = context.getBean("classname", String);
+                System.out.println("Access_Spring" + beanComponent.getName());
+
+        NOTE:
+            All bean components (singleton beans) are created from top to down when ApplicationContext is initialized.
+
+Bean component  :
+            Custom Bean name:
+                        // Bean naming using "name" keyword:
+                            @Bean(name = "Vehicle1")
+                            Vehicle v1(){
+                                return new createVehicle("BMW");
+                            }
+
+                        // Bean naming using "value" keyword:
+                            @Bean(value = "Vehicle2")
+                            Vehicle v2(){
+                                return new createVehicle("Audi");
+                            }
+
+                        // Bean naming using Shortcut method:
+                            @Bean("Vehicle3")
+                            Vehicle v3(){
+                                return new createVehicle("GWagon");
+                            }
+
+                Note: 
+                        If bean components have same name, it will overwrite names and you will be able to access only one. 
+                        The one which you can access is soly based on how spring processes.
+                        ex.,
+                            // projectConfig.java
+                                @Bean(name = "v24")
+                                Vehicle vehicle(){
+                                    return new Vehicle("krunal", "BMW");
+                                }
+
+                                @Bean(name = "v24")
+                                Vehicle vehicle2024(){
+                                    return new Vehicle("2nd Class", "panda");
+                                }
+
+                            // main.java
+                                System.out.println(context.getBean("v24", Vehicle.class));
+                                --> It could be first or last bean compoent of same custom bean name.
+
+            @Primary:
+                        It decides default bean when user is trying to fetch Vehicle type bean.
+                        ex., context.getBean(Vehicle.class);
+
+                        @Primary annotation will make that Bean default bean.
+                        ex.,
+                            // projectConfig.java
+                                @Bean
+                                Vehicle vehicle(){
+                                    return new Vehicle("krunal", "BMW");
+                                }
+
+                                @Primary
+                                @Bean
+                                Vehicle vehicle2024(){
+                                    return new Vehicle("2nd Class", "audi");
+                                }
+
+                            // main.java
+                                System.out.println(context.getBean(Vehicle.class));
+                                --> Primary bean will be returned here.
+
+                        Note: 
+                            We can assign @Primary annotation to multiple Beans which result in NoUniqueBeanDefinitionException.
+
+                            ex.,
+                                // projectConfig.java
+                                    @Primary
+                                    @Bean
+                                    Vehicle vehicle() {
+                                        var veh = new Vehicle();
+                                        veh.setName("Audi 8");
+                                        return veh;
+                                    }
+
+                                    @Primary
+                                    @Bean
+                                    Vehicle vehicle2() {
+                                        var veh = new Vehicle();
+                                        veh.setName("bmw");
+                                        return veh;
+                                    }
+
+                                // main.java
+                                Vehicle v = context.getBean("audi", "Vehicle.class");
+
+                                --> result in exception
+
+                        NOTE:
+
+                            ex.,
+                                // projectConfig.java
+                                    @Primary
+                                    @Bean("audi")
+                                    Vehicle vehicle() {
+                                        var veh = new Vehicle();
+                                        veh.setName("Audi 8");
+                                        return veh;
+                                    }
+
+                                    @Primary
+                                    @Bean("bmw")
+                                    Vehicle vehicle2() {
+                                        var veh = new Vehicle();
+                                        veh.setName("bmw");
+                                        return veh;
+                                    }
+
+                                // main.java
+                                Vehicle v = context.getBean("audi", "Vehicle.class");
+
+                                --> getContext() will look for only Vehicle bean whose name is "audi". As a result, it won't thorw exception because only one bean found with "audi" name.
+
+                                if we found multiple bean with "audi" name, it will resturn @primary annoted Vehicle bean.
+
+                                NOTE:
+                                    if you have beans with "audi" names and mistakenly assign @Primary to multiple beans. it will throw NoUniqueBeanDefinitionException.
+
+            @Component:
+                        in real world to avoid writing @bean for all class; we write @component Annotation on class definition.
+
+                        ex.,
+                            // Vehicle.java
+                                @Component
+                                public class Vehicle {
+                                    private String name;
+                                    Getter and Setter method:
+                                }
+
+                            // productConfig file
+                                @ComponentScan(com.kpriyadarshi.beans);  --> this will scan all files from "Beans" folders.
+                                public class ProjectConfig {
+                                    ... empty file ...
+                                }
+
+                            result -> when we run method. it will print Null for vehicle name. As we haven't assign value.
+
+            @PostConstruct:
+                        Executes when bean is created.
+                        It is used to ensure custom configuration and logic has been implemented before the execution it is used.                       
+
+                        ex.,
+                            // Vehicle.java
+                                @Component
+                                public class Vehicle {
+                                    private String name;
+                                    Getter and Setter method:
+
+                                    @PostConstruct
+                                    public void init(){
+                                        this.name = "Honda";
+                                    }
+                                }
+
+                            Result -> It will assign "honda" name to Vehicle class. else it will show null value when we try to print name of it.
+
+            @PreDestroy:
+                        Executes automatically when bean is being destroyed by spring framework.
+                        Used to disconnect database, close file, Release a source etc.
+
+                        NOTE: To use @PreDestroy annotation, we need to close ApplicationContext.
+
+                        ex.,
+                            // Vehicle.java
+                                @Component
+                                public class Vehicle {
+                                    private String name;
+                                    Getter and Setter method:
+
+                                    @PreDestroy
+                                    public void destroy(){
+                                        System.out.println("Closing Vehicle bean: " + this.name + "!");
+                                    }
+                                }
+
+                            // Main.java
+                                public static void main(String[] args) {
+                                    var context = new AnnotationConfigApplicationContext(ProductConfig.class);
+                                    -- use below line to execute @PreDestroy annotation:
+                                    context.close();
+                                }
+                            
+                            Result: It will execute @PreDestroy methods.
+
+Hardcorded dependency/ Thight Coupling :: 
+                        Vehicle class manually assigned to Person class in the configuration file. 
+                        Doing so create Manual and TIGHTLY COUPLING.
+                            ex.,
+                                // productConfig.java
+                                    @Configuration
+                                    public class ProjectConfig {
+
+                                        @Bean
+                                        public Vehicle vehicle() {
+                                            Vehicle veh = new Vehicle();
+                                            veh.setName("Audi 8");
+                                            return veh;
+                                        }
+
+                                        @Bean
+                                        public Person person() {
+                                            Person person = new Person();
+                                            person.setName("John");
+                                            person.setVehicle(vehicle()); // Manually setting dependency
+                                            return person;
+                                        }
+                                    }
+
+                        Now We want to add Model field (from CAR class which is subclass of Vehicle) to above code:
+                            ex.,
+                                // Create Car.java file with one field "modelName". 
+
+                                // ProductConfig.java   
+                                    @Primary
+                                    @Bean
+                                    public Vehicle createVehicle1(){
+                                        var car = new Car();
+                                        car.setModelName("i3");
+                                        car.setName("BMW");
+                                        return car;
+                                    } 
+
+                        Here, we need to change whole createVehicle1() method. 
+                        Just imagine if we have x5 methods then we need to change entire ProductConfig.java file.
+
+Wiring beans/ Loose Coupling   ::
+            Remeber, with one constructor we do not need to use @Autowired. It is optional.
+
+                Wiring beans without parameter  :
+                            In productConfig file, we will have person() method. 
+                            here we will use setVehicle() and pass existing vehicle method from "productConfig" file.
+                            ex., 
+                                public Vehicle veh_Method(){
+                                    Vehicle v = new Vehicle();
+                                    v.setName("1k");
+                                    return v;   
+                                }
+
+                                public Person person_Method(){
+                                    Person p = new Person();
+                                    p.setVehicle(veh_Method());  // method name is passed as parameter.
+                                    return p;
+                                }
+
+                            NOTE: We won't face any ambiguity as we are passing method name inside person method.
+
+                Wiring beans with parameter :
+                            Here, we will pass parameter "Vehicle veh_Temp". and everything is wired by spring. 
+                            ex.,
+                                public Person person_Method(Vehicle veh_Temp){
+                                    Person p = new Person();
+                                    p.setVehicle(Vehicle veh_Temp);  // instead of passing method name, we are passing object.
+                                    return p;
+                                } 
+
+                            NOTE: As auto wiring is done by spring, we might face ambiguity if we have 2 beans with same data type.
+                                    To avoid, we can use @Primary annotation.
+                                    or @Qualifier("name_of_bean") annotation.                                    
+                                    or It will match with the name given on parameter inside class and name given on configProduct file.
+
+                                    ex.,
+                                        class person{
+                                            
+                                        }
+
+                Wiring beans using @Wiring annotation   :
+                                @Wiring annotation can be placed on variable OR method.
+
+                                ex.,
+                                    @Component
+                                    class Person{
+                                        priavte final String name = "Krunal";
+
+                                        @Autowired
+                                        priavte Vehicle veh;
+
+                                        @Autowired
+                                        public void setVehicle(Vehicle vehicle) {
+                                            this.vehicle = vehicle;
+                                        }
+                                    }
+
+                                @Wiring annotation goes well with @Component because it will automatically wire vehicle to person object.
+                                since @component does allow to create multiple instance we will not face ambiguity.
+
+                                Exception is thrown if bean does not exist.
+
+                                ex.,
+                                    // only add @autowire to variable in Person() class. if we do not do that vehicle will be NULL for person object.
+
+                                NOTE:
+                                    We can trun off "@autowire(required = false)" to avoid exception if bean not found and assign NULL value to it.
+                                    Also, we can not use final keyword with @autowired variable.
+                 
+                Wiring beans using @Wiring on constructor   :
+                                we can not use @autowire on variable with final variable. We can't create method to set by default.
+                                If we try to use final and @Autowired, we will see ERROR "variable isn't initialized."
+
+                                It is important feature for PROD so there is alternative:
+                                Use it with constructor:
+                                ex.,    
+                                    public class Person{
+                                        priavte final Vehicle veh;
+
+                                        Person(Vehicle veh){
+                                            this.veh = veh;
+                                        }
+                                    }
+
+                                NOTE:
+                                    you can't use default/ zero parametered constructor. as vehicle variable expect value.
+
+Exceptions  :
+                NoSuchBeanDefinitionException       :
+                            When you try to get bean using context.getBean("Vehicle.class") and no vehicle bean is found from IOC container. It will return this exception.
+
+                NoUniqueBeanDefinitionException     :
+                            When you try to inject a bean by a type but project config file has multiple beans with same type, this Exception is thrown.
+                            ex.,
+                                // projectConfig.java
+                                    @bean
+                                    String firstName(){
+                                        return "John";
+                                    }
+
+                                    @bean 
+                                    String lastName(){
+                                        return "Doe";
+                                    }
+
+                                // main.java
+                                    var context = new AnnotationConfigApplicationContext(projectConfig.class);
+                                    var name = context.getBean(String.class);  
+                                    // Exception will be thrown as there are two beans with same type.   
+
+                                    //use this instead:
+                                    var name = context.getBean("firstName", String.class);  // John
+                                    var name2 = context.getBean("lastName", String.class);  // Doe
+
+                                    // Or use @Primary Annotation in projectConfig.java class.
+                                
+                            NOTE:   
+                                if we have x2 @Primary annotation for same data types we will get Exception "NoUniqueBeanDefinitionException" with proper message saying "more than 1 @Primary annotation".
+
+                UnsatisfiedDependencyException      :
+                            When Circular dependency is created, this exception is thrown.
+                            When A bean trying initiate another bean and other bean is try to initiate first bean. This exception is thrown. 
+                            There is no solution for this. So we have to avoid this situation.
+
+                            It can be easily discovered as we can not even start out server.
+
+                            ex.,
+                            // Circular dependency:
+                                class person{
+                                    @Autowired
+                                    private Vehicle veh; // person class is trying to initiate vehicle class.
+                                }
+
+                                class Vehicle{
+                                    @Autowired
+                                    private Person p;   // vehicle class is trying to initiate person class.
+                                }

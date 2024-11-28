@@ -250,8 +250,8 @@ sorting         ::  A sorting algorithm to arrange elements of an array in speci
                     Bubble sort ::  This algorithm based on bubble traveling to surface. 
                                     Where each element is compared with other elements of Array.
                                     
-                                    NOTE:   In bubble sort, we often see that elements adjusted in sorted order and it is unneccessary to perform all n^2 comparision. 
-                                            Use boolean value to stop.
+                                    NOTE:   Optimized bubble sort, we'll use boolean value to check if any swapping is happening or not. 
+                                            If not it is already sorted and we can break loop.
 
 Arrays.sort()        ::
                         Arrays.sort() is used to sort the array in ascending order.
