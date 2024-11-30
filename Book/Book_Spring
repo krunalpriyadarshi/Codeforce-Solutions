@@ -140,7 +140,13 @@ How execution is performed:
         NOTE:
             All bean components (singleton beans) are created from top to down when ApplicationContext is initialized.
 
-Bean component  :
+Concept that I understand:
+            -> 
+                If you want to create Beans manually, we need to configure configuration file.
+                This will give more freedom to choose which bean compoent we want to use.
+                Where @Autowire is allowed to use inside Bean component.
+
+Annotations  :
             Custom Bean name:
                         // Bean naming using "name" keyword:
                             @Bean(name = "Vehicle1")
@@ -260,6 +266,10 @@ Bean component  :
             @Component:
                         in real world to avoid writing @bean for all class; we write @component Annotation on class definition.
 
+                        NOTE:
+                            Spring will automatically create a single bean. (as part of Singleton bean scope)
+                            To create more beans of same class, we need to use @CompoentScan in config file.
+
                         ex.,
                             // Vehicle.java
                                 @Component
@@ -271,13 +281,37 @@ Bean component  :
                             // productConfig file
                                 @ComponentScan(com.kpriyadarshi.beans);  --> this will scan all files from "Beans" folders.
                                 public class ProjectConfig {
-                                    ... empty file ...
+                                    ... empty file - as bean will be created with @CompoentScan ...
                                 }
 
                             result -> when we run method. it will print Null for vehicle name. As we haven't assign value.
 
+            @ComponentScan:
+                        Spring has default feature to scan components where @Configuration or @SpringBootApplication is mentioned.
+                        But when @Component is used we need to use @ComponentScan so that we know which beans to create.
+                        
+                        We need to include in a file where beans are created. Generally we mention this inside Config files.
+
+                        ex.,
+                            //productConfig.java
+                                @ComponentScan(basePackage= "com.example.beans")
+                                class productConfig(){
+                                    ... methods to create beans ...
+                                }
+
+                        ComponentScan has more parameters...
+                            @ComponentScan(
+                                basePackage = "com.example.beans",
+                                includeFilters = ...,
+                                excludeFilters = ...
+                            )
+
             @PostConstruct:
-                        Executes when bean is created.
+                        Executes when bean is created but constructor execute first.
+                        NOTE:
+                            First class's constructor is initialized. and after that @PostConstruct is executed.
+                            -> If B is child class of A then first A's constructor will execute then B's constructor will execute after that A's @PostConstruct and B's @PostConstruct execute.
+
                         It is used to ensure custom configuration and logic has been implemented before the execution it is used.                       
 
                         ex.,
@@ -365,9 +399,9 @@ Hardcorded dependency/ Thight Coupling ::
                         Just imagine if we have x5 methods then we need to change entire ProductConfig.java file.
 
 Wiring beans/ Loose Coupling   ::
-            Remeber, with one constructor we do not need to use @Autowired. It is optional.
+                Remember, with one constructor we do not need to use @Autowired. It is optional and it will consider a dependency between both beans.
 
-                Wiring beans without parameter  : 
+                Wiring beans using Method parameters: 
                         { Not a Good way to wire components as when change occures, We have to make changes everywhere. }
                             
                             In productConfig file, we will have person() method. 
@@ -386,10 +420,11 @@ Wiring beans/ Loose Coupling   ::
                                 }
 
                             NOTE:
-                                ->  Spring framework will be create multiple instance of Vehicle bean as default behaviour.
+                                ->  Instead of creating Vehicle bean for veh_method and person_method, Spring as default behaviour creates one Vehicle bean and give them. 
+                                    You can use print statement in both constructors to validate above statement.
                                 ->  We won't face any ambiguity as we are passing method name inside person method.
 
-                Wiring beans with parameter :
+                Wiring beans using method calls:
                             Here, we will pass parameter "Vehicle veh_Temp". and everything is wired by spring. 
                             ex.,
                                 public Person person_Method(Vehicle veh_Temp){
@@ -408,8 +443,10 @@ Wiring beans/ Loose Coupling   ::
                                             
                                         }
 
-                Wiring beans using @Wiring annotation   :
-                                @Wiring annotation can be placed on variable OR method.
+                Wiring beans using @Wiring annotation   : 
+                                @Wiring annotation can be placed on bean class OR Setter method.
+
+                                NOTE: There is a limitation that a bean variable can't be final. Because value is yet to assign.
 
                                 ex.,
                                     @Component
@@ -438,22 +475,101 @@ Wiring beans/ Loose Coupling   ::
                                     Also, we can not use final keyword with @autowired variable.
                  
                 Wiring beans using @Wiring on constructor   :
-                                we can not use @autowire on variable with final variable. We can't create method to set by default.
-                                If we try to use final and @Autowired, we will see ERROR "variable isn't initialized."
+                                To use final keyword for bean variable, we have to implement this method and it's accepted for production.
 
-                                It is important feature for PROD so there is alternative:
                                 Use it with constructor:
                                 ex.,    
                                     public class Person{
                                         priavte final Vehicle veh;
 
-                                        Person(Vehicle veh){
+                                        @Autowired
+                                        public Person(Vehicle veh){
                                             this.veh = veh;
                                         }
                                     }
 
                                 NOTE:
-                                    you can't use default/ zero parametered constructor. as vehicle variable expect value.
+                                    ->  you can't use default/ zero parametered constructor. as vehicle variable expect value.
+                                    ->  @Qualifier can't be used with @Autowire but can be used inside parameter:
+                                        ex.,
+                                            // Runtime error:
+                                                @Autowire
+                                                @Qualifier ---> can not be used here wit constructor.
+                                                public Person(Vehicle veh){
+                                                    ... code ...
+                                                }
+
+                                        ex., 
+                                            // Works:
+                                                @Autowire
+                                                public Person( (@Qualifier "Vehicle1") Vehicle veh){
+                                                    ... code ....
+                                                }
+
+                                    ->  if class has only one constructor, we don't need to write @autowired as it will applied default. but make sure it is not default constructor with 0 parameter.
+
+                                    ex.,
+                                        public class Person{
+                                            private final Vehicle veh;
+
+                                            ---- writing @autowire is optional ----
+                                            public Person(Vehicle veh){
+                                                this.veh = veh;
+                                            }
+                                        }
+
+                Autowiring with multiple Beans of same type :
+                                        Spring will try to match Beans with same type. If type is Vehicle then it will try to find same type Bean. 
+
+                                        If multiple is found, it will try to match parameter name but this way has less readibility as anything can be used as parameter so it is not adviced to use.
+
+                                            ex.,                                                
+                                                // ProductConfig file
+                                                    @Configuration
+                                                    class productConfig{
+                                                        public Vehicle v1(){
+                                                            ...
+                                                        }
+
+                                                        public vehicle v2(){
+                                                            ...
+                                                        }
+
+                                                        @Primary
+                                                        public vehicle v3(){
+                                                            ...
+                                                        }
+                                                    }
+
+                                                
+                                                // Person.java
+                                                    Class Person{
+                                                        private final Vehicle veh;
+
+                                                        @Autowire
+                                                        public Person(Vehicle v1){
+                                                            ... ...
+                                                        }
+                                                    }
+
+                                                    RESULT: 
+                                                        Spring will try to find same type bean but here 3 beans are found. {v1, v2, v3}. so spring will try to match with parameter name in constructor with name of vehicle method from config file.
+
+                                                        As V1 method from config file matches it will show value as per v1.
+
+                                                        If variable name did not match with any method from config file, it will choose @Primary bean.
+
+                                                        OR you can use @Qualifier in constructor.
+                                                        ex.,
+                                                            // Person.javaClass 
+                                                                Person{
+                                                                    private final Vehicle veh;
+
+                                                                    @Autowire
+                                                                    public Person(@Qualifier("v1") Vehicle veh){
+                                                                        ... ...
+                                                                    }
+                                                                }
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
