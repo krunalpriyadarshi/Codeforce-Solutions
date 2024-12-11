@@ -1,3 +1,9 @@
+NOTES:
+        > System.out.println(any_object) :
+                                 prints object's toString() method if object's toString() method is not overridden. 
+                                 It will execute super.Object's tostring() method.
+                                 Which is "className@HashCode" of a object.
+----------------------------------------------------------------------------------------------------------------
 Primitive Datatype:
         Primitive data types specify the size and type of variable values.
 
@@ -314,7 +320,6 @@ Arrays.sort()   V/S     Collections.sort()      ::
                         new order will be {p1, p2, p3}.
 
 NumberFormat    :: Used to convert it into currency format.
-
 Hashing         ::
                     Synchronized data structure     :: 
                             HashTable

@@ -14,7 +14,7 @@ How to create a project in IntelliJ:
                     Version     -   Release version of Project. ex., V3.0.1 
 
 Loosely Coupling V/S Tightly Coupling:
-            When A classes are highly depedent on each other, making changes difficult adn requires more testing and less resuable.
+            When A classes are highly depedent on each other, making changes to them is difficult and requires more testing and less resuable.
             ex.,
                 main class directly initiats JSON class and uses CreateDoc method.
 
@@ -570,6 +570,221 @@ Wiring beans/ Loose Coupling   ::
                                                                         ... ...
                                                                     }
                                                                 }
+
+Bean Scope:
+        - Singleton Bean (Default)
+        - Prototype Bean
+        - Request
+        - Session
+        - Application
+
+        Syntex -->   " @Scope(BeanDefinition.SCOPE_PROTOTYPE) "
+
+            Singleton (Default) ::
+                            Singleton instantiation is default way Where same object is returned for Bean reference. 
+                            Singleton Bean have Eager and Lazy concept for Bean creation.
+
+                            Flaw/ Disadvantage -> 
+                                When two users tries to access same data, it will create "RACE CONDITION". Where final value depends on last applied changes. It occurs for tread process.
+                                ex.,
+                                    We have one hashtable. here user1 and user2 tried to change value of key "animal". User1 changed value to "lion" but other changed to "cat". But value of "animal" depends on which thread arrived at last.
+
+                            ex.,
+                                HERE single bean "Vehicle" is accessed by V1 and V2 objects. If you print address of object it will same.
+
+                                // Config file:
+                                    class productConfig{
+                                        @Bean
+                                        public Vehicle vehicle(){
+                                            return new Vehicle();
+                                        }
+                                    }
+
+                                // main file:
+                                    Vehicle v1 = context.getBean(Vehicle.class);
+                                    System.out.println(v1.toString() + " --------------");
+
+                                    Vehicle v2 = context.getBean(Vehicle.class);
+                                    System.out.println(v2.toString() + " --------------");
+                                    
+                                    if(v2 == v1)
+                                        System.out.println("same address");
+                                    System.out.println(v2.hashCode());
+                                    System.out.println(v1.hashCode());
+
+                                    // Changing value on one object reflact on other object as same bean is used for both.
+                                    v1.setName("no way");
+                                    System.out.println(v2.toString());
+
+            Prototype   ::
+                            Prototype used to avoid RACE CONDITION occured by Singleton approach.
+                            Here, New object is returned for each Bean reference.
+                            Prototype bean does not have Eager instantiation concept because beans are created when needed. 
+
+                            | Scenario                         | Person Scope | Vehicle Scope | Behavior                                                                 |
+                            |----------------------------------|--------------|---------------|--------------------------------------------------------------------------|
+                            | Both are prototype               | Prototype    | Prototype     | New Person and Vehicle instances are created for each getBean() call.    |
+                            | Person: singleton, Vehicle: prototype | Singleton    | Prototype     | Person is shared, but each call to createVehicle() returns a new Vehicle.|
+                            | Both are singleton               | Singleton    | Singleton     | Both Person and Vehicle instances are shared. Modifying one affects all references. |
+
+                            ex.,
+                                // Person is Singleton while Vehicle is Prototype:
+                                    // Config file:
+                                        @Configuration
+                                        public class AppConfig {
+
+                                            @Bean
+                                            @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+                                            public Vehicle vehicle() {
+                                                return new Vehicle();
+                                            }
+
+                                            @Bean
+                                            public Person person() { // Singleton by default
+                                                return new Person();
+                                            }
+                                        }
+
+Singleton V/S Prototype ::
+        > Singleton is default scope While Prototype is defined scope.
+        > Singleton same objects for each bean reference while Prototype scope will return different object for each bean reference.
+        > Singleton is used for immutable objects while Prototype used for Mutable object. 
+        > singleton is commonly used scope while prototype is rarely used scope.
+
+Singleton Eager & Lazy instantiation ::
+                Eager instntiation is deafult behaviour of Spring. Where all beans are created at first by Spring. 
+                This approach has one flaw that as all beans are created at first it might take time. Even those bean which we are going to use rarely. For example, Bean creation for "Deactivate my account". Which is rarely used in general.
+                
+                Hence Lazy instantiation was introduced to avoid bean creation at start. And create bean on demand.
+
+                Eager V/S Lazy:
+                    >   Spring's default behavior is Eager while Lazy is defined behaviour.
+                    >   Eager will create all Beans at start. While Lazy will create bean on demand.
+                    >   Eager will throw exceptions/errors before server start while we might face exceptions/errors using Lazy. ex., Lazy tries to create Bean during execution and it might not be found in IOC container and throws Exception.
+                    >   Eager takes lots of space as all Beans are created and reduce Performance. Use of Lazy, maintains performance.
+                    >   Eager is used in mostly cases but Lazy is used for rare cases.
+
+                ex.,  
+                    If we use @Lazy annotation, bean will created when are using getBean() method. we will see "Bean Creation" printed and after that "Vehicle is created".
+                    Without @Lazy, spring will use default @Eagar annotation, where all beans are created. so we will see "Vehicle is created" before "Bean Creation".
+                    
+                    // Vehicle class:
+                        class Vehicle{
+                            public Vehicle(){
+                                System.out.println("Vehicle is created.");
+                            }
+                        }
+                    // config file:
+                        class productConfig{
+                            @Bean
+                            @Lazy
+                            public Vehicle veh(){
+                                ...
+                            }
+                        }
+                    // Main file:
+                        var context = new ApplicationConfigApplicationContext(productConfig.java);
+                        sout("-------- Bean Creation ------------")
+                        Var vehicle = context.getBean(Vehicle.class);
+
+AOP (Aspect Oriented Programming):
+            Aspect is a logic/programming-code which contains cross-cutting concerns. Where Cross-cutting concerns includes performance monitoring logs, security, transcation management, logging etc,.
+
+            AOP centralized this concerns in separated file. 
+            ex.,
+                To understand better, let's say we want to check execution start time, end time and total time taken of given Java file inside project.
+                To do that, We can write single code. But what if we want to do this for java files inside Beans folder. Then we need to write this non-business code for all java files.  
+                To reduce this, we use @Aspect file where we will create a method and write all non-business code. And access whenever we want ny simple adding "Advices" of AOP.
+
+            Advantages of AOP:
+                Modularization: Separates cross-cutting concerns from the main logic.
+                Reusability: Allows you to reuse aspects across multiple modules.
+                Clean Code: Reduces boilerplate code by moving repeated logic to a centralized aspect.
+                Improved Maintenance: Easier to update or enhance cross-cutting concerns without modifying business logic.
+
+            Function V/S AOP Aspect:
+                AOP Aspect is some what same as Function. Where we define logic somewhere and later we call it where we need to use it. But Both are different.,
+                >
+                    Fuction follows Scatter Apporach. Function needs to be explicitly called where logic is required.
+                    Aspect follows centralized Approach. Where logic, rules and everything is written on same file. We do not need to call them from Main method.
+                >
+                    Duplication for Function call. If we want to use logic in 10 places, we need to call function from each point.
+                    Single Aspect call. Defined Point-cut Expression will make all call.
+                >
+                    Function creates Thighly Coupling.
+                    Aspect creates Loosely Coupling.
+                > 
+                    Functions clutters the business logic. As we are writing non-business logic inside main method.
+                    With AOP Aspect, all concerns are handled without touching Business logic.
+                >
+                    As business grow, developers might create new methods. And they might forget to add logging Functions to logic.
+                    Because of Point-cut Expression, Aspect is applied to automatically and leave no room for human error. 
+
+            NOTE: How to use Aspect inside Project:
+                To use AspectJ in project.,
+                >   We need to include Dependency inside POM.xml file.  
+                >   In config file, enable AOP flag by @EnableAspectJAutoProxy. Which lets Spring know about AOP being used in project.
+                >   In Aspect file, use @Component and @Aspect. 
+                        @Aspect used to define class as an Aspect. Without it, Spring won't use advices (@Before, @After etc.,) or other Aspect logic.
+                        @Component used to ensure class is a bean and it is eligible for Spring lifecycle.
+                    
+            AOP Jargons:
+                Target Object   -   A class on which Aspect code will be intercept.
+                Aspect          -   A class in which Aspect code is written.
+
+                Advices         -   Advices are defined action on aspect methods. ex., @Before, @After, @Around
+                Point Cut       -   AKA Point Cut Expression. Which specify where the advice should be applied. 
+                Join Point      -   From Target Object, methods on which Advice will be applied to.
+
+                ex.,
+                    // Vehicle class:   "Vehicle.java" file
+                        Class Vehicle{
+                            private String name;
+
+                            public void process(){
+                                this.name += " @CanadianVersion";
+                            }
+                        }
+
+                    // Aspect Class:    "LogginAspect.java" file
+                        @Component
+                        @Aspect
+                        public class LogginAspect{
+                            @Before("execution(* com.example.service.Vehicle.process(..)))
+                            public void logging(){
+                                System.out.println("---- Log: Accesing Vehicle ----");
+                            }
+
+                            @After("execution(* com.example.service.Vehicle.process(..)))
+                            public void exitLogging(){
+                                System.out.println("---- Log: Releasing Vehicle ----");
+                            }
+                        }
+
+            ADVICE types:
+                @Before             -   Befre the execution of method, Advice is applied.
+                @AfterReturning     -   After the succesful execution of method, Advice is applied.
+                @AfterThrowing      -   After Exception is thrown in target method, Advice is applied.
+                @After              -   Advice is applied after the execution of method. (no matter exception is thrown or not.)
+                @Around             -   Combination of @Before and @After.
+                
+            Point-cut expression syntex:
+                    execution(modifiers-pattern? ret-type-pattern declaring-type-pattern? name-pattern(param-pattern) throws-pattern?)
+                    
+                    NOTE:
+                            package com.exmaple;
+                            public class Solution{
+                                public int checkMaxVal(int[] nums) thorw NullPointerException{
+                                    ...     // implementation
+                                }
+                            }
+
+                            --> modifiers-pattern is "public".
+                            --> ret-type-pattern is "int".
+                            --> declaring-type-pattern is "com.exmaple.Solution".   { It is combination of PackageName + ClassName.}
+                            --> name-pattern is "checkMaxVal".  {It is method name.}
+                            --> param-pattern is "int[]".   {It is parameter's data type.}
+                            --> throws-pattern is "NullPointerException".
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
