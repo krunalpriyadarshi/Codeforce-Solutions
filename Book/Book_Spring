@@ -786,6 +786,70 @@ AOP (Aspect Oriented Programming):
                             --> param-pattern is "int[]".   {It is parameter's data type.}
                             --> throws-pattern is "NullPointerException".
 
+            @Order: 
+                Execution of Advice is random when multiple files implemented same Advice.
+                We can give @Order(1), @Order(3)... for each Aspect file.
+
+            Example., 
+                MyAspect.java file:
+                @Aspect
+                @Component
+                @Order(1)
+                public class MyAspect {
+                    private Logger logger = Logger.getLogger(MyAspect.class.getName());
+
+                    @Around("execution(* com.example.beans.*.*(..))")
+                    public void aroundExecution(ProceedingJoinPoint joinPoint) throws Throwable {
+                        System.out.println("Around method execution in beans package --- start");
+                        joinPoint.proceed();
+                        System.out.println("Around method execution in beans package --- end");
+                    }
+
+                    @Before("execution(* com.example.beans.*.*(..))")
+                    public void beforeExecution(){
+                        System.out.println("---> Before method execution in beans package");
+                        logger.log(Level.SEVERE, "Severe");
+                        logger.log(Level.WARNING, "Warning");
+                    }
+
+                    @After("execution(* com.example.beans.*.*(..))")
+                    public void afterExecution(){
+                        System.out.println("---> After method execution in beans package");
+                    }
+
+                    @AfterThrowing(value = "execution(* com.example.beans.*.*(..))", throwing = "ex")
+                    public void afterThrowExecution(JoinPoint joinPoint, Exception ex){
+                        logger.log(Level.INFO, ex.getMessage());
+                    }
+
+                    @AfterReturning(value = "execution(* com.example.beans.*.*(..))", returning = "returnObj")
+                    public void afterReturningExecution(JoinPoint joinPoint, Object returnObj){
+                        logger.log(Level.INFO, "Successful Execution: " + returnObj);
+                    }
+                }
+
+            Configuring Advices:
+                    > Create Advice interface with @Retention Policy and @Target Runtime.
+                    > Add @interfaceName on top of method inside class of "beans" folder.
+                    > use "@annotation(com.example.interface.InterfaceName)" --> in aspect file.
+
+                    example.,
+                        // interfaces file -> LogAspect.java
+                            @Retention(RetentionPolicy.RUNTIME)
+                                @Target(ElementType.METHOD)
+                                public @interface LogAspect {
+                            }
+                        
+                        // 2nd step: 
+                        Add @LogAspect - which is interface file name. On top of any method inside Bean class.
+                        
+                        // 3rd step: 
+                        Aspect folder -> aspect.java file.   
+                            @Before("@annotation(com.example.interfaces.LogAspect")
+                            public void beforeExecution(){
+                                logger.log(Level.INFO, "Annotation Interface.");
+                            } 
+
 Exceptions  :
                 NoSuchBeanDefinitionException       :
                             When you try to get bean using context.getBean("Vehicle.class") and no vehicle bean is found from IOC container. It will return this exception.
@@ -836,3 +900,28 @@ Exceptions  :
                                     @Autowired
                                     private Person p;   // vehicle class is trying to initiate person class.
                                 }
+
+Logger Level    ::
+        (General logging level - QA team)
+            Fatal       -   System crash or not working.
+            Error       -   Issue on system but functionalities are working properly.
+            Warn        -   Unexpected behaviour (System working fine)
+            Info        -   Informative event occured.
+            Debug       -   Useful while debugging the code.
+            Trace       -   For extended debugging sessions.
+
+        (Java Built-in Logger)
+            SEVERE      -   Critical Error
+            WARNING     -   Unexpected behavior but system works fine.
+            INFO        -   general information realated message.
+            CONFIG      -   configuration-related message.
+            FINE        -   detailed Trance-debugging message.
+            FINER       -   even more detailed Debugging message.
+            FINEST      -   finest level of debugging message.
+
+        Syntex  :
+            logger.log(Level.SEVERE, "This is a message.");
+            logger.log(Level.INFO, "Informative message.");
+            logger.log(Level.CONFIG, "Configuraion message.);
+            ...
+
