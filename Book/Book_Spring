@@ -861,7 +861,7 @@ Dispatcher Servlet  :
                 In spring, responsibility of managing servlet goes to Spring framework instead of developers.
 
 Create SpringBot project    :
-                Go to "spring initializr" website. (https://start.spring.io/)
+                Go to "spring initializr" website. (https://start.spring.io/) --> used to generate web project skeleton based on required dependency.
                 Configure details.
                 Generate Project Zip file and extract it.
                 From IDE, file -> new -> "IMPORT MODULE from source" select POM.XML file from extracted folder.
@@ -879,15 +879,22 @@ Create SpringBot project    :
                                         }
                 
                 NOTES:
-                    @SpringBootApplication   -   Define Java file as Main to launch application.
+                    @SpringBootApplication   -   
+                                                It is Spring boot main class.
                                                 PSVM{} use "SpringBootApplication.run(currentFileName.class, args) 
 
-                    application property file   -
+                                                It is made out of 3 annotations. {@EnableAutoConfiguration, @ComponentScan, @SpringBootConfiguration}
+
+                    application.properties file   -
                                         Inside this file configure default setting setup by spring framework.
                                         ex.,
                                             server.port = 8077;     --> Assign port: 8077 to Spring application
                                             server.port = 0;        --> Assign any available port to application.
-                                            server.servlet.context-path = "kp"      --> add "kp" to website path.         
+                                            server.servlet.context-path = "kp"      --> add "kp" to website path.  
+
+                    debug = true            -
+                                        Generates Autoconfiguration report on console.
+                                        Which contains information about { positive_Matches, Negative_Matches, Exclusion, Unconditional_classes }        
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
