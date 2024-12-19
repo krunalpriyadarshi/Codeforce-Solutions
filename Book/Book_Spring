@@ -850,6 +850,45 @@ AOP (Aspect Oriented Programming):
                                 logger.log(Level.INFO, "Annotation Interface.");
                             } 
 
+Servlet     :
+                Servlet is Server-side program that used to handle client request, process them and send dynamic response.
+                ex.,
+                    When you click on "Submit" button on form. The request will execute servlet on server side to validate entry and show message as response. 
+
+Dispatcher Servlet  :
+                Servlet inside spring known as "Dispatcher servlet". Which maintains all the URL mapping inside a web Application.
+                
+                In spring, responsibility of managing servlet goes to Spring framework instead of developers.
+
+Create SpringBot project    :
+                Go to "spring initializr" website. (https://start.spring.io/)
+                Configure details.
+                Generate Project Zip file and extract it.
+                From IDE, file -> new -> "IMPORT MODULE from source" select POM.XML file from extracted folder.
+                Rebuilt project to install all dependencies.
+
+                CREATE HELLO WORLD PROJECT:
+                        Create HTML page inside resources -> static folder.
+                        Create Controller for this html page -> 
+                                        @Controller
+                                        public class HomeController{
+                                            @RequestMapping("home.html")
+                                            public String displayHomePage(){
+                                                return "home.html";
+                                            }
+                                        }
+                
+                NOTES:
+                    @SpringBootApplication   -   Define Java file as Main to launch application.
+                                                PSVM{} use "SpringBootApplication.run(currentFileName.class, args) 
+
+                    application property file   -
+                                        Inside this file configure default setting setup by spring framework.
+                                        ex.,
+                                            server.port = 8077;     --> Assign port: 8077 to Spring application
+                                            server.port = 0;        --> Assign any available port to application.
+                                            server.servlet.context-path = "kp"      --> add "kp" to website path.         
+
 Exceptions  :
                 NoSuchBeanDefinitionException       :
                             When you try to get bean using context.getBean("Vehicle.class") and no vehicle bean is found from IOC container. It will return this exception.
