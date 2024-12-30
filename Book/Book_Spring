@@ -992,6 +992,22 @@ Spring MVC Architecture (Interal flow)  :
             step 7: Server container will convert into HTTP response.
             step 8: Bowser will intercept HTTP response to show content.
 
+URL path    :
+            Absolute Path   -   
+                        URL path starts with '/'. 
+                        When resource file is in the same location. 
+                        ex.,
+                            Website URL :   https://example.com/folder/page
+                            Componenet search   :   https://example.com/assets/css/style-starter.css
+
+            Relative Path   -
+                        URL has no '/' at start.
+                        when resource file depends on the current folder location. If each html file has it's own CSS file.
+                        NOTE: May cause problem using this method for subfolders.
+                        ex.,
+                            Website URL :   https://example.com/folder/page
+                            Componenet search   :   https://example.com/folder/assets/css/style-starter.css
+
 Controller      :
             Terms:
                     @RequestMapping(value = "/htmlPage")    -    Maps web requests to specific handler methods.
