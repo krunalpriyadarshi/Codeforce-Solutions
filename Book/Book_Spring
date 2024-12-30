@@ -891,10 +891,205 @@ Create SpringBot project    :
                                             server.port = 8077;     --> Assign port: 8077 to Spring application
                                             server.port = 0;        --> Assign any available port to application.
                                             server.servlet.context-path = "kp"      --> add "kp" to website path.  
+                                                                    ex.,
+                                                                        example.com/home --> redirects to Home page
+                                                                        example.com/kp/home --> since context-path = "kp", we need to include "kp" inside web link.
 
                     debug = true            -
                                         Generates Autoconfiguration report on console.
                                         Which contains information about { positive_Matches, Negative_Matches, Exclusion, Unconditional_classes }        
+
+ThymeLeaf Framework     :   
+                    Thymelead has great integration with Spring MVC and Spring Security.
+                    We can deploy Thymeleaf adn spring in one server. Not like {Spring + React/ Angular} project, where frontend stored at differentserver than backend files.
+
+                    spring.thymeleaf.cache      :
+                                        If cache is "true", thymeleaf will store compiled pages on every Server start and use that pages. Hence you won't see changes refalcted to pages when project is build again. 
+                                        If cache is "false", thymeleaf will compile pages every built time. Great for development use.
+
+                    NOTE:
+                        This config works for thymeleaf pages, It won't work for backend files. We need to restart server everytime to see changes of backend file.
+
+                    Thymeleaf Page Layouts      ::
+                                        th: insert  :
+                                                        Insert the child fragment to parent tag.
+                                                        Parent's attributes are preserved and child fragment is inserted inside it.
+                                        th: replace :
+                                                        Replaces the entire parent tag with fragment.
+                                                        Parent's attributes are replaced by child attributes.   
+
+                                        NOTE:   content inside of parent will be removed and child fragment is placed instead.
+                                            
+                                            ex.,
+                                                "HOME.html"     :   
+                                                    <body>
+                                                        <!-- Example with th:insert -->
+                                                        <div th:insert="header::headerFragment" class="parent-insert" id="insert-id">
+                                                            <p>Insert Example</p>
+                                                        </div>
+
+                                                        <!-- Example with th:replace -->
+                                                        <div th:replace="header::headerFragment" class="parent-replace" id="replace-id">
+                                                            <p>Replace Example</p>
+                                                        </div>
+                                                    </body>  
+
+                                                "Header.html"   :  
+                                                    <div th:fragment="headerFragment" class="child-header" id="child-id">
+                                                        <h1>Header Content</h1>
+                                                    </div>     
+
+                                                OUTPUT          :
+                                                    <body>
+                                                        <!-- Example with th:insert -->
+                                                        <!-- new child fragment is inserted inside parent -->
+                                                        <div th:insert="header::headerFragment" class="parent-insert" id="insert-id">
+                                                            <div th:fragment="headerFragment" class="child-header" id="child-id">
+                                                                <h1>Header Content</h1>
+                                                            </div> 
+                                                        </div>
+
+                                                        <!-- Example with th:replace -->
+                                                        <!-- all attributes of parent is replaced. -->
+                                                        <div th:fragment="headerFragment" class="child-header" id="child-id">
+                                                            <h1>Header Content</h1>
+                                                        </div> 
+                                                    </body>
+
+LOMBOK Library  :
+            LOMBOK generates getter, setter, equals(), toString(), hashCode() methods & Constructors at compile time.
+            It contains library such as @Getter, @Setter, @NoArgsConstructor, @RequiredArgsConstructor, @AllArgsConstructor, @ToString, @EqualsAndHashCode, @Data 
+
+            HOW TO USE LOMBOK:
+                Add dependency of LOMBOK library in POM.xml file.
+
+            @Slf4j  -
+                        Above annotation will remove declaration of logger in POJO file.
+                        ex.,
+                            private static logger log = LoggerFactory.getLogger(Contact.class);
+
+SpringBoot DevTools     :
+                    It is a dependency where Automatic restart & LiveReload happens for DEV environment. 
+                    It will disable all cache of project so that components/pages/java file will be compiled for every build.
+
+                    NOTE:
+                        During built, DevTools won't be included to jav/war files. Making deployment to production easy because we might not need recompilation.
+
+MVC pattern :
+            MVC design is used to achieve loosely coupling.
+                Model       -   It stores and manages the data from database.
+                Controller  -   Bind Model & View together. And used to execute business logic inside.
+                View        -   Ui and show data from controller.
+
+Spring MVC Architecture (Interal flow)  :
+            step 1: End user send http request to Server container. (Server container can be anything lets say TOMCAT server) 
+            step 2: TOMCAT server accept http request and handover request to Dispather servlet.
+            step 3: Dispather servlet will check with "Mapping Handler" to get method name and controller.
+            step 4: Dispather servlet will invoke controller and its method.
+                    After execution controller will return data and view to show the data inside.
+            step 5: Dispather servlet finds view by "Resolver view" and render the data retrieved from controller. And send response.
+            step 6: Server container will accept response from Dispater server and send it back to server.
+            step 7: Server container will convert into HTTP response.
+            step 8: Bowser will intercept HTTP response to show content.
+
+Controller      :
+            Terms:
+                    @RequestMapping(value = "/htmlPage")    -    Maps web requests to specific handler methods.
+                    @RequestMapping(value = "/saveMsg", method = RequestMethod.POST)    -   Handle post request coming from a form with name = "saveMsg".
+                    @PostMapping(value = "/saveMsg")    -   alternate of above method and handle POST request.     
+
+            Create individual controller:
+                ex.,
+                    @Controller
+                    public class HomeController {
+
+                        @RequestMapping(value={"", "/", "home"})
+                        public String displayHomePage() {
+                            return "home.html";
+                        }
+
+                    }
+
+            Create mapping Controller to avoid multiple creation of controller:
+                ex.,
+                    @Configuration
+                    public class WebConfig implements WebMvcConfigurer {
+                        @Override
+                        public void addViewControllers(ViewControllerRegistry registry){
+                            registry.addViewController("/courses").setViewName("courses");
+                        }
+                    }
+
+            Data binding Process:
+                            The name attribute of field from frontend is binded with @RequestParam of backend.
+                                example.,
+                                    // Front-end:
+                                        <form th:action="@{/saveMsg}" method="post" class="signin-form">
+                                            <input type="text" name="name" id="name" placeholder="Enter Your Name" />
+
+                                    // Back-end:
+                                        @PostMapping(value = "saveMsg")
+                                        public ModelAndView saveMessage(
+                                                @RequestParam String name,       // Matches name="name"
+                                                @RequestParam String mobileNum,  // Matches name="mobileNum"
+                                                @RequestParam String email,      // Matches name="email"
+                                                @RequestParam String subject,    // Matches name="subject"
+                                                @RequestParam String message     // Matches name="message"
+                                        ){
+                                            ... // code ...
+                                        }
+
+Query param V/S Path param  :
+            Query param used for filter, sort or search. And it's format contains key-value pair after '?' in url.
+            ex.,
+                Filter products with 'electronic' category and sorting based on price Ascending.
+                GET /products?category=electronic&sort=price
+            
+            Path param used to identify specific resource. Injected directly inside URL.
+            ex.,
+                Fetch product with id = 123.
+                Get /products/123
+
+Query params using @RequestParam   :
+            getParameter() is a URL parameter that is used when a client or browser sends a request to a server.
+            ex.,
+                www.kpriyadarshi.ca/certificate?year=2021&order=asd
+                Above link is with Query parameter.
+
+            code configuration -
+                Step 1 : Add queryParameter to any frontend link.
+                    // Footer.html
+                    <li><a th:href="@{/holidays(festival='true',federal='true')}">Holidays</a></li>
+                Step 2 : Handle Query parameter from controller of the page. Make parameter non-required as it's used as filter.
+                    // HolidayController 
+                    public String displayHolidays(@RequestParam(required = false) boolean festival,
+                                  @RequestParam(required = false) boolean federal,
+                                  Model model){ ... }
+                Step 3 : use th:if to hide or show <div> on frontend.
+                    // holiday.html
+                    <div class="col-lg-6" th:if="${festival} == true">
+
+Path params using @PathVariable :
+            Path params is.,
+            ex., 
+                www.kpriyadarshi.ca/certificate/all      
+
+            Code configuration -
+                Step 1 : Add Path param to the frontend side. Here, Path param is "all" string which will send to the backend side.
+                    // Footer.html
+                    <li><a th:href="@{/holidays/all}">Holidays</a></li>  
+                Step 2 : Fetch Path param from backend side.
+                    //  HolidayController.java
+                    @GetMapping(value = "/holidays/{display}")    
+                    public String displayHolidays(@PathVariable String display, Model model){ 
+                        if(display != null && display.equals("all")){
+                            model.addAttribute("federal", true);
+                            model.addAttribute("festival", true);
+                        }
+                    }
+                Step 3 : Use th:if to show or hide content at front end.
+                    // holiday.html
+                    <div class="col-lg-6" th:if="${festival} == true">
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
@@ -970,4 +1165,3 @@ Logger Level    ::
             logger.log(Level.INFO, "Informative message.");
             logger.log(Level.CONFIG, "Configuraion message.);
             ...
-

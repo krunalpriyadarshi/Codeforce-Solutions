@@ -21,6 +21,62 @@ Non-primitive Datatype/ Reference Datatype:
         instances or objects which stores memory address of variable.
         ex.,
             Array, class, interface, String, Enum
+
+        Enum   ::   Enum is a special "class" that represents a group of FINAL constants.
+                    Enum follows private package access mdifier hence we can not create new constants outside of Enum class.
+                    If we try to access invalid Enum constant outside, it will throw error message "Invalid Enum constant". Because of this property we do not need to define switch's default value as invalid entry will not be allowed.
+                    
+                    NOTE:
+                        Enum can have constructor, method and variables.
+                        Enum can have abstract method.
+                        Enum can implement interface.
+                        Enum can have main method.
+
+                    example 1: Define new Enum.
+                        enum Level {
+                            LOW, MEDIUM, HIGH
+                        }
+                    
+                    example 2: Define new Enum with constructor and method.
+                        enum Level{
+                            // Constant defination:
+                            Low(1), 
+                            Medium(2),
+                            Hard(3);
+
+                            // define of variable and constructor:
+                            private int defficultyLevel;
+
+                            Level(int level){
+                                this.defficultyLevel = level;
+                            }
+
+                            // define of method:
+                            public int getDefficultyLevel(){
+                                return this.defficultyLevel;
+                            }
+                        }
+
+                    example 3: Use of Abstract method inside Enum.
+                        enum Operation{
+                            ADD{
+                                @Override
+                                public double apply(double a, double b){
+                                    return a + b;
+                                }
+                            },
+                            SUBTRACT{
+                                @Override
+                                public double apply(double a, double b){
+                                    return a - b;
+                                }
+                            };
+                            
+                            abstract double apply(double a, double b);
+                        }
+
+                    example 4: Use of Interface inside Enum.
+                        interface 
 ----------------------------------------------------------------------------------------------------------------
 Operations:
                 Arithmetic Operations   :   + - * % /
