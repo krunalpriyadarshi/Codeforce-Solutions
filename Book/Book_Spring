@@ -571,7 +571,7 @@ Wiring beans/ Loose Coupling   ::
                                                                     }
                                                                 }
 
-Bean Scope:
+Bean Scope (Part 1):
         - Singleton Bean (Default)
         - Prototype Bean
         - Request
@@ -1106,6 +1106,113 @@ Path params using @PathVariable :
                 Step 3 : Use th:if to show or hide content at front end.
                     // holiday.html
                     <div class="col-lg-6" th:if="${festival} == true">
+
+Spring Validation   :
+            In html, we have required attribute to make field required during form submittion.
+            ex.,
+                <input type="text" name="name" id="name" placeholder="Enter your name" required>
+
+            But it can be easily bypass by browser console where user will remove attribute by deleting it.
+            Or by injecting javascript code. document.getElementById('name').removeArrribute('required');
+
+            JAKARATA VALIDATION & HIBERNATE VALIDATION  :
+                        jakarta.validation.constraints.*
+                            @Digits
+                            @Email
+                            @Max
+                            @Min
+                            @NotNull    -   Return true for not null value. ex., "" (Empty string), " " (White space), "   ", "abc", " abc " 
+                            @NotEmpty   -   Return true for at least one character. ex., " " (white space), "   ", "abc", " abc "
+                            @NotBlank   -   Return true for at least one non-white space character. It is like performing trim() on value and check if it has character in it or not. ex., "abc", " abc " 
+                            @Pattern
+                            @Size
+
+                        org.hybernate.validator.constraints.*
+                            @CreditCardNumber
+                            @Length
+                            @Currency
+                            @Range
+                            @URL
+                            @UniqueElements
+                            @EAN
+                            @ISBN
+
+                        @NotNull V/S @NotEmpty V/S @NotBlank  :
+                            | Example Value       | @NotNull | @NotEmpty | @NotBlank |
+                            |---------------------|----------|-----------|-----------|
+                            | null                | False    | False     | False     |
+                            | "" (empty string)   | True     | False     | False     |
+                            | " " (space)         | True     | True      | False     |
+                            | "abc"               | True     | True      | True      |
+                            | " abc "             | True     | True      | True      |
+                            | "123"               | True     | True      | True      |
+                            | "0"                 | True     | True      | True      |
+                            | "true"              | True     | True      | True      |
+                            | "false"             | True     | True      | True      |
+                            | " " (3 spaces)      | True     | True      | False     |
+
+            Implement Jakarta Validation on MVC project :
+                        Step 1. Add model attribute onject contact to bind data with front end field.
+                                ex.,
+                                    @RequestMapping(value = "/contact")
+                                    public String displayContactPage(Model model){
+                                        model.addAttribute("contact", new Contact());
+                                        return "contact.html";
+                                    }
+                        Step 2. Add th:object and th:field inside HTML page. This will bind field from HTML page to variable of POJO class.
+                                NOTE: field name on HTML page and variable name on POJO class must be same to bind data. Else we need to use "name" attribute inside POJO class.
+                                ex.,
+                                    // contact.html
+                                    <form th:action="@{/saveMsg}" method="post" h:object="${contact}">
+                                        <input type="text" th:field="*{name}" required="true"/>
+                                    </form>
+                        Step 3. Add validation on POJO class. "Contact.java"
+                                ex.,
+                                    @NotBlank(message = "Enter name")
+                                    private String name;
+                        Step 4. When button on form page is pressed, pointer goes to controller of the page. 
+                                Here we tell MVC to perform Validation and return Errors.
+                                ex.,
+                                    // ContactController.java
+                                    @RequestMapping(value = "/saveMsg", method=POST)
+                                    public String saveMessage(@Valid @ModelAttribute("contact") Contact contact, Errors errors){
+                                        if(errors.hasErrors()){
+                                            log.error(errors.toString());
+                                            return "contact";
+                                        }
+                                        return "redirect:/home";
+                                    }
+                        Step 5. Show all errors to HTML page from controller class.
+                                ex.,
+                                    // contact.html
+                                    <ul>
+                                        <li class="alert alert-danger" role="alert" th:each="error: @{#fields.errors('contact.*'}"></li>
+                                    </ul>
+
+Bean Scope (Part 2) :
+            Request scope   -   
+                        Spring creates new instance of bean for every HTTP request.
+                        If user make 50 http_request to server, it will create a single bean for each http request. And these beans live for short duration and it's being collected by Garbadge collector. Hence avoid creating unneccessary request bean in application as it will it performance.
+                        ex.,
+                            Use request bean for passing credentials of users. As these details are not being stored in server after the use, request scope is perfect for this scenario.
+            Session scope   -   
+                        Spring creates new instance of bean for defined session time in server memory.
+                        Session scoped bean lived for defined time. Hence avoid keeping too much infomation on session as it might hit performance.
+                        Never store sensitive information inside Session scoped beans.
+                        ex.,
+                            userName that we show on multiple pages of application is defined as Session scope.
+            Application scope   -   
+                        Spering creates only one instance of bean for whole application run time.
+                        Singlton and Application scope are so much similar but there are some edge cases, we want to use this other type of scope.
+                        Avoid use of Application scoped beans unless needed as it also hit performance of web app. Instead of Application scoped bean, We can fetch data from database or caching. 
+                        NOTE: Race condition can occur for Applicationscope.
+                        ex.,
+                            Each singlton scoped bean is created for each ApplicationContext but a web app can have multiple ApplicationContext.
+                            While one Application scoped bean created for the whole web app. 
+
+            NOTE:   
+                Singleton & Prototype scope can be used inside web application or simple java code.
+                Request/Session/Application scope can be used inside only web application as it works on HttpRequest.
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
