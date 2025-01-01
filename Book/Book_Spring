@@ -964,9 +964,48 @@ LOMBOK Library  :
                 Add dependency of LOMBOK library in POM.xml file.
 
             @Slf4j  -
-                        Above annotation will remove declaration of logger in POJO file.
-                        ex.,
-                            private static logger log = LoggerFactory.getLogger(Contact.class);
+                Above annotation will remove declaration of logger in POJO file.
+                ex.,
+                    private static logger log = LoggerFactory.getLogger(Contact.class);
+            @AllArgsConstructor -
+                Creates a constructor using all available fields inside of class.
+                ex.,
+                    // HomeController.java
+                    @AllArgsConstructor
+                    public class HomeController{
+                        public final String username;
+                        @NotNull
+                        public String name;
+                        public int age;
+                    }
+                    // Constructor with all available fields inside class will be generated during compile time will be...
+                    public HomeController(String username, String name, int age){   ... }
+            @NoArgsConstructor  -
+                Creates a default type constructor.
+                ex.,
+                    // HomeController.java
+                    @NoArgsConstructor
+                    public class HomeController{
+                        public final String username;
+                        @NotNull
+                        public String name;
+                        public int age;
+                    }
+                    // Default constructor will be generated during compile time will be...
+                    public HomeController(){ }
+            @RequiredArgsConstructor
+                Creates a constructor with only @NotNull or final fields/variable inside of class.
+                ex.,
+                    // HomeController.java
+                    @RequiredArgsConstructor
+                    public class HomeController{
+                        public final String username;
+                        @NotNull
+                        public String name;
+                        public int age;
+                    }
+                    // Constructor with @NotNull and final field will be generated during compile time will be...
+                    public HomeController(String username, String name){ }
 
 SpringBoot DevTools     :
                     It is a dependency where Automatic restart & LiveReload happens for DEV environment. 
@@ -1078,6 +1117,7 @@ Query params using @RequestParam   :
                     <li><a th:href="@{/holidays(festival='true',federal='true')}">Holidays</a></li>
                 Step 2 : Handle Query parameter from controller of the page. Make parameter non-required as it's used as filter.
                     // HolidayController 
+                    @GetMapping(value = "/holidays/{display}")
                     public String displayHolidays(@RequestParam(required = false) boolean festival,
                                   @RequestParam(required = false) boolean federal,
                                   Model model){ ... }
@@ -1186,7 +1226,7 @@ Spring Validation   :
                                 ex.,
                                     // contact.html
                                     <ul>
-                                        <li class="alert alert-danger" role="alert" th:each="error: @{#fields.errors('contact.*'}"></li>
+                                        <li class="alert alert-danger" role="alert" th:each="error: @{#fields.errors('contact.*')}"></li>
                                     </ul>
 
 Bean Scope (Part 2) :
@@ -1213,6 +1253,253 @@ Bean Scope (Part 2) :
             NOTE:   
                 Singleton & Prototype scope can be used inside web application or simple java code.
                 Request/Session/Application scope can be used inside only web application as it works on HttpRequest.
+
+SpringBoot Security :
+            SpringBoot security brings Security related features to web app such as Authentication, Authorization etc.
+            It protects webapp from Unauthorized access, CSRF, XSS, SQL Injection, Brute force attacks, Session hijacking etc.
+
+            Authentication V/S Authorization:
+                ->  Authentication is used to check user's identity using id-password or OTP.
+                    Authorization is used to check user's authority by checking their assigned role.
+                ->  Authentication occurs before Authorization.
+                ->  If Authentication fails it response 401 error message.
+                    While Authorization fails we get 403 response.
+
+            Implement SpringBoot Security   :
+                Step 1.
+                    Add dependency to POM.xml file. And load maven changes.
+                    NOTE:   
+                        After adding Springboot security, Authentication is implemented by default. Hence we will be redirected to login page initially. Where password is generated by spring security framework and it is available on Server Console.
+
+                        We can create custom creds instead of spring security generates id-password on server console.
+                        GENERALLY this method is used for POC but for PRODUCTION, we have to use Database/ OAUTH2 servers for id-password as there can be so many users.
+
+                        Add id-password to "application.properties" file:
+                            spring.security.user.name = krunal
+                            spring.security.user.password = 12345678
+
+                        This time password won't be generated on server console. And we can use id-password from application.properties file.
+
+                Step 2.
+                    Create securityConfig file:
+                    ex.,
+                        @Configuration
+                        public class securityConfig{
+                            @Bean
+                            // Security Filter Chain are defined security rules for Http requests.
+                            SecurityFilterChain defaultSecurityFilterChain(httpSecuirty http) throws Exception{
+                                http.
+                                    // Configure how http requests are authorized
+                                    authorizeHttpRequests(
+                                        // permit all incoming http requests
+                                        auths -> auths.anyRequest().permitAll()
+                                    )
+                                    // Provides a default login page for users to log in. If a user is not authenticated.
+                                    .formLogin(Customizer.withDefaults())
+                                    // Enables basic Authentication for APIs.
+                                    .httpBasic(Customizer.withDefaults());
+
+                                return http.build();
+                            }
+                        }
+
+            permitAll() -   
+                        Accept all incoming http request. Used to allow access to the resource file CSS/JS/Assets.
+            denyAll()   -   
+                        Denies all incoming http request. Used for temporay retired APIs or for some testing purpose. 
+                        When we try to access such denied resource, it will send "403 response".
+            anyRequest()    -
+                        Matches all incoming requests (global matcher/ catch-all rule).
+                        ex.,
+                            http.authorizeHttpRequests(authz -> authz
+                                    .requestMatchers("/admin/**").hasRole("ADMIN") // Only ADMIN can access /admin/**
+                                    .anyRequest().permitAll()                      // All other requests are allowed
+                            );  
+            requestMatchers()   -
+                        Match specific pattern of http request.
+                        ex.,
+                            // Matches "http://localhost:8080/home" but does not match "http://localhost:8080" and send 403 response.
+                            http.authorizeHttpRequests(authz -> authz
+                                    .requestMatchers("/home").permitAll()        // only "/home" matched requests will have access/
+                                    .anyRequest().denyAll()                      // not matching requests will be rejected and 403  response will be sent once user is logged in.
+                            ); 
+
+                            // In controller "", "/", "/home" path returns "home.html" string. so we need to include each request.
+                            http.authorizeHttpRequests(auths -> auths
+                                    .requestMatchers("/index", "/", "/home").permitAll() 
+                                    .anyRequest.denyAll()
+                            )
+
+                            NOTE:
+                                we can not use "" in requestMatchers as pattern can't be empty.
+                                Hence we have to use "/index" pattern to match "" request.
+
+                            // HolidayController has Path variable and url changes accroding to that.
+                            ex., 
+                                /holiday/all    -   to show all federal and festival holiday
+                                /holiday/festival   -   to show all festival holiday
+                                /holiday/federal    -   to show all federal holiday
+
+                                http.authorizeHttpRequests(auths -> auths
+                                        .requestMatchers("/holiday/**").permitAll() 
+                                        .anyRequest.denyAll()
+                                )
+                        
+                        NOTE:   
+                            We need to give access to the public resource such as CSS file, Js file, assets folder. As Spring security, secure all component of web app.
+
+                            Hence do this.,
+                                    .requestMatchers("/assets/**").permitAll() 
+            authenticated() -
+                        A request will be accessible by authenticated users- those who are logged in.
+                        ex.,
+                            http
+                                .authorizeHttpRequests(auth -> auth
+                                    .requestMatcher("/home").authenticated()
+                                )
+                                .build();
+
+            CSRF Token    :
+                        CSRF is a token used to prevent attack such as cross-site request.
+                        It is token gnereated by server and during each http request, client has to sent it with http request otherwise server will reject the request. 
+
+                        By default, Spring security enables CSRF for all Http methods which can alter data like POST, DELETE, UPDATE etc. And also for login and logout action as they are state changin action.
+                        But spring security is not enable for GET method.
+
+                        Syntex:
+                            // inlcude in login.html so Spring security and thymeleaf can handle all.
+                            <input type="hidden" th:name="${_csrf.parameteName}" th:value="${_csrf.token}" />
+
+                        http.csrf().disable()  -
+                                    Used to disable CSRF for whole application. 
+                                    ex.,
+                                        http.csrf().disable();
+                        http.csrf.ignoringRequestMatcher()  -
+                                    Used to disable CSRF for specific action.
+                                    ex.,
+                                        ttp.csrf.ignoringRequestMatcher("/saveMsg");
+
+                        NOTE: 
+                            SpringSecurity has default behaviour in which CSRF is handle. It will send 403 response if invalid http request is receieved.
+                            When you use ReactJS or AngularJS, developer have to handle CSRF but with thymeleaf is not needed as thymeleaf handle CSRF by detault.
+                            ex.,
+                                // Regular form submit action which result in 403 response as it is vulnerable to CSRF attack.
+                                // home.html
+                                <form action="/saveMsg"> </form> 
+                                
+                                // To avoid 403 response, You can disable it in config file by,
+                                http.csrf().disable();
+                                Or http.csrf(AbstractHttpConfigurer::disable);
+                                or http.csrf(csrf -> csrf.disable());
+                                
+                                // But it increses the risk of CSRF attack.
+                        
+                        NOTE:
+                            When CSRF is disable on config file. Spring stops generating and validating CSRF token.
+                            As a result, attacker can take sessionId "JSESSIONID" from cookies which is maintained by the web container in the form of cookie.
+                            Attackers can take this sessionId and show them as authorized peroson and inject JavaScript code to webApp.
+
+            CSRF lifecycle  :
+                        For data-manipulating (POST, DELET, UPDATE) or state-changing (LOGIN, LOGOUT) actions, the request first goes to the SecurityFilterChain.
+
+                        If ignored/permitted, it proceeds to the controller.
+
+                        If not permitted, it triggers authentication/authorization checks.
+
+                        After passing checks, the controller processes the request and redirects as needed.
+
+            Store information in web app memory :
+                        Create a method with return type "InMemoryUserDetailsManager" which object will store all user details like usernane, password, role etc.
+                        ex.,
+                            // SecurityConfig.java
+                            @Bean
+                            public InMemoryUserDetailsManager userDetailsService(){
+                                // user 1
+                                UserDetails admin = User.builder()
+                                    .username("k")
+                                    .password("1")
+                                    .roles("ADMIN", "USER")
+                                    .build();
+
+                                // user 2
+                                UserDetails user = User.builder()
+                                    .username("p")
+                                    .password("1")
+                                    .roles("USER")
+                                    .build();
+
+                                return new InMemoryUserDetailsManager(user, admin);
+                            }
+
+Spring Security & thymeleaf :
+            To load dynamic rendering to web app, this extra package used to fetch data such as user logged in or not, authorized or not etc.
+        
+            sec:authorize="isAnonymous()"   -   true if User is Anonymous.
+            sec:authorize="isAuthenticated()"   -   true if User is logged in to the system.
+            sec:authorize="hasRole("name")  -   true if string matches with User's role.
+            sec:authorize="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')"   -   true if user has any role from list.
+            
+            sec:authentication="name"   -   Displays the username of the authenticated user
+            sec:authentication="autorities"   -   Displays the authorities (roles) associated with the currently authenticated user.
+            sec:authentication="principal"  -   Displays the entire principal object (usually the user details object that contains username, roles, etc.).
+
+            IMPLEMENTATION OF SPRING SECURITY & THYMELEAF:
+                        Step 1: inlcude dependency inside POM.XML file                   
+                            <dependency>
+                                <groupId>org.thymeleaf.extras</groupId>
+                                <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+                            </dependency>
+                        Step 2: Add xlms: to your header.html file to use dynamic rendering.
+                            // header.html  
+                            <html lang="en" xmlns:th="http://www.thymeleaf.org"
+                                xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+                        Step 3: Use sec:authorize & sec:authentication attribute:
+                            // header.html
+                            <li class="nav-item" sec:authorize="isAnonymous()">
+                                <a th:href="@{/login}" class="nav-link">LogIn</a>
+                            </li>
+                            <li class="nav-item" sec:authorize="isAuthenticated()">
+                                <a th:href="@{/logout}" class="nav-link">logout</a>
+
+Exception Handler   : 
+            @ExceptionHandler used to handle exceptions during runtime of WebApp.
+
+            @ExceptionHandler can be used with one controller @Controller to handle any exception occured in the specific controller class.
+            ex.,
+                Here we are handling 2 exceptions thrown for HomeController with @ExceptionHandler:    
+                // HomeController.java
+                @Controller
+                public class HomeController{
+                    @RequestMapping("/home")
+                    public String displayHomePage{
+                        return "home.html";
+                    }
+
+                    @ExceptionHandler({
+                        NullPointerException exception,
+                        IOException exception
+                    })
+                    public ModelAndView handleException(RuntimeException ex){
+                        .. code..
+                    }
+                }
+
+            @ExceptionHandler can be used for all controller using @ControllerAdvice.
+            ex.,
+                // GlobalExceptionController.java
+                @ControllerAdvice
+                public class GlobalExceptionController{
+                    // Parent class of all exceptions.
+                    @ExceptionHandler(Exception.class)
+                    public ModelAndView handleException(RuntimeException ex){
+                        .. code..
+                    }
+                }
+
+            ??? Why ModelAndView was used here?
+
+h2databse   :
+            
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
