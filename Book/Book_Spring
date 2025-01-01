@@ -1499,7 +1499,36 @@ Exception Handler   :
             ??? Why ModelAndView was used here?
 
 h2databse   :
-            
+            Wheneeer we start server, we need to create data schema and table. 
+            Because when we terminate/restart server all the information have been lost and during start of server, new memory is initialized.
+
+            It is used for Non-Production environment to avoid creation of SQL/oracle database instead focus on building and testing demo project quickly.
+
+            IMPLEMENT H2DATABASE    :
+                        step 1: Include dependency to POM.xml file.
+                            code:
+                                <dependency>
+                                    <groupId>com.h2database</groupId>
+                                    <artifactId>h2</artifactId>
+                                    <scope>runtime</scope>
+                                </dependency>
+                        step 2: Access "h2console" but before that add permitAll() and CSRF friendly.
+                            ex.,
+                                http.csrf(
+                                    csrf -> csrf.ignoringRequestMatcher(PathRequest.toH2Console())
+                                )
+                                .requestMatchers().permitAll(PathRequest.toH2Console());
+                        step 3: Disabling Spring security when security trying to deal with frame component.
+                            code:
+                                http.headers(headersConfigurer -> headersConfigurer
+                                        .frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
+                        step 4: go to /h2-console link:
+                            link:
+                                http://localhost:8080/h2-console/
+                        
+                        NOTE:
+                            For CSRF use PathRequest.toH2Console() method instead of using String "/h2console".
+                            Else with the string "/h2console" will not work.
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
