@@ -786,6 +786,52 @@ AOP (Aspect Oriented Programming):
                             --> param-pattern is "int[]".   {It is parameter's data type.}
                             --> throws-pattern is "NullPointerException".
 
+                    LEARN different TYPES OF EXPRESSION SYNTEX., 
+                        Match all methods in package:
+                            execution(* com.eazybytes.eazyschool..*.*(..))
+
+                        Match all public methods from eazyschool package
+                            execution(public * com.eazybytes.eazyschool..*.*(..))
+
+                        Firt query: Match all methods in package
+                        Second query: Match admin package's all method.
+                        RESULT: Match all methods from both package.
+                            execution(* com.eazybytes.eazyschool..*.*(..)) || execution(* com.eazybytes.admin..*.*(..))
+                            execution(* com.eazybytes.eazyschool..*.get*(..)) && execution(public * *(..))
+
+                        Match controller folder's ContactController class's all methods.
+                            execution(* com.eazybytes.eazyschool.controller.ContactController.*(..))
+
+                        Match displayMessage method with any number of parameters method but from ContactController class.
+                            execution(* com.eazybytes.eazyschool.controller.ContactController.displayMessages(..))
+                        
+                        Match any Constructor of ContactController class. The constructor with 0 parameter or with multiple parameter.
+                            execution(com.eazybytes.eazyschool.service.ContactService.new(..))
+
+                        Match all methods who accept 2 parameter String and int from eazySchool package,
+                            execution(* com.eazybytes.eazyschool..*.*(String, int))
+                        
+                        Match any method from eazyschool package but method must have a first parameter as String.
+                        Matches can be updateContact(String name, int id) or updateContact(String email)
+                            execution(* com.eazybytes.eazyschool..*.*(String, ..))
+
+                        Match any method from eazySchool package but method last parameter of type string    
+                        execution(* com.eazybytes.eazyschool..*.*(.., String))
+
+                        Match any get* method.
+                        It can be getContact(), getinfo(int id), getNmae(String firstName, String lastName)
+                            execution(* com.eazybytes.eazyschool..*.get*(..))
+                        
+                        Match any methods with 0 signature value from eazySchool package.
+                            execution(* com.eazybytes.eazyschool..*.*())
+
+
+
+
+
+
+                        execution(String com.eazybytes.eazyschool.service.*.*(..))
+
             @Order: 
                 Execution of Advice is random when multiple files implemented same Advice.
                 We can give @Order(1), @Order(3)... for each Aspect file.
@@ -1408,6 +1454,10 @@ SpringBoot Security :
 
                         After passing checks, the controller processes the request and redirects as needed.
 
+                        If controller has @Valid then it checks validation that is defined inside class file.
+
+                        After the validation of controller, if service class is used. Pointer goes to service class and then data layer to save data.
+
             Store information in web app memory :
                         Create a method with return type "InMemoryUserDetailsManager" which object will store all user details like usernane, password, role etc.
                         ex.,
@@ -1498,7 +1548,7 @@ Exception Handler   :
 
             ??? Why ModelAndView was used here?
 
-h2databse   :
+H2Databse   :
             Wheneeer we start server, we need to create data schema and table. 
             Because when we terminate/restart server all the information have been lost and during start of server, new memory is initialized.
 
@@ -1512,23 +1562,216 @@ h2databse   :
                                     <artifactId>h2</artifactId>
                                     <scope>runtime</scope>
                                 </dependency>
-                        step 2: Access "h2console" but before that add permitAll() and CSRF friendly.
+                        step 2: Add configuration to application.properties
+                            code:
+                                spring.datasource.url=jdbc:h2:mem:testdb
+                                spring.datasource.driverClassName=org.h2.Driver
+                                spring.datasource.username=sa
+                                spring.datasource.password=
+                                spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+                                spring.h2.console.enabled=true
+                                spring.h2.console.path=/h2-console
+                                spring.jpa.hibernate.ddl-auto=update
+                                spring.jpa.show-sql=true
+                        step 3: Access "h2console" but before that add permitAll() and CSRF friendly.
                             ex.,
                                 http.csrf(
                                     csrf -> csrf.ignoringRequestMatcher(PathRequest.toH2Console())
                                 )
                                 .requestMatchers().permitAll(PathRequest.toH2Console());
-                        step 3: Disabling Spring security when security trying to deal with frame component.
+                        step 4: Disabling Spring security when security trying to deal with frame component.
                             code:
                                 http.headers(headersConfigurer -> headersConfigurer
                                         .frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
-                        step 4: go to /h2-console link:
+                        step 5: Go to /h2-console link:
                             link:
                                 http://localhost:8080/h2-console/
                         
                         NOTE:
                             For CSRF use PathRequest.toH2Console() method instead of using String "/h2console".
                             Else with the string "/h2console" will not work.
+
+JDBC    :
+            With JDBC there are lots of stpes to connect database.,
+
+            Steps to access Database using JDBC:
+                Load driver class
+                Obtain a DB connection
+                Obtain a statement suing connection object
+                Execute the query
+                Process the result set
+                Close the connection
+
+JDBCTemplate :
+            Because of JDBCTemplate, we do not need to load driver class, create DB connection, catch exception and handle it etc.
+            JDBCTemplate will take care of that and we can focus on creating business logic.
+            JDBC is used as backend for Advance framework such as Spring Data, Hybernate etc.
+
+            SAVING DATA TO DATABASE:
+                        step 1.
+                            Data goes from HTML page -> controller class -> service class -> Repo class 
+                        step 2.
+                            // contact.html
+                            <form action="/saveMsg" method="post" class="signin-form" th:object="${contact}">
+                                <input type="text" th:field="*{name}" placeholder="Your Name" class="contact-input" />
+                        step 3.
+                            // contactController.java
+                            @Autowired
+                            private final ContactService contactService;  
+
+                            @RequestMapping(value = "/saveMsg",method = POST)
+                            public String saveMessage(@Valid @ModelAttribute("contact") Contact contact, Errors errors) {
+                                if(errors.hasErrors()){
+                                    log.error("Contact form validation failed due to : {}", errors.toString());
+                                    return "contact.html";
+                                }
+                                contactService.saveMessageDetails(contact);
+                                return "redirect:/contact";
+                            }
+                        step 4.
+                            // ContactRepository.java
+                            @Repository
+                            public class ContactRepository {
+                                @Autowired
+                                private final JdbcTemplate jdbcTemplate;
+
+                                public int saveContactMsg(Contact contact){
+                                    String sql = "INSERT INTO CONTACT_MSG (NAME) VALUES (?)";
+                                    return jdbcTemplate.update(sql,contact.getName());
+                                    }
+                            }
+            
+            QUERY DATA FROM DATABASE AND SHOW INSIDE HTML PAGE: 
+                        flow: 
+                            When user load "/messages.html" page, the pointer goes to SecurityConfig file.
+                            And checks if current user has permission/permit for current HttpRequest.
+                            If user has access, pointer goes to controller of it. And checks if modelAndView assign it or not.
+                            Here, it is getMapping request.
+                            So controller will call service and service call Repository class and fetch data from database.
+                            Here we need to map data from database column to object field using Mapper.
+                        
+                        step 1.
+                            Create a Mapper to bind data with column to object fields:
+
+                            NOTE: 
+                                Mapper class has 2 parameters:
+                                    ResultSet is data retrieved from SQL query.
+                                    rowNum shows which row in the result set is currently being processed.
+                            
+                            // ContactRowMapper.java
+                            public class ContactRowMapper implements RowMapper<Contact> {
+                                @Override
+                                public Contact mapRow(ResultSet rs, int rn) throws SQLException {
+                                    Contact contact = new Contact();
+                                    contact.setContactId(rs.getInt("CONTACT_ID"));
+                                    contact.setName(rs.getString("NAME"));
+
+                                    System.out.println("Row Number: " + rowNum);
+                                    return contact;
+                                }
+                            }
+
+                            NOTE: 
+                                We can skip creating Mapper class if field name from SQL column is exactly like variable name inside class.
+
+                                Update Repository class and use BeanPropertyRowMapper.newInstance(className.class) which will create RowMapper.
+                                // ContactRepository.java
+                                @Repository
+                                public class ContactRepository{
+                                    @Autowired
+                                    public JdbcTemplate jdbcTemplate;
+
+                                    public List<Contact> getAllContacts(){
+                                        String sql = "SELECT * FROM contact";
+                                        return jdbcTemplate.query(sql, new BeanPropertyRowMapper.newInstance(Contact.class));
+                                    }
+                                }
+                        step 2.
+                            Use Mapper and jdbc.query() to fetch data from database.
+
+                            NOTE:
+                                jdbcTemplate has 3 parametes:
+                                    Sql query in string format
+                                    PreparedStatementSetter() which is used to set value for ? in query
+                                    Mapper to bind data with database column data to class field
+
+                            // ContactRepository
+                            @Repository
+                            public class ContactRepository {
+                                @Autowired
+                                private final JdbcTemplate jdbcTemplate;
+
+                                public List<Contact> findMsgsWithStatus(String status){
+                                    String sql = "SELECT * FROM contact_msg WHERE status = ?";
+                                    return jdbcTemplate.query(sql, new PreparedStatementSetter() {
+                                        @Override
+                                        public void setValues(PreparedStatement ps) throws SQLException {
+                                            ps.setString(1, status);
+                                        }
+                                    }, new ContactRowMapper());
+                                }
+                            }
+
+                        step 3.
+                            Service object to perform business logic and call above Repository method to fetch data:
+                            ex.,
+                                // ContactService.java
+                                public List<Contact> findMsgsWithOpenStatus(){
+                                    List<Contact> contactMsgs = contactRepository.findMsgsWithStatus(EazySchoolConstants.OPEN);
+                                    return contactMsgs;
+                                }
+                        
+                        step 4.
+                            Controller class to set view-model or redirect.
+                            In this case, we will set model and view to show data to getMapping request.
+
+                            ex.,
+                                // ContactController.java
+                                @RequestMapping(value = "/displayMessages", method = RequestMethod.GET)
+                                public ModelAndView displayMessage(){
+                                    List<Contact> contactMsgs = contactService.findMsgsWithOpenStatus();
+                                    ModelAndView modelandview = new ModelAndView("messages.html");
+                                    modelandview.addObject("contactMsgs", contactMsgs);
+                                    return modelandview;
+                                }
+
+                        step 5.
+                            Show data to html page:
+                            ex.,
+                                // messages.html
+                                <tr th:each="msg: ${contactMsgs}">
+                                    <td th:text="${msg.name}"></td>
+                                    <td><a th:href="@{/closeMsg(id=${msg.contactId})}" class="btn btn-style btn-style-3">CLOSE</a></td>
+                                </tr>
+
+NamedParamaeterJDBCTemplate :
+            instead of using '?', we are providing field name in NamedParamaeterJDBCTemplate.
+            It just provide more readibility to code than JDBCTemplate.
+
+            ex.,
+                // Contact.java
+                @Data public class Contact{
+                    public String name;
+                }  
+
+                // ContactRepository.java
+                @Repository
+                class ContactRepository{
+                    @Autowire
+                    private NamedParamaeterJDBCTemplate namedParamaeterJDBCTemplate;
+
+                    public int saveContact(Contact contact){
+                        String sql = "INSERT INTO contacts (name) values (:name)";
+                        // map parameters
+                        SqlParameterSource parameters = new SqlParameterSource().addValue("name", contact.getName());
+
+                        return namedParameterJdbcTemplate.update(sql, parameters);
+                    }
+                }
+
+AWS :
+            user name   :   admin
+            password    :   12345678
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
