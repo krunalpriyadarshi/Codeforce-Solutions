@@ -1,3 +1,51 @@
+interface   :
+            Interface is used to achieve loosely coupling between components.
+            Interface is used to achieve Abstraction and multiple inheritance.
+
+            NOTE:
+                Variable inside Interface is by default "public static final".
+
+            ABSTRACT METHOD(NORMAL WAY):
+                    We must have to use all interface method inside class.
+                        interface A{
+                            void call();
+                        }
+                        class B implements A{
+                            // Mandatory implementation
+                            void call(){
+                                System.out.println("call method");
+                            }
+                        }
+            DEFAULT METHODS:
+                    It is optional method. 
+                    It can be accessible from class object.
+                    It can be overridden.
+                        interface A{
+                            default void call();
+                        }
+                        class B implements A{
+                            // optinal to use call() method from interface.
+                            ..
+                        }
+            STATIC WAY:
+                    Static method can be accessible by interface only. We can't access static method from object of a class.
+                        example.
+                            interface A{
+                                static void call(){
+                                    System.out.println("interface instance");
+                                }
+                            }
+                            class B implements A{
+                                // Can not override static method of interface.
+                                ..
+                            }
+                            class Test {
+                                public static void main(String[] args) {
+                                    A.info(); // Access via interface
+                                    // obj.info(); // ERROR: Cannot access via object
+                                }
+                            }
+
 Spring takes components from Jakartaka if concept is helpful to developers. / Spring borrows the annotations from Java EE.
 
 How to create a project in IntelliJ:
@@ -1769,7 +1817,7 @@ NamedParamaeterJDBCTemplate :
                     }
                 }
 
-AWS :
+AWS RDB :
             Perform AWS setup and create RDB    -
                         user name   :   admin
                         password    :   12345678
@@ -1794,6 +1842,31 @@ AWS :
                         NOTE:
                             url is "jdbc:mysql://" + AWS's Endpoint + DB name from MySql 
                             username and password are from initial AWS RDB Database setup.
+
+Spring DATA :
+            It is spring framework which simplifies data access for application. In result, developers do not need to write extra code to access these data from DB.
+            There are many modules like.,
+                Spring JDBC,
+                Spring DATA JPA,
+                Spring DATA REST., etc
+
+Spring JDBC :
+            Spring JDBC is limited ORM (Object Related Mapping) framework.
+            It is small version of Spring DATA JPA.
+            It does not offer caching, lay loading and many features that JPA provides.
+
+ORM (Object Related Mapping)    : 
+            Map tables to Classes.
+                Columns map to fields (attributes) in the class.
+                Rows map to Object of class.
+            Managing Relationship 
+                ORM handles all One-to-one, One-to-many, many-to-many
+            Automatic SQL query generation
+            Session Management
+            Persistence Context
+
+Spring DATA JPA :
+              
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
