@@ -37,6 +37,10 @@ interface   :
                             }
                             class B implements A{
                                 // Can not override static method of interface.
+                                /*
+                                /   @Override
+                                /   static void call(){...}  // ERROR: Cannot use static method with @Override
+                                */
                                 ..
                             }
                             class Test {
@@ -45,6 +49,88 @@ interface   :
                                     // obj.info(); // ERROR: Cannot access via object
                                 }
                             }
+
+            Marker Interface:
+                        A interface without fields and methods.
+                        These interfaces used as meta data so that we can create logic based on meta data. 
+                        Lets say a class has Cloneable marker interface implemented which means that class can be cloned. But it does not implement cloneable interface than it will throw custom exception when tried to access it.
+                        
+                        There are few Marker interface: 
+                            Cloneable       -   A meta data to tell if class is cloneable or not.
+                            Remote          -   A meta data to tell if class is remote or not.
+                            Serializable    -    
+                                Used to mark a class if it is Serializable.
+                                We can define logic based on class's meta data.
+                                At runtime, we can check instance as meta data and apply behavior. like if is Seriablizable we can stream object but if not, we can throw custom exception.
+                                    example.,
+                                        interface Serializable{
+                                            // Empty interface
+                                        }
+                                        class Person implements Serializable{
+                                            private String name;
+                                            public void setName(String name){this.name = name;}
+                                            public String getName(return name);
+                                        }
+                                        class Test{
+                                            public static void main(String[] args) {
+                                                Person p = new Person();
+                                                System.out.println(p instanceof Seriablizable);  // Used to check if it supports Serializable. Which is used as Meta data.
+                                            }
+                                        }  
+
+            Functional Interface:
+                        A functional interface is a interface with only one method. 
+                            But to avoid confusion from regular interface (which can have one or more than one method), we are using Annotation "Functional interface" on top of interface. Which forces interface to use only one method else throw error.
+                        
+                        Main use of Funcitonal Interface is to use lambda function.
+
+                        example.,
+                            // Regular way to use Functional interface: 
+                                    @FunctionalInterface
+                                    interface Calculator{
+                                        void compute(int a, int b);
+                                    }
+
+                                    class Test{
+                                        public static void main(String[] args) {
+                                            Calculator add = new Calculator() {
+                                                // Creating a object that implement interface.
+                                                @Override
+                                                public void compute(int a, int b) {
+                                                    System.out.println(a+b);
+                                                }
+                                            };
+                                        }
+                                    }
+                            
+                            // Using Functional interface as Lambda function: (only parameters)
+                                    @FunctionalInterface
+                                    interface Calculator{
+                                        void compute(int a, int b);
+                                    }
+
+                                    class Test{
+                                        public static void main(String[] args) {
+                                            Calculator add = (int a, int b) -> System.out.println(a+b);
+
+                                            add.compute(10, 20);
+                                        }
+                                    }
+                            
+                            // Using Functional interface as Lambda function: (parameters with return value)
+                                    @FunctionalInterface
+                                    interface Calculator{
+                                        int compute(int a, int b);
+                                    }
+
+                                    class Test{
+                                        public static void main(String[] args) {
+                                            Calculator add = (int a, int b) -> (a+b);
+
+                                            int result = add.compute(10, 20);
+                                            System.out.println(result);
+                                        }
+                                    }
 
 Spring takes components from Jakartaka if concept is helpful to developers. / Spring borrows the annotations from Java EE.
 
@@ -1323,6 +1409,40 @@ Spring Validation   :
                                         <li class="alert alert-danger" role="alert" th:each="error: @{#fields.errors('contact.*')}"></li>
                                     </ul>
 
+Custom Spring Validation    :
+            To create Custom Validation, we need to create @interface and a class which implements @interface.
+
+            Class must override isValid() method.
+            where "ConstraintValidatorContext" is must required. Which can be used to get groups and define custom logic. And Payload can be used inside.
+            And other parameter is datatype of value which is being validated.
+
+            @interface:
+                // PasswordValidator.java
+                    @Constraint(validatedBy = PasswordStrengthValidator.class)      // Class which has custom logic for validation 
+                    @Target({ElementType.FIELD})                                    // Targets - what needs to be validated
+                    @Retention(RetentionPolicy.RUNTIME)                             // At Runtime it should execute
+                    public @interface PasswordValidator {
+                        String message() default "Please choose a strong password"; // Default error message incase no message defined in POJO class
+                        Class<?>[] groups() default {};                             // groups defined here can be used inside java class by "context.getDefaultConstraintMessageTemplate().contains("Group1")" and define custom logic to it. like password max-length 6 for group1 but max-length for group2 is 10.
+                        Class<? extends Payload>[] payload() default {};            // Used for logger or meta data. Create a class which extends Payload and define logger statement inside. Make sure to add it inside default{myExamplePayload.class} 
+                    }
+            Class which implement @interface:
+                // PasswordStrengthValidator.java
+                    public class PasswordStrengthValidator implements
+                            ConstraintValidator<PasswordValidator, String> {
+                        @Override
+                        public boolean isValid(String passwordField,
+                                            ConstraintValidatorContext cxt){
+                            return passwordField != null && passwordField.length() > 5;
+                        }
+                    }
+            POJO class:
+                // User.java
+                    public class UserDTO {
+                        @PasswordValidator(message = "Password must be at least 8 characters, include one uppercase letter, one digit, and one special character.")
+                        private String password;
+                    }
+                
 Bean Scope (Part 2) :
             Request scope   -   
                         Spring creates new instance of bean for every HTTP request.
@@ -1528,7 +1648,7 @@ SpringBoot Security :
 
                                 return new InMemoryUserDetailsManager(user, admin);
                             }
-
+.
 Spring Security & thymeleaf :
             To load dynamic rendering to web app, this extra package used to fetch data such as user logged in or not, authorized or not etc.
         
@@ -1850,6 +1970,19 @@ Spring DATA :
                 Spring DATA JPA,
                 Spring DATA REST., etc
 
+            Hierarchy of Spring Data Interface:
+                Repository ---> CrudRepository ---> ListCrudRepsitory ---> JPARepository
+                Repository ---> PagingAndSortingRepository ---> ListPagingAndSortingRepsitory ---> JPARepository
+
+                ex.,
+                     Repository
+                               |
+                        CrudRepository
+                       /             \
+      ListCrudRepository    PagingAndSortingRepository
+                       \             /
+                       JpaRepository
+
 Spring JDBC :
             Spring JDBC is limited ORM (Object Related Mapping) framework.
             It is small version of Spring DATA JPA.
@@ -1865,8 +1998,540 @@ ORM (Object Related Mapping)    :
             Session Management
             Persistence Context
 
+Optional<> object   :
+            Optional object is a safer way to deal with not null values.
+            When we try to use method on null values, we get NULLPOINTEREXCEPTION.
+            Hence, we need to null value before processing further.
+            ex.,
+                public boolean isUpdated(String id, String FirstName){
+                    Contact contact = Repository.findById(id);
+                    // contact can be null:
+                    if(contact == null)
+                        return false;
+
+                    contact.setFirstName(FirstName);
+                    Contact result = Repository.save(contact);
+                    // if database could not save data for some reason it could return null value as it failed to update value of contact obejct.
+                    return result != null;
+                }
+            
+            To safer way to deal NULL values, we can use Optional.ifPresent() with Optional.get().
+            Optional.ifPresent()    -
+                        Returns True if value is present else return false;
+            Optional.get()  -
+                        Returns the object saved inside Optional object. 
+                        initially we are passing an object when declaring Optional object.
+                        Optional<Contact> contact = new Optional<>();
+                        contact = Repository.findById(id);
+
+            ex.,
+                public boolean isUpdated(String id, String FirstName){
+                    Contact contact = Repository.findById(id);
+                    
+                    if(contact.ifPresent()){
+                        contact.setFirstName(FirstName);
+                        Contact result = Repository.save(contact);
+                        // if saved succesful returns True else False.
+                        return result != null;
+                    }
+                    
+                    // if Null is return during fetch operation of findById() method.
+                    return false;
+                }
+
+                OR YOU CAN USE LAMBDA FUNCTION:
+                public boolean isUpdated(String id, String FirstName){
+                    Contact contact = Repository.findById(id);
+                    
+                    contact.ifPresent( con ->{
+                        contact.setFirstName(FirstName);
+                        Contact result = Repository.save(contact);
+                    });
+
+                    return contact.ifPresent;
+                }
+               
 Spring DATA JPA :
-              
+            @Entity  -
+                    Used to define relationship between a java class and a database table.
+                    
+                    Spring JPA tries to match Class name and Table name, inorder to bind data.
+                    This can be done by ignoring casing and "_" character which is used in SQLdb frequently for Table or Column name.
+
+                    NOTE:
+                        Spring JPA has default behaviour of matching class and table (Field and Column) by trying to match names.
+                        ex 1.,
+                            Class name = "Contact"
+                            Table name = "contact"
+                                These will match as Spring JPA will ignore sensitive casing.
+                            
+                        ex 2.,
+                            Field name = "contactId"
+                            Column name = "contact_id"
+                                These will match as '_' and sensitive casing will be ignored.
+
+                        ex 3.,
+                            Class name = "Contact"
+                            Column name = "contact_id" 
+                                These will not match. So we need to use @Table(name = "Contact_id") in java file.
+                        
+                        ex 4.,
+                            Field name = "email"
+                            Column name = "email_id"
+                                These will not match. So we need to use @Coulmn(name = "email_id") in java file.
+
+            @MappedSuperClass   -
+                    It is not a table but provide fields to child class. As BaseEntity has fields like createdBy, lastUpdatedBy etc., which are common for each table inside Database.
+
+            @Id -   
+                    To set field as Primary key.
+
+                    NOTE:   
+                        To auto populate field as per Database generation method, we need to use @GeneratedValues() and @GenericGenerator().
+
+                        @GeneratedValues() defines ID generation rule and Generator's name that needs to be used.
+                        @GenericGenerator() defines Strategy based on database to generate IDs. 
+
+                        CODE:
+                            @Id
+                            @GeneratedValues(strategy = GenerationType.AUTO, generator = "native")
+                            @GenericGenerator(name = "native", strategy = "native")
+                            @Column
+                            private String contactId;
+
+            @Column -
+                    When column name and class variable name is not matching add @Column on top of field declaration.
+
+            @Table  -
+                    When table name and class name is not matching add @Table on top of class declaration.
+
+            @Transient  -
+                        Tells spring, not to include these class fields to any database related operations.
+                        ex.,
+                            class person{
+                                @PasswordValidator
+                                private String password;
+
+                                @Tramsient
+                                private String confirmPassword;
+                            }
+
+            Step 1  -   In MainApplication file, scan Repository and Model/entity to use Spring DATA JPA.
+                        ex.,
+                            // Main SpringBoot application file:
+                                @SpringBootApplication
+                                @EnableJpaRepositories("com.eazybytes.eazyschool.repository")
+                                @EntityScan("com.eazybytes.eazyschool.model")
+                                public class EazyschoolApplication {
+                                    public static void main(String[] args) {
+                                        SpringApplication.run(EazyschoolApplication.class, args);
+                                    }
+                                }
+
+            Step 2  -   Data mapping of Fields and Columns
+                        By using @Entity on top of class table.
+                        Use @Table, @Column to match name with fields and columns.
+
+                        For BaseEntity class use @MappedSuperClass so that we can use inside our POJO class.
+
+                        For Primary Key, use @Id
+                        And for AUTO_INCREMENT, use @GeneratedValue(strategy = GenerationType.IDENTITY); Which generates Id Automatically based on MySQL's native ID generation method.
+
+                        ex.,
+                            // Any class with id AUTO_INCREMENT
+                            @Id
+                            @GeneratedValue(strategy = GenerationType.IDENTITY)
+                            @Column(name = "contact_id")
+                            private int contactId;
+
+
+                        For Primary Key, use @ID and @GeneratedValues() & @GenericGenerator(). Which is deprevated method and no longer in avaiable to use by Spring framework.
+                        ex.,
+                            // Any class with id AUTO_INCREMENT
+                            @Id
+                            @GeneratedValue(strategy= GenerationType.AUTO,generator="native")
+                            @GenericGenerator(name = "native",strategy = "native")
+                            @Column(name = "contact_id")
+                            private int contactId;
+
+            Step 3  -   Implement Repository inside Repository class such as CrudRepository, ListCrudRepsitory etc.
+
+                        NOTE:
+                            Repository interface expect 2 parameters:
+                                -> Class name 
+                                -> Datatype of Primary Key
+                            
+                                ex.,
+                                    implements CrudRepository<Contact, String>
+                                        where Contact class implement this method and Primary key has String/varchar data type.
+
+                        ex.,
+                            // Class ContactRepository
+
+                                @Repository
+                                Class ContactRepository implements CrudRepository<Contact, Integer>{
+                                    ...
+                                }
+
+            Step 4  -   Define Custom Query Methods inside Repository files. If needed.
+
+            Step 5  -   Implment Query logic inside Service class:
+
+                        ex.,
+                            // ContactService.java
+                            @Slf4j
+                                @Service
+                                public class ContactService {
+                                    @Autowired
+                                    private ContactRepository contactRepository;
+
+                                    public boolean saveMessageDetails(Contact contact){
+                                        boolean isSaved = false;
+                                        contact.setStatus(EazySchoolConstants.OPEN);
+                                        Contact savedContact = contactRepository.save(contact);
+                                        if(null != savedContact && savedContact.getContactId()>0) {
+                                            isSaved = true;
+                                        }
+                                        return isSaved;
+                                    }
+
+                                    public List<Contact> findMsgsWithOpenStatus(){
+                                        return contactRepository.findByStatus(EazySchoolConstants.OPEN);
+                                    }
+
+                                    public boolean updateMsgStatus(int contactId, String updatedBy){
+                                        boolean isUpdated = false;
+                                        Optional<Contact> contact = contactRepository.findById(contactId);
+                                        contact.ifPresent(contact1 -> {
+                                            contact1.setStatus(EazySchoolConstants.CLOSE);
+                                        });
+                                        Contact updatedContact = contactRepository.save(contact.get());
+                                        if(null != updatedContact && updatedContact.getUpdatedBy()!=null) {
+                                            isUpdated = true;
+                                        }
+                                        return isUpdated;
+                                    }
+                                }
+
+            Step 6  -
+                        Optional Setting only if you want to see Generated Query by Derived Query Methods in JPA.
+                        "spring.jpa.show-sql" used to show SQL query inside Server console.
+                        "spring.jpa.properties.hibernate.format_sql" used to format those sql query as the will be printed in single line by default.
+                        
+                        example.
+                            // application.properties
+                            spring.jpa.show-sql= true
+                            spring.jpa.properties.hibernate.format_sql= true
+
+CUSTOM QUERY METHOD :
+            We can find a row by using FindByName("krunal") but sometime we need complex query to retrieve records from database. 
+
+            For that, Derived Query Methods are used:
+                        Introducer clause   -
+                                    find    :
+                                                Used to retrieve data from DB.
+                                                ex.,
+                                                    List<User> findByFirstName(String firstName);
+                                    read    :
+                                                Used to read data from DB. 
+                                                'read' and 'find' are same.
+                                                But in special senario where we do not have record in DB and want to handle data as an exception.
+                                                ex.,
+                                                    List<User> readByFirstName(String firstName);
+                                    query   :
+                                                Create custom query to solve complex query.
+                                                ex.,
+                                                    @Query("SELECT u FROM User u WHERE u.firstName = ?1")
+                                                    List<User> queryByFirstName(String firstName);
+                                    count   :
+                                                Counts records retreieved by query.
+                                                ex.,
+                                                    long countByFirstName(String firstName);
+                                    get :
+                                                Used to retrieve single record.
+                                                ex.,
+                                                    User getById(Long id);
+                                    Distinct    :
+                                                Used to fetch distinct records.
+                                                ex.,
+                                                    List<User> findDistinctByFirstName(String firstName);
+                        Criteria clause -
+                                    Or  :   
+                                    And :
+
+            exercise:
+                findDistinctFirstNameAndLastName(String firstName)
+                    SELECT Distinct u.FirstName, u.lastName FROM user u WHERE u.firstName = ?1;
+                findByLastNameAndFirstName(firstName, SecondName)
+                    SELECT * FROM user AS u WHERE u.firstname = ?1 AND u.lastname = ?2;
+                findByEmail(emailAddress)
+                    SELECT * FROM user AS u WHERE u.email = ?1;                     
+                findByFirstNameOrderByLastNameAsc(String firstName)
+                    SELECT u FROM User u WHERE u.firstName = ?1 ORDER BY u.lastName ASC;
+                findByEmailContaining(String partOfEmail)
+                    SELECT u FROM User u WHERE u.email LIKE ?1;
+                findByAgeBetween(int minAge, int maxAge)
+                    SELECT u FROM User u WHERE u.age BETWEEN minAge AND maxAge;
+                findAgeGreterThan(int age)
+                    SELECT u FROM user WHERE u.age > ?1;
+                findByFirstNameNot(String firstName)
+                    SELECT u FROM user WHERE u.firstName <> ?1;
+
+AUDITING IN SPRING DATA JPA :
+            In business, It is required to audti information about records. Like who inserted the record? And when? Also, who updated record? And when?
+
+            For that, we have created fields in table and class "BaseEntity". Which is accessed by all POJO classes inside webapp.
+            // BaseEntity
+                @Data
+                @MappedSuperclass
+                public class BaseEntity {
+                    private LocalDateTime createdAt;
+                    private String createdBy;
+                    private LocalDateTime updatedAt;
+                    private String updatedBy;
+                }
+
+            But it is hactic and error prone to config to do for all POJO classes. 
+
+            Hence Spring Security and Spring DATA JPA created Auditing:
+            
+            We have annotation like @CreatedTime, @CreatedBy, @LastModifiedTime and @LastModifiedBy inside spring for Auditing.
+            NOTE:
+                In general, Created informations are filled initially when records are inserted. And LastModified fields are null as records just got inserted.
+                Same with update time, after update, we need to update LastModified information but created informations are untounched.
+
+                Hence, Use @Column(insertable = false) and 
+                            @Column(updatable = false).
+                
+                        Step 1:
+                                // Define Auditing fields:
+                                    public class BaseEntity {
+                                        @CreatedDate
+                                        @Column(updatable = false)
+                                        private LocalDateTime createdAt;
+
+                                        @CreatedBy
+                                        @Column(updatable = false)
+                                        private String createdBy;
+
+                                        @LastModifiedDate
+                                        @Column(insertable = false)
+                                        private LocalDateTime updatedAt;
+
+                                        @LastModifiedBy
+                                        @Column(insertable = false)
+                                        private String updatedBy;
+                                    }
+                        Step 2:
+                                // And use entity listener to Registers the entity for auditing by using @EntityListeners.
+                                    @EntityListeners(AuditingEntityListener.class)
+                                    public class BaseEntity { 
+                                        ..//code ..
+                                    }
+                        Step 3:
+                                // Implementation to fetch data from Spring Security:
+                                // AuditorAware<T> interface expect T as type of data used to define user. User role can be String, Id or an object.
+                                    @Component("auditImpleBean")
+                                    public class AuditImpl implements AuditorAware<String> {
+                                        @Override
+                                        public Optional<String> getCurrentAuditor(){
+                                            return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication().getName());
+                                        }
+                                    }
+                        Steep 4:
+                                // Enable Auditing from Main application file:
+                                @EnableJpaAuditing(auditorAwareRef = "auditImpleBean")
+                                public Class EazyschoolApplication {
+                                    public static void main(String[] args) {
+                                        SpringApplication.run(EazyschoolApplication.class, args);
+                                    }
+                                }
+
+Relationship in JPA :
+
+            FetchType   :
+                        Fetch is used to define how to load child entity when loading parent entiry.
+
+                        FetchType.Eager -   When Parent record is being loaded, all child record can be loaded alongside.
+                        FetchType.Lazy  -   When Parent record is being loaded, we do not want child record to be loaded.
+
+                        NOTE:
+                            For *ToMany relationship (OneTOMany, ManyToMany), FetchType.Lazy is default type. Since it will hit the performance of system.
+                            For *ToOne relationship (OneTOOne, ManyToOne), FetchType.Eager is deafult type. Since it won't hit the performance of system.
+                        
+            CascadeType :
+                        When we make changes to parent records, we want those changes apllied to child records as well.
+                        ex.,
+                            When we remove a record person from Person table, we want to remove address record from Address table. (Table and Address table have 1:1 relationship)
+
+                        CascadeType.PERSIST     -   When we save parent table data, we also want to save child table data. Often used with save() operation.
+                        CascadeType.MERGE       -   When we update parent table data, we also want to update child table data. Often used with update() operation.
+                        CascadeType.REFRESH     -   When we fetch parent table data, we also want to fetch child table data. Often used with get() or reload operation.
+                        CascadeType.REMOVE      -   When we delete parent table data, we also want to delete child table data. 
+                                    NOTE:   REMOVE works with 1:1 relationship else you will see error.
+                        CascadeType.DETACH      -   When we detach parenet, we also want to detach all child. Works for cacheing.
+                        CascadeType.ALL         -    shortcut to add all CascadeTypes.
+
+                        NOTE:
+                            By default, No Operation is cascaded.
+
+            @JoinColumn :
+                        used to define reference/ foreign key.
+                        where.,
+                            name is reference key name inside table.
+                            referencedColumnName is field name inside targetEntity.
+                            nullable is to tell if field can be null or not. Which is generally used during DDL.
+
+            @OneToOne   :
+                        relationship between parent and child is one to one.
+                        where.,
+                            fetch is used to define how you want to handle child entity.
+                            cascade is used to define what actions need to performed on child entity.
+                            targetEntity is used to define Child class/model.
+
+                        ex.,
+                            @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, targetEntity = Address.class)
+                            @JoinColumn(name = "address_id", referencedColumnName = "addressId", nullable = true)
+                            private Address address;
+
+AuthenticationProvider  :
+            Used for Authentication process. Where we verify credentials added by user.
+
+            Earlier we were using InMemoryUserDetailsManager to save user id-password inside server memory but we can't do this for all users.
+            Hence, we need database. 
+            In order to verify user id-password typed in login page; we need AuthenticationProvider implemented class to define authentication process.
+
+            NOTE:
+                We need to implement 2 methods from interface.
+                authenticate()  -
+                            Provides custom logic to verify the credentials. If creds are valid, then token is generated in this format: (userName, PWD, role).
+                            All the logic (fetch user from db -> check password -> setting password) are implemented here.
+                supports()      -
+                            System can have multiple AuthenticationProvider like for sernamePasswordAuthenticationToken or for JwtAuthenticationToken.
+                            Hence support checks if this AuthenticationProvider needs to be used for handle request.
+                        
+            Syntex.,
+                // class who implements AuthenticationProvider
+                    class EazySchoolUsernamePwdProvider implements AuthenticationProvider{
+                        @Override
+                        public Authentication authenticate (Authentication authentication){
+                            // Custom logic to check user password.
+                        }
+
+                        @Override 
+                        public boolean supports(Authentication authentication){
+                            // used to tell system if this method of verification need to use or other.
+                            return authentication.equals(UsernamePasswordAuthenticationToken.class);
+                        }
+                    }
+
+            example.,
+                @Component
+                public class EazySchoolUsernamePwdProvider implements AuthenticationProvider{
+
+                    @Autowired
+                    private PersonRepository personRepository;
+
+                    @Override
+                    public Authentication authenticate(Authentication authentication){
+                        String email = authentication.getName();
+                        String pwd = authentication.getCredentials().toString();
+
+                        Person person = personRepository.readByEmail(email);
+
+                        if(person != null && person.getPersonId() > 0 && pwd.equals(person.getPwd())){
+                            //authetication token generation: (username, password, role) token
+                            // NOTE: PWD CAN BE NULL AS SPRING TRIES TO REMOVE ALL PASSOWRD RELATED INFO FOR SECURITY PURPOSE.
+                            return new UsernamePasswordAuthenticationToken(
+                                    person.getName(), pwd, getGrantedAuthorities(person.getRoles()));
+                        }
+                        else{
+                            // return exception which represents authentication/login got failed.
+                            throw new BadCredentialsException("Invalid Credentials");
+                        }
+                    }
+
+                    private List<GrantedAuthority> getGrantedAuthorities(Roles roles) {
+                        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+                        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + roles.getRoleName()));
+                        return grantedAuthorities;
+                    }
+
+                    @Override
+                    public boolean supports(Class<?> authentication){
+                        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+                    }
+                }
+
+Encrypt V/S Encryption V/S Hashing  :
+            Encrypt -
+                         used to convert one data form to another. Which has no security and used to transfer data from one place to another.
+            Encryption  -
+                        used cryptography concept for security. 
+                        A key is used to convert simple text into encrypted text. 
+                        And same key can be used to convert encrypted text back to simple text.
+            Hashing -
+                        Provides more security compared to Encryption. 
+                        Where a hashkey used to create HashValue.
+                        ex.,
+                            Initially, Hashing is performed on Password before saving it to database. 
+                            Now, when user enter password. To valid new input password; same hashing is used and if new hashvalue matches with database hashvalue, Password is valid.
+                        Hashing is not reversible. Once data is changed into HashValue. It can't be convert back into original data.
+
+Hashing :
+            In-built method BCryptPasswordEncoder() can be used to apply hashing.
+            encode()    -
+                        Take String as parameter and return hashValue of String.
+            equals(para1, para2)    -
+                        Returns true if both hashValues are same.
+                        NOTE:   para1 is original text enter by user on which hashing is applied. And compared with para2. If matches it return true else false.
+
+            ex.,
+                // productConfig
+                    @Bean
+                    public PasswordEncoder passwordEncoder(){
+                        return new BCryptPasswordEncoder();
+                    }
+
+                // personService.java file - save hashed value of password inside DataBase.
+                    @Autowire
+                    private PasswordEncoder passwordEncoder;
+
+                    public boolean createNewPerson(Person person){
+                        .. code..
+                        // set hashValue during registration:
+                        person.setPwd(passwordEncoder.encode(person.getPwd()));
+                        person = personRepository.save(person);
+                        ..code..
+                    }
+
+                // AutheticatorProvider - Check hashValue with user's creds during login
+                    @Autowire
+                    private PasswordEncoder passwordEncoder;
+
+                    @Override
+                    public Authentication authenticate(Authentication authentication){
+                        String pwd = authentication.getCredentials().toString();
+                        boolean isMatch = passwordEncoder.matches(pwd, person.getPwd()))
+                        ..code..
+                    }
+
+                NOTE:
+                    In spring, Spring Security and JPA both perform validation.
+                    In result, matchfield validation is performed twice by spring security and JPA which is unneccessary and error prone.
+
+                    Error prone:
+                        1st valiation is performed by spring seurity on login page.
+                            Where pwd is matched with confirmPwd. If matches it returns true.
+                            And save() operation is performed. Where password is hashed by BCrypt method. and hashValue is stored in DB.
+                        2md validation is performed by JPA after save() operation.
+                            Now pwd is HashValue and confirmPwd is original input string.
+                            In this case, match is always false. 
+                        Hence it is neccessary to stop 2nd validation from JPA.
+
+                    Disable JPA Field Validation:
+                        // Applciation.properties file
+                            spring.jpa.properties.javax.persistence.validation.mode = none
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
