@@ -1472,6 +1472,8 @@ SpringBoot Security :
             SpringBoot security brings Security related features to web app such as Authentication, Authorization etc.
             It protects webapp from Unauthorized access, CSRF, XSS, SQL Injection, Brute force attacks, Session hijacking etc.
 
+            FLOW:   Request → Security Filter Chain → Security Rules → Controller
+
             Authentication V/S Authorization:
                 ->  Authentication is used to check user's identity using id-password or OTP.
                     Authorization is used to check user's authority by checking their assigned role.
@@ -1679,8 +1681,12 @@ Spring Security & thymeleaf :
                             <li class="nav-item" sec:authorize="isAuthenticated()">
                                 <a th:href="@{/logout}" class="nav-link">logout</a>
 
-Exception Handler   : 
+Global Exception Handler   : 
             @ExceptionHandler used to handle exceptions during runtime of WebApp.
+
+            NOTE:
+                USE @ControllerAdvice(annotation = Controller.class) to apply global exception handler for controller only.
+                For REST services, we might want to use @RESTControllerAdvice(annotation = RESTController.class)
 
             @ExceptionHandler can be used with one controller @Controller to handle any exception occured in the specific controller class.
             ex.,
@@ -2277,6 +2283,110 @@ CUSTOM QUERY METHOD :
                 findByFirstNameNot(String firstName)
                     SELECT u FROM user WHERE u.firstName <> ?1;
 
+CUSTOM QUERY WITH JPA   :
+            @Query / JPQL (Java Persistence Query Language) :
+                        JPQL is similar platform independent and objet Oriented query language.
+                        JPQL query is similar to SQL query.
+                        ex.,
+                            @Query("SELECT C FROM customer c WHERE c.contactId = ?1 ORDER BY c.createdAt DESC)
+                            List<Customer> findByIdOrderByCreatedAtDesc(long id);
+
+                        example.,
+                            // contactRepository.java
+                            Page<Contact> findByStatus(String fieldName, Pageable pageable);
+
+                            ---> Here Spring will create its own query and executes. 
+                            ---> But if you do not want and wanted to create custom query. Use it by using @Query annotation with JPQL query inside.
+
+                            // Updated contactRepository.java
+                                @Query("SELECT c FROM contact WHERE c.status = :status")
+                                Page<Contact> findByStatus(String fieldName, Pageable pageable);
+
+                                OR
+                                
+                                @Query("SELECT c FROM contact WHERE c.status = ?1)
+                                Page<Contact> findByStatus(String fieldName, Pageable pageable);
+
+                            --> we can use ? or Named Parameter. 
+                            
+                            NOTE:
+                                Generally, use of ? is not preferred insetead named parameters are preferred because it has more readibility.
+            
+            @Query with update or delete query:
+                        We need to two other annotation @Transcational and @Modifying.
+
+                        @Transcational used to create transcation and when exception occured. It can roll back to previous save point and make changes unchanged.
+                        @Modifying used to tell Spring JPA that this custom query will change the state of database.
+
+                        example.,
+                            // contactRepository.java
+                                @Transactional
+                                @Modifying
+                                @Query("UPDATE Contact c SET c.status = :status WHERE c.id = :id")
+                                int updateStatusById(String status, int id); 
+
+            Query native    :
+                        In Native query, we are writing exact SQL query as it would execute inside database. So we need to use exact table name as it is mentioned inside database.
+
+                        example.,
+                            // contactRepository.java
+                                @Query(value = "SELECT * FROM contact_msg WHERE status = :status", nativeQuery= true)
+                                List<Contact> findByStatus(String status, Pageable pageable)
+
+                                OR
+
+                                @Query(value = "SELECT * FROM contact_msg WHERE status = ?1", nativeQuery= true)
+                                List<Contact> findByStatus(String status, Pageable pageable)
+
+            Named Query :
+                        We have to write JPQL query on top of Model class. Not native query can not be used inside "Named Query".
+
+                        ex.,
+                            // contact.java
+                                @Entity
+                                @NamedQuery(
+                                    name = "Contact.findOpenMsgs",   --> method written in contact repository
+                                    query = "SELECT c FROM contact WHERE c.status = :status" --> sql query
+                                )
+                                public class Contact extends BaseEntity{...}
+
+                        NOTE:   
+                            We might need to write multiple Named Query for a model class.
+                            Hence, use @NamedQueries {} and define all @NamedQuery inside.
+
+                            Also, for update/delete query, we need to mention @Transactional and @Modified.
+
+                            ex.,
+                                // contact.java
+                                @Entity
+                                @NamedQueries{
+                                    @NamedQuery(
+                                        name = "Contact.findOpenMsgs",   --> method written in contact repository
+                                        query = "SELECT c FROM contact WHERE c.status = :status" --> sql query
+                                    ),
+                                    @NamedQuery(
+                                        name = "Contact.updateMsgStatus", --> make sure to add @Transactional and @Modified.
+                                        query = "UPDATE contact c SET c.status = :status WHERE c.contactId = :id"
+                                    )
+                                }
+                                public class Contact extends BaseEntity{...}
+
+                                // contactRepository.java
+                                    public findOpenMsgs(String status);
+                                    
+                                    @Transactional
+                                    @Modified
+                                    public updateMsgStatus(String status, int id);  --> I need to mention @Transactional and @Modified on top of interface method because spring does not know that this method will perform any DML operation. 
+
+            Named Native Query  :
+                        Named native query uses SQL query inside.
+                        But it is complex and over head as we have to configure inorder to use that.
+                        Additionally, It does not support dynamic sorting.
+                        Hence I do not recommand to use it.
+
+                        // Spring JPA is used so that we can focus on writing business logic rather than writing SQL query. 
+                        // While Named native query, works completly opposite. We have to define sql query and we have to define pre configurations. in order to things to work in spring environment.
+
 AUDITING IN SPRING DATA JPA :
             In business, It is required to audti information about records. Like who inserted the record? And when? Also, who updated record? And when?
 
@@ -2533,6 +2643,345 @@ Hashing :
                         // Applciation.properties file
                             spring.jpa.properties.javax.persistence.validation.mode = none
 
+ORM (Object Related Mapping)    :
+            NOTE:
+                Use of @Data will cause error during mapping because it changes default toString() implementation. 
+                So use @Getter and @Setter instead from lambok library.
+
+    OneToMany - ManyToOne   :
+                OneToMany relationship between `class` to `people`.
+                NOTE:
+                    A class can have multiple people. Hence class is Parent. While people is child.
+
+                peoples.java
+                    @Entity
+                    public class Person extends BaseEntity{
+                        @ManyToOne(
+                            fetch = FetchType.Lazy,
+                            optional = true
+                        )
+                        @JoinColumn(
+                            name = "class_id",
+                            referencedColumnName = "classId",
+                            nullable = true
+                        )
+                        private EazyClass eazyClass;
+                    }
+
+                class.java
+                    @Entity
+                    @Table(name = "class")
+                    public class EazyClass extends BaseEntity{
+                        @OneToMany(
+                            MappedBy = "eazyClass",
+                            fetch = FetchType.Lazy,
+                            cascade = CascadeType.PERSIST,
+                            targetEntity = Person.class
+                        )
+                        private Set<Person> persons;
+                    }
+
+    ManyToMany  :
+            // Person.java
+                @Entity
+                public class Person extends BaseEntity{
+                    @ManyToMany(
+                        fetch= FetchType.Lazy,
+                        cascade = CascadeType.PERSIST
+                    )
+                    @JoinTable(name = "person_courses,
+                        joinColumn = {@JoinColumn(name= "", referencedColumnName="")},
+                        inverseJoinColumn = { @JoinColumn(name= "", referencedColumnName= "") }
+                    )
+                    private set<Course> courses = new HashSet<>();
+                }
+
+            // Course.java
+                @Entity
+                public class Course extends BaseEntity{
+                    @ManytoMany(
+                        fetch = FetchType.Lazy,
+                        cascade = CascadeType.PERSIST
+                    )
+                    private Set<Person> persons = new HashSet<>();
+                }
+
+Sorting with JPA    :
+            In springBoot application, we do not have to write SQL queries where JPA will take care of it.
+            To perform sorting, we can use JPA sorting.
+                ->  Static Sorting 
+                ->  Dynamic Sorting
+
+            Static Sorting  :
+                        Sorting are perfomed during the execution of SQL query. 
+                        And can not be changed during runtime.
+                        ex.,
+                            List<Person> findByIdOrderByNameDesc();
+                    
+            Dynamic sorting :
+                        Sorting can be changed during runtime. 
+                        ex.,
+                            Sort sort = Sort.by("name").descending().and(Sort.by("age"));
+
+Pagination with JPA :
+            To show Big data in various pages, Pagination is used.
+            We can apply Paging and Dynamic sorting with it.
+            ex.,
+                // personService.java
+                    Page<person> findMsgWithOpenstatus(int pageNum, String order){
+                        // Define how sort and pageable you want to perform:
+                        //Pagable pagable = PageRequest.of(int page, int size, Sort sort);
+                        Pageable pagable = PageRequest.of(pageNum -1, 5, ( (order.equals("asc"))? Sort.by(name).descending: Sort.by(name).ascending));
+
+                        // use pagable to retrieve data from database. Data retrieved based on 
+                        Page<Person> findAll(pageable);  --> find all person based on Name passed inside parameter.
+                    }
+                    
+                // person.java
+                    // use Page<T> methods:
+                    Page<Person> pagePersonList = personService.findMsgWithOpenstatus(1, "asc");
+
+REST services terms :
+            SOAP    -   Simple Object Access Protocol
+            REST    -   Representational State Transfer 
+            JSON    -   JavaScript Object Notation
+
+            REST    :
+                        REST uses JSON format to exchange data.
+
+REST Services in Spring MVC (Internal Flow):
+            Step 1: End point/Application sends Http request to the server container. (Server Container can be anything like TomCat server.)
+            Step 2: Server Container will accept the request and handover request to server Dispatcher.
+            Step 3: Server Dispatcher will check with "Handler Mapping" which will return controller and method name.
+            Step 4: Server Dispatcher will execute Controller Method.
+                        Controller method will return output. It will not send any view details as REST service only give data. View will be taken care by other services.
+                        ex.,
+                            @GetMapping("/getMessages")
+                            @ResponseBody
+                            public List<Contact> getMsgsWithOpenStatus(String status){  ... }
+            Step 5: Server dispatcher will send this data to Server Container.
+            Step 6: Server Container will send data to End point/Application.
+
+REST Service:
+            In spring, Every request intercept by spring security so we need to add requestMatcher() for APIs. 
+            NOTE: We might not need to handle CSRF as other service will take care of CSRF.
+
+            @ResponseBody   -   
+                        Used to define method as REST api. 
+                        Where JSON value is converted to POJO value.
+            @RequestBody    -   
+                        Used to define incoming parameter will be an JSON. 
+                        Where POJO value converted into JSON value.
+            @RESTController -
+                        Combination of @Controller and @ResponseBody.
+            @ResponseEntity -
+                        returns a json object which have many information in it. like header value, httpStatus value and POJO class which is converted back to JSON format.
+            @RequestEntity  -
+                        Accept incoming Json object which contains information like header, body Json etc. 
+                        After accepting entity, we can perform backend logic.
+
+            NOTE:
+                If you authentication is required to use API, use authentication open inside POSTMAN and enter credentials.
+
+            REST Service using Query parameter:
+                        Query value is expected during API call.
+                        ex.,
+                            @GetMapping("/getMessagesByStatus")
+                            @ResponseBody
+                            public List<Contact> getMessagesByStatus(@RequestParam(name = "status") String status){
+                                return contactRepository.findByStatus(status);
+                            }
+
+            REST Service using RequestBody:
+                        Json object is expected during API call.
+                        NOTE:
+                            you need to pass JSON value from postman's BODY
+                                {
+                                    "status": "Close"
+                                }
+                            Also, Return type form the method is JSON so change "Accept" to "Application/json" in PostMan header.
+
+                        ex.,
+                            @GetMapping("/getAllMsgsByStatus")
+                            @ResponseBody
+                            public List<Contact> getAllMsgsByStatus(@RequestBody Contact contact){
+                                if(contact != null && contact.getStatus()!= null)
+                                    return contactRepository.findByStatus(contact.getStatus());
+                                else
+                                    return List.of();
+                            }  
+
+            REST Service using RESTController   :
+                            We are using @Controller and @ResponseBody in above implementation.
+                            Alternatively, we can use @RESTController. which is combination of both.
+
+                            ex.,
+                                @RESTController
+                                public class ContactRestController{
+                                    @GetMapping("/getAllMsgsByStatus")
+                                    public List<Contact> getAllMsgsByStatus(@RequestBody Contact contact){
+                                        if(contact != null && contact.getStatus()!= null)
+                                            return contactRepository.findByStatus(contact.getStatus());
+                                        else
+                                            return List.of();
+                                    } 
+                                }
+
+            REST Services to save data  :
+                            We need to send response with error code and messages after the succesful save operation.
+                            So create a model "response" with 2 fields error-code and error-msg.
+
+                            we can accept header from postman. to catch it, we can use @RequestHeader.
+                            The json object sent from postman need to be validated by spring validation. We can do it by @Valid annotation.
+
+                            For return value, you can send a POJO object or you can send ResponseEntity object.
+                            Pojo and ResponseEntity object will be created back to JSON value.
+                            But ResponseEntity will have extra information about httpResponse. Information like., status code, header value etc.
+                            
+                            // Response.java
+                                @Data
+                                @NoArgsConstructor
+                                @AllArgsConstructor
+                                public class Response {
+                                    private String statusCode;
+                                    private String statusMsg;
+                                }
+                            
+                            // RESTController
+                                @PostMapping("/saveMsg")
+                                public ResponseEntity<Response> saveMsg(@Valid @RequestBody Contact contact, @RequestHeader("form") String form){
+                                    log.info("retrieved value is: " + form);
+
+                                    contactRepository.save(contact);
+
+                                    Response response = new Response();
+                                    response.setStatusMsg("saved succesful");
+                                    response.setStatusCode("200");
+
+                                    return ResponseEntity
+                                            .status(HttpStatus.CREATED)  --> which is converted back to 201 status at postman.
+                                            .header("isMsgSaved", "true")
+                                            .body(response);
+                                }
+
+            REST Services to delete data    :
+                        Same way but with the use of ResponseEntity and RequestEntity.
+                        ex.,
+                            @DeleteMapping("/deleteMsg")
+                            public ResponseEntity<Response> deleteMsg(RequestEntity<Contact> requestEntity){
+                                HttpHeaders headers =  requestEntity.getHeaders();
+                                log.info(headers.toString());
+
+                                Contact contact = requestEntity.getBody();
+                                if(contact!= null && contact.getContactId()> -1) {
+                                    contactRepository.deleteById(contact.getContactId());
+                                }
+
+                                Response response= new Response("200", "deleted succesfully");
+                                return ResponseEntity
+                                        .status(HttpStatus.OK)
+                                        .header("isDeleted", "Yes it is deleted")
+                                        .body(response);
+                            }
+
+Global Exception Controller for REST Services   :
+            NOTE:
+                We need to give this GlobalExceptionRESTController order 1. 
+                Because Spring randomly uses both GlobalExceptionController and GlobalExceptionRESTController to handle exception.
+            
+            Here, 2 types of error can be handle.
+            -> Server side error/exception
+            -> invalid @RequestBody sent from postman
+
+            ex.,
+                @Slf4j
+                @RestControllerAdvice(annotations = RestController.class)
+                @Order(1)
+                public class GlobalExceptionRESTController extends ResponseEntityExceptionHandler {
+
+                    //@Override
+                -----> to handle invalid requestBody:
+                    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
+                                                                                HttpHeaders headers,
+                                                                                HttpStatus status,
+                                                                                WebRequest request){
+                        Response response = new Response(status.toString(), exception.getBindingResult().toString());
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                    }
+
+                -----> to handle server exception:
+                    @ExceptionHandler({Exception.class})
+                    public ResponseEntity<Response> responseException(Exception exception){
+                        Response response = new Response("500", "Internal server error");
+                        return ResponseEntity
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(response);
+                    }
+                }
+
+XML based Rest Services :
+            By default, JSON format is being used inside SpringBoot.
+
+            But to use XML based Rest Services, you need to perform 2 actions:
+
+            Step 1:
+                // Add dependency
+                <dependency>
+                    <groupId>com.fasterxml.jackson.dataformat</groupId>
+                    <artifactId>jackson-dataformat-xml</artifactId>
+                </dependency>
+
+            Step 2:
+                // Use produces parameter to either class level RequestMapping or method level RequestMapping/ PostMapping/ GetMapping.
+
+                ex.,
+                    // Method level -> XML will work for that method only.
+                        ex.,
+                            @GetMapping(value = "/getMessagesByStatus", produces = MediaType.APPLICATION_XML_VALUE)
+                            @ResponseBody
+                            public List<Contact> getMessagesByStatus(@RequestParam(name = "status") String status){
+                                return contactRepository.findByStatus(status);
+                            }
+
+                    // Class Level  --> XML will work for all methods.
+                        ex.,
+                            @RestController
+                            @RequestMapping(value = "/api/contact", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+                            @CrossOrigin(origins = "*")
+                            public class contactRestController {    ... }
+
+            Step 3:
+                // PostMan: request for XML based output.
+
+                Go to the header and add {accept = application/xml}.
+
+CORS (Cross-Origin Resource Sharing)    :
+            CORS is default protection setting by browser where 2 different Origins can't communicate.
+            browser will block communicate between frontend origin and backend origin communication by default.
+
+            To enable it, use @CrossOrigin(origins = "*") or specify origin value by  @CrossOrigin(origins = "http://localhost:/8080") on top of your REST Controller.
+
+            ex.,
+                // contactRestController.java
+                @RestController
+                @CrossOrigin(origins = "*")
+                public class contactRestController {    ... }
+
+Avoid sharing confidencial information by REST services :
+            We are saving audit related informations inside table. Like created, createdBy, modifiedBy, LastModified etc.
+
+            To ignore to sharing confidencial information by @JsonIgnore and @JsonIgnoreProperties
+            ex.,
+                // On top of field name inside Model class:
+                    @JsonIgnore
+                    private LocalDateTime createdAt;
+
+                OR
+
+                // On top of Model class:
+                    @JsonIgnoreProperties(value = {"createdAt, createdBy, LastModifiedBy, LastModifiedByAt})
+                    class Contact{...}
+
 Exceptions  :
                 NoSuchBeanDefinitionException       :
                             When you try to get bean using context.getBean("Vehicle.class") and no vehicle bean is found from IOC container. It will return this exception.
@@ -2583,7 +3032,7 @@ Exceptions  :
                                     @Autowired
                                     private Person p;   // vehicle class is trying to initiate person class.
                                 }
-
+ 
 Logger Level    ::
         (General logging level - QA team)
             Fatal       -   System crash or not working.

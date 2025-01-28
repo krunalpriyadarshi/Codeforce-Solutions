@@ -1,5 +1,51 @@
-password: 1234567890
+Before applying any Join operations try to use "Any", "EXISTS", "ALL" operations. As they are faster than Join operations.
 
+IsNull(expression, value)   :
+            if expression is NULL then return value else return expression.
+
+            UnitsOnOrder column can contains NULL value.
+            In case, we want to calculate totalUnitPrice then we need unitsOnOrder value.
+            So we want to handle NULL value as 0 in calculation.
+            Because NULL value in calculation will return NULL value and we want to avoid that.
+
+            ex.,
+                SELECT 
+                    ProductName, 
+                    UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
+                FROM Products;  
+
+COALESCE(val1, val2, ...)   :
+            Return first not null value from array:
+            ex., 
+                COALESCE(null, null, 1, 2) => 1
+                COALESCE(null, null, null, 2) => 2
+                COALESCE(null, null, null, null) => ""
+
+            Use of COALESCE in SQL query:
+            ex.,
+                SELECT 
+                    ProductName, 
+                    UnitPrice * (UnitsInStock + COALESCE(UnitsOnOrder, 0))
+                FROM Products;
+
+LAG(CoulmnName, steps, AlternativeOfNullVal) Over(OrderByQuery):
+            LAG function is used to check previous row's column value.
+            For example, we can use it to fetch previous records data and perform logic on it.
+
+            ex.,
+                // Check if previous row has same value or not.
+                select
+                    num,
+                    lag(num, 1) as prev_num
+                from logs;
+
+                // check if previous date's temp was lesser than this. 
+                NOTE: records might not be sorted based on date so it's better to sort them by date. Hence use over() 
+                select 
+                    temp,
+                    lag(temp, 1) over(order by date asc) as prev_temp
+                from tempLogs;
+                
 Hot to kill process on port 3306:
     --  run CMD as administrator: 
             netstat -ano | findstr :3306
@@ -16,21 +62,26 @@ Hot to kill process on port 3306:
         <OR>
         Go to the Task Manager and go to details. Now search for the PID and kill the process.
 
-// MySQL database connection
-$servername = "localhost";
-$username = "root";
-$password = "1234567890";
-$dbname = "";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+Leave me alone to cipher out a way so we can run in the daytime if we want to.
 
 
+PHP > Establishing a connection to the database: 
+        // MySQL database connection
+        $servername = "localhost";
+        $username = "root";
+        $password = "1234567890";
+        $dbname = "";
 
-*^snc!8*R8l5evLy3P
-krunal
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        ID/Password: (Wordpress)
+            krunal
+            *^snc!8*R8l5evLy3P
+            password: 1234567890
