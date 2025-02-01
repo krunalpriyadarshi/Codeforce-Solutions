@@ -2982,6 +2982,264 @@ Avoid sharing confidencial information by REST services :
                     @JsonIgnoreProperties(value = {"createdAt, createdBy, LastModifiedBy, LastModifiedByAt})
                     class Contact{...}
 
+Consume created REST services Another application   :
+            OpenFeign   -
+                        A tool offered by Spring Cloud project.
+            RestTemplate    -
+                        A tool to call REST endpoints.
+                        It is blocking Async and Sync invocations. Hence, new application prefer WebClient.
+            WebClient   -
+                        A tool to call REST endpoints.
+                        It is part of the Spring Web Reactive module.
+                        And It supports Async and sync invocations. (Non-blocking tool)
+
+            CREATE A PROJECT SPRING-CLOUD PROJECT   :
+                    Add properties:
+                                <spring-cloud.version>2023.0.3</spring-cloud.version>
+                    Add dependencies:
+                                <dependencies>
+                                    <dependency>
+                                        <groupId>org.springframework.boot</groupId>
+                                        <artifactId>spring-boot-starter-web</artifactId>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>org.springframework.boot</groupId>
+                                        <artifactId>spring-boot-devtools</artifactId>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>org.springframework.cloud</groupId>
+                                        <artifactId>spring-cloud-starter-openfeign</artifactId>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>org.springframework.cloud</groupId>
+                                        <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>org.projectlombok</groupId>
+                                        <artifactId>lombok</artifactId>
+                                        <version>1.18.30</version>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>org.springframework.boot</groupId>
+                                        <artifactId>spring-boot-starter-webflux</artifactId>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>org.springframework.boot</groupId>
+                                        <artifactId>spring-boot-starter-test</artifactId>
+                                        <scope>test</scope>
+                                    </dependency>
+                                </dependencies>
+                    Add dependencyManagement:
+                                <dependencyManagement>
+                                    <dependencies>
+                                        <dependency>
+                                            <groupId>org.springframework.cloud</groupId>
+                                            <artifactId>spring-cloud-dependencies</artifactId>
+                                            <version>${spring-cloud.version}</version>
+                                            <type>pom</type>
+                                            <scope>import</scope>
+                                        </dependency>
+                                    </dependencies>
+                                </dependencyManagement>
+
+            Consume REST Services Using FeignClient  :
+                        Step 1:
+                            Add credentials to "BasicAuthRequestInterceptor" so that API can be accessed. 
+                            ex.,
+                                On API side, if spring security is configured and API can only be accessed by Admin. 
+                                We need to login as Admin to access API to another application.
+
+                            Enable FeignClient in main method. Otherwise bean not found exception will be occured.
+                        Step 2:
+                            Abstract method to consume REST services. like., contactProxy.java
+                        Step 3:
+                            Use abstract method to fetch data and use it inside application. like., contactController
+
+                        EXAMPLE:
+                            Step 1: Add AuthIntercept inside config file to provide credentials during API call.
+                                // ProductConfig.java
+                                @Bean
+                                public BasicAuthRequestInterceptor basicAuthRequestInterceptor(){
+                                    return new BasicAuthRequestInterceptor("test@admin1.com", "test@admin1");
+                                }
+
+                            Step 2: Enable FeignClient in main Application file
+                                // KpApplication file
+                                @SpringBootApplication
+                                @EnableFeignClients(basePackages = "com.kp.proxy")
+                                public class KpApplication {    ...}
+
+                            Step 3: Implement Abstract method to get API data:
+                                // ContactProxy
+                                @FeignClient(
+                                        name = "contact",
+                                        url = "http://localhost:8080/api/contact",
+                                        configuration = ProductConfig.class
+                                )
+                                public interface ContactProxy {
+                                    @RequestMapping(method = {RequestMethod.GET}, value = "/getMessagesByStatus")
+                                    @Headers(value = "Content-Type:application/json")
+                                    public List<Contact> getMessagesByStatus(@RequestParam("status") String status);
+                                }
+                            
+                            Step 4: Use the Abstract method inside application:
+                                (To test with postman, lets create REST method inside SpringCloud application)
+                                // ContactController
+                                @Autowired
+                                ContactProxy contactProxy;
+
+                                @GetMapping("getMessagesByStatus")
+                                public List<Contact> getMessagesByStatus(@RequestParam("status") String status){
+                                    return contactProxy.getMessagesByStatus(status);
+                                }
+
+                            Step 5: Test in PostMan application
+                                // Call controller method:
+                                http://localhost:8081/getMessagesByStatus?status=Open
+
+            Consume REST Services Using RestTemplate    :
+                // It is stright POJO class to use RestTemplate. And Do not use this as it is deprecated.
+
+                    @PostMapping("/saveMsg")
+                    public ResponseEntity<Response> saveMsg(@RequestBody Contact contact){
+                        String uri = "http://localhost:8080/api/contact/saveMsg";
+                        HttpHeaders headers = new HttpHeaders();
+                        headers.add("invocationFrom","RestTemplate");
+                        HttpEntity<Contact> httpEntity = new HttpEntity<>(contact, headers);
+                        ResponseEntity<Response> responseEntity = restTemplate.exchange(uri, HttpMethod.POST,
+                                httpEntity,Response.class);
+                        return responseEntity;
+                    }
+
+            Consume REST Services Using WebClient   :
+                Step 1. Give Credentials to webClient using ExchangeFilterFunctions
+                    @Bean
+                    public WebClient webClient(){
+                        return WebClient.builder()
+                                .filter(
+                                        ExchangeFilterFunctions.basicAuthentication("test@admin1.com", "test@admin1")
+                                )
+                                .build();
+                    }
+                
+                Step 2. Consume REST Service    :
+                    @PostMapping("/saveMessage")
+                    public Mono<Response> saveMessage(@RequestBody Contact contact){        --> reactive model MONO is used to perform WebClient call. BECAUSE OF Unblocking behaviour (Sync and Async)
+                        String uri = "http://localhost:8080/api/contact/saveMsg";   --> URI of hosted REST Services
+
+                        return webClient.post().uri(uri)        --> use webclient's post method and send URI 
+                                .header("form", "WebClient")    --> add header if needed.
+                                .body(Mono.just(contact), Contact.class)    --> send body() but 2 parameters are required. one to cover contact RequestBody in MONO Reactive model. and class model in 2nd parameter.
+                                .retrieve()                     --> call hosted REST Services
+                                .bodyToMono(Response.class);       --> cover return data in MONO Reactive model.
+                    }
+
+Http Method type:
+            SAFE type           :   Which does not the change state of table. ex., GET, HEAD, OPTIONS
+            UNSAFE type         :   Which changes the state of table. ex., POST, PUT, DELETE
+            IDEMPOTENT type     :   Making same request gives same result. ex., GET, HEAD, PUT, DELETE
+            NON-IDEMPOTENT type :   Making same request gives diff result. ex., POST, PATCH
+
+            Method	Safe?	Idempotent?	Description
+            GET	    ✅ Yes	✅ Yes	Retrieve data without modifying it
+            HEAD	✅ Yes	✅ Yes	Retrieve headers without modifying data
+            OPTIONS	✅ Yes	✅ Yes	Check available methods without modifying data
+            PUT	    ❌ No	✅ Yes	Update/replace a resource (same result on multiple calls)
+            DELETE	❌ No	✅ Yes	Delete a resource (same result if repeated)
+            POST	❌ No	❌ No	Create a resource (different result if repeated)
+            PATCH	❌ No	❌ No	Partially update a resource (not guaranteed to be idempotent)
+
+Spring DATA Rest    :
+            This dependency will create all REST services based on model.
+            "/profile" link will show all apis for a model.
+                        "id" will REST method name.
+                        "type" are Http Request type. (SAFE, UNSAFE, IDEMPOTENT)    
+
+            NOTE:
+                All REST Services will be visited at localhost:/profile. Hence add requestMatcher in spring security.
+        
+            STEPS:
+                Step 1. Add dependency of Spring DATA Rest.
+                    <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-data-rest</artifactId>
+                    </dependency>
+                
+                Step 2. Add spring security for "/profile".
+                    // SecurityConfig.file
+                    .requestMatchers("/profile/**").authenticated()
+
+                NOTE:   Profile controller will be created by Spring DATA Rest. Hence, make sure to create unique bean name for existing Profile controller.
+
+                Step 3. OPEN link "http://localhost:8080/profile" to view all RestAPIs.
+
+Explore ALL Services provided by an application using Spring DATA Rest  :
+            "localhost:/profile" will give all links to 'MODEL'. Which exist inside the application.
+
+            "localhost:/MODEL_NAME/search" will expose all APIs/ Methods exist for the current 'MODEL'. 
+            NOTE:
+                Spring security will give Unauthorized error so add these links inside configuration.
+                ex.,
+                    .requestMatchers("/contacts/**").permitAll()
+
+            EXPOSE ALL Contacts APIS and methods:
+                http://localhost:8080/contacts/search
+
+                in JSON format, it will show all APIs/ Methods.
+
+            USE Method from '/search':
+                JSON file:
+                    "findByStatusPagination" : 
+                    {
+                        "href" : "http://localhost:8080/contacts/search/findByStatusPagination{?status,page,size,sort*}",
+                        "templated" : true
+                    }
+                Use href:
+                    replace {} variable with values.
+                        status = OPEN
+                        page = 1
+                        size = 4
+                        sort = name, asc
+
+                    NEW LINK WILL BE:
+                        http://localhost:8080/contacts/search/findByStatusPagination?status=Open&page=0&size=10&sort=name,asc
+
+            ***NOTE***  
+                @JsonIgnore
+                    By using this apporach we can see, what data is being sent by Application if REST call is made.
+
+                    These API calls result will show all fields in JSON format.
+                    Here you can validate which field value should not be shared during API call.
+
+                    Use @JsonIgnore to exclude that field from API call.
+
+HALExplorer :
+            HALExplorer UI can be used to explore all APIs/ Methods.
+            It provides nice UI and buttons to test APIs/ Methods.
+
+            NOTE:
+                HALExplorer opens on default link. Which is "localhost:8080/".
+
+                Configure link to open HALExplorer and Spring DATA Rest in common link:
+                    add configuration line:
+                        spring.data.rest.basePath= /data-api
+
+                Spring DATA Rest will open at "localhost/data-api/profile".
+
+            NOTE:
+                @RepositoryRestResource(path = "course")
+                class course{   ... }
+
+                This will rename all HALExplorer and Spring DATA Rest API name to 'localhost:/data-api/course/search' -> to view all APIs inside "course" model.
+
+            NOTE:
+                @RepositoryRestResource(exported = false)
+                class course{   ... }
+
+                This will disable exporting of APIs/ Methods of the "Course" model.
+
+            ADD Security configuration to access this link.
+
 Exceptions  :
                 NoSuchBeanDefinitionException       :
                             When you try to get bean using context.getBean("Vehicle.class") and no vehicle bean is found from IOC container. It will return this exception.
@@ -3034,6 +3292,10 @@ Exceptions  :
                                 }
  
 Logger Level    ::
+        // application.properties file
+            debug = true    --> it will execute all log related statement during run-time of an application. Used to debug Spring-starter issues, auto-configuration, or routing-issues.
+            trace = true    --> Detailed tracing will be performed during run-time of an application. Used to debug HTTP request flow, security filters, or method execution details.
+
         (General logging level - QA team)
             Fatal       -   System crash or not working.
             Error       -   Issue on system but functionalities are working properly.
