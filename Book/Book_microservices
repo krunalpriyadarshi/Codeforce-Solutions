@@ -1,0 +1,91 @@
+Microservices   
+    It’s an approach to achieving loose coupling by creating multiple independent components, each with its own process. This enhances agility, scalability, usability, and enables parallel development. While making complex to built and achieve security.
+
+MONOLITHIC V/S MICROSERVICES    :
+            Parallel development    -
+                Dev team can work independently on different componenets witout blocking development of other each other.
+                
+                In monolithic, it is hard to achieve compared to microservices.
+                    - Tight coupling
+                        - The same code base is shared in the application, and changing that might break other parts of the system.
+                    - Limited tech choices:
+                        - In monolithic, the same tech stack has to be used for the whole application.
+                        - In microservices, each team can pick the best/optimized tech stack as per requirement.
+                    - Testing:
+                        - The whole application needs to be tested, which is time-consuming.
+                    - Deployment:
+                        - The whole application needs to be packaged and re-deployed.    
+            
+            Agility -
+                It is ability to adapt changes quickly in terms of speed and responsiveness.
+                
+                In monolithic, components are thight couple compated to microservices which make it less agile.
+                    - Any change in monolithic app can impact entire app which makes longer development, testing and deployment.
+                    - Any change in microservices can impact independent service which makes it loose coupling and faster software development cycle.
+
+            Scalibility -
+                Ability to handle newly added resources without impacting performance. Resource can be traffic (new users and new data).
+
+                In monolithic, if Order component gets more traffic then we need to scale whole application. In result, less used components such as Review component are created Which leads to more waste of resource and incresed costs. 
+
+                In microservices, if order component gets more traffic we can only increse scale of that component. It is more efficient and cost-effective
+
+            Usability   -
+                How easily a system can be used, extended and maintained -- both from development and user experience perspective.
+
+                Microservices have more edge because they are easier to maintain and scale.
+
+            Complexity  -
+                Microservices are more complex to create as it require more planning and infrastructure. Microservices have more issues/errors related to latency adn failure between services.
+
+            Security    -
+                Monolithics are easy to secure because of single entry point, simple data access and single point of failure.
+                Microservices on other hand have multiple entry points and each entry points needs to be secure and handled each issue/error. Also, they've differenet data base which create data isolcation.
+
+Why SpringBoot better to use for microservices?
+            Springboot provides full range of built in features, integration and starter project. ex, dependency injection, auto-configuration etc.
+            It also provides built in servers like Tomcat, Jetty during development.
+            Additionally, production-ready features health check, admin etc.
+            Last but not least, smooth cloud integration and containerization.
+
+Implement REST services:
+            REST service entry points
+                CRUD operations
+                    Create  ->  HttpMethod.POST
+                    Read    ->  HttpMethod.GET
+                    Delete  ->  HttpMethod.DELETE
+                    Update  ->  HttpMethod.PATCH/PUT
+            Error/Exception handling   
+            Document Rest services
+
+Create REST webApplication:
+            Step 1
+                Add dependency to create webApp.
+                    Spring Web  -
+                                It provides built in core features for building web/RESTful applications.
+                    H2 Database -
+                                For testing/PoC spring project, To server based memory database H2DATABASE is used.
+                    Spring Data JPA -
+                                To interact with databases by using Java objects and an abstraction over CRUD operations.
+                    Spring Boot Actuator    -
+                                Provides built in endpoints to monitor health and metrics over memory usage, http request, CPU load etc.
+                    Spring Boot DevTools    -
+                                Re-Start application much faster for better dev experience.
+                    lombok  -
+                                Built in annotation to automatically generate Getter, Setter, constructor and toString() method.
+                    Validation  -
+                                Bean validation.
+
+            Step 2
+                Create EndPoint and access it.
+                    // accountController.java
+                    @RestController
+                    public class accountController {
+
+                        @GetMapping("hi")
+                        public String welcome(){
+                            return "Hello Krunal! <br/>This is your application. Enjoy!";
+                        }
+                    }
+                Access endpoint by http://localhost:8080/hi address
+                    

@@ -3238,7 +3238,100 @@ HALExplorer :
 
                 This will disable exporting of APIs/ Methods of the "Course" model.
 
-            ADD Security configuration to access this link.
+            Do not forge to ADD Security configuration to access this link.
+
+Import Custom properties :
+            Application.properties file is used to define property of Application. 
+            Based on defined property, our system can behave.
+
+            Sometime, we want to define custom property and want to create flow of application.
+            ex., If we have Pagination in webApp and we want to decide only 10 records can be placed for a page. We can define in custom property file and fetch value from it and use it inside our webApp.
+
+            NOTE:
+                Create custom property file but we need to import that file inside application.properties file.
+                Syntex:
+                    spring.config.import = classpath:file_name.properties
+                
+                ex.,
+                    // kpProps.properties
+                        kp.pageSize = 10
+                        kp.contact.pageSize = 20
+                        kp.contact.successMsg = Your message saved successfully.
+                        kp.branch[0] = Krunal
+                        kp.branch[1] = Priyadarshi
+                        kp.branch[2] = Is
+                        kp.branch[3] = HERE!!
+                    
+                    // Applciation.properties
+                        spring.config.import=classpath:kpProps.properties
+
+Use Custom properties inside Controller :
+            WAY 1: USE Use @ConfigurationProperties  --> HARD WAY TO USE CUSTOM PROPERTY.
+                        Step 1: Define properties inside application.properties file or custom properties file.
+                                    kp.pageSize = 10
+                                    kp.contact.pageSize = 20
+                                    kp.contact.successMsg = Your message saved successfully.
+                                    kp.branch[0] = Krunal
+                                    kp.branch[1] = Priyadarshi
+                                    kp.branch[2] = Is
+                                    kp.branch[3] = HERE!!!
+
+                        Step 2: Use @ConfigurationProperties 
+                                // KpProps.java
+                                    @Component("kpPros")
+                                    @Data
+                                    @ConfigurationProperties(prefix = "kp")         --> make sure all properties defined have prefix of "kp" else code will not recognize property.
+                                    @Validated
+                                    public class KpProps {
+                                        @Min(value = 5, message = "Value should be between 5-25")
+                                        @Max(value = 25, message = "Value should be between 5-25")
+                                        private int pageSize;                       --> pageSize from property is int so it is wise to create a variable.
+                                        private Map<String, String> contact;        --> to match contact.pageSize and contact.successMsg, we will use HashMap<> to fetch value based on key.
+                                        private List<String> branch;                --> We have list of branch inside property file. Hence List<> and fetch value based on index.
+                                    }
+                                
+                        Step 3: Use it inside Controller:
+                                // ContactController.java
+                                // Below code will set of pagination pageSize based on global value defined in property file and try to overwrite the value if contact.pageSize exists.
+                                    //code:
+                                    int pageSize = kpProps.getPageSize();
+
+                                    if(null!= kpProps.getContact() && null!= kpProps.getContact().get("pageSize"))
+                                        pageSize = Integer.parseInt(kpProps.getContact().get("pageSize"));
+
+                                    Pageable pageable = PageRequest.of(pageRow - 1, pageSize,
+                                                                        (sortDir.equals("asc")) ? Sort.by(fieldName).descending() :Sort.by(fieldName).ascending());
+
+            WAY 2:  @Value("${ property_name }") 
+                        Step 1: Define property inside Application.properties
+
+                        Step 2: Use @Value("${ }") 
+                                // controller.java
+                                    @Service
+                                    public class ContactService {
+                                        @Value("${kp.pageSize}")
+                                        private int pageSize;
+                                        
+                                        // method to use this value.
+                                        public void checkVal(){
+                                            log.info("value of kp.pageSize" + pageSize);
+                                        }
+                                    }
+                                
+            WAY 3:  Use Environment:
+                        Step 1: Define property inside Application.properties
+
+                        Step 2: @Autowire Environment and use getProperty("property_name") to fetc value.
+                                // Controller.java
+                                    @Controller
+                                    public class contactController{
+                                        @Autowire
+                                        private Environment environment;
+
+                                        public void checkVal(){
+                                            log.info("value of kp.pageSize" + environment.getProperty("kp.pageSize"));
+                                        }
+                                    }
 
 Exceptions  :
                 NoSuchBeanDefinitionException       :
@@ -3296,6 +3389,19 @@ Logger Level    ::
             debug = true    --> it will execute all log related statement during run-time of an application. Used to debug Spring-starter issues, auto-configuration, or routing-issues.
             trace = true    --> Detailed tracing will be performed during run-time of an application. Used to debug HTTP request flow, security filters, or method execution details.
 
+        // Logging based on package.
+            If you want to apply, Error logging to controller but Info logging to aspect package:
+                logging.level.com.kp.aspect = INFO
+                logging.level.com.kp.controller = ERROR
+
+                syntex:
+                    loggin.level.(path_to_fie)
+
+        NOTE:
+            Give color to log statements:
+                // application.properties
+                    spring.output.ansi.enabled = ALWAYS
+
         (General logging level - QA team)
             Fatal       -   System crash or not working.
             Error       -   Issue on system but functionalities are working properly.
@@ -3318,3 +3424,47 @@ Logger Level    ::
             logger.log(Level.INFO, "Informative message.");
             logger.log(Level.CONFIG, "Configuraion message.);
             ...
+
+AWS EC2 V/S Elastic Beanstalk   :
+            EC2 and Elastic Beanstalk are AWS services to host web application to cloud server. Where charges are applied based on usage.
+
+            EC2 stands for Elastic Compute Cloud. It is cons that we need to install all the packages, TOMCAT server, auto scaling, load balancing etc.
+            While Elastic BeanStalk will automatically handle deployment. It installs packages, auto scaling, load balancing and monitor health report.
+
+            With EC2, developers has to perform additional steps. Where Elastic beanStalk handles everything. 
+
+Deployment  ::
+            Step 1
+                Create "Jar" or "War" package of your application that you want to use during deployment.
+
+                Click ctrl +ctrl to open quick run and "mvn clean install" run this command to generate Jar/War file.
+
+                Add property inside POM.xml file: 
+                    <packaging>jar</packaging>
+                
+                Generate Var file inside will be present inside Target folder. Default name will be combination of "groupId + ArtificateId + version".
+                To give custom name populate:
+                    <build> 
+		                <finalName>KruZ-AWS-Deployment</finalName>
+                    </build>
+                    
+                NOTE:   
+                    We might get an error while generating JAR file due to failed unit testing. 
+                    Skip it by.,
+                        "mvn clean install -Dmaven.test.skip=true"  
+            Step 2
+                Create AWS Elastic BeanStalk:
+                    create "IAM Roles" for EC2 and elasticbeanstalk. Which we are going to use during configuration of Elastic BeanStalk.
+
+                ADD configuration:
+                    We have added multiple properties inside application.properties file.
+
+                    We can overwrite it by adding same property to AWS configuration tab.
+                    
+                    NOTE:
+                        Property name inside spring is "spring.profiles.active=uat".
+                        Inside same property will be "SPRING_PROFILES_ACTIVE = uat".
+
+                        MAKE SURE TO USE UNDERSCOPE "_" instead of DOT "." inside AWS configuration tab.
+                
+In production, Logger needs to be saved to file. Which can be done by XML configuration to save logger statements.

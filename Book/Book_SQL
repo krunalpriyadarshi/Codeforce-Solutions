@@ -62,8 +62,35 @@ Hot to kill process on port 3306:
         <OR>
         Go to the Task Manager and go to details. Now search for the PID and kill the process.
 
-
 Leave me alone to cipher out a way so we can run in the daytime if we want to.
+
+UNDERSTNAD THIS:
+    1907. Count Salary Categories:
+                with categories AS(
+                    SELECT 'Low Salary' AS category, 0 AS accounts_count FROM DUAL
+                    UNION
+                    SELECT 'Average Salary', 0 FROM DUAL
+                    UNION
+                    SELECT 'High Salary', 0 FROM DUAL
+                )
+                select c.category, ifNull(temp.accounts_count, 0) as accounts_count
+                from categories as c
+                left join (
+                    select 
+                        CASE
+                            WHEN income < 20000 THEN "Low Salary"
+                            WHEN income> 50000 THEN "High Salary"
+                            ELSE "Average Salary"
+                        END AS category, 
+                        count(*) AS accounts_count
+                    from 
+                        accounts
+                    group by category
+                ) as temp
+                on temp.category = c.category
+
+https://medium.com/@ritusantra/window-functions-rows-clause-c9d9b4e2c3bc
+over () insql
 
 
 PHP > Establishing a connection to the database: 
