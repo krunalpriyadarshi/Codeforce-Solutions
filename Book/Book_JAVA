@@ -409,6 +409,54 @@ Hashing         ::
                     HashMap ::
                                 map.getOrDefault() method.
                                 map.merge() method.
+
+VarArgs         ::
+            VarArgs is also known as Variable-length arguments. 
+
+            VarArgs is defined by ... (three dots) and each method can have only one varargs parameter and it could be at the end of parameters.
+
+            ex.,
+                public void method(String... args){..}                  // valid
+                public void method(String arg, String... args){..}      // valid 
+                public void method(String... args, String arg){..}      // invalid -> varargs should be at the end. 
+
+            VarArgs acts as an array and can be accessed using index.
+            ex.,
+                public void method(String... args){
+                    for(int i= 0; i< args.length; i++){
+                        System.out.println(args[i]);
+                    }
+                }
+
+            NOTE:
+                Ambiguity with VarArgs and Overloading:
+                            Compiler sometimes get confuse to choose method between VarArgs and Overloading.
+                            And result in Ambiguity error.
+
+                            ex.,
+                                public void add(int... args){..}
+                                public void add(int x, int args){..}
+
+                                add(1);          // Ambiguity error.
+                                add(1, 2);       // Ambiguity error.
+                                add(1, 2, 3);    // Ambiguity error.
+
+                A class can't have same named varArgs and array as parameter. It will show DUPLICATE error.
+                            ex.,
+                                public void add(int... args){..}    // Error        --> remove one of these two to avoid issue.
+                                public void add(int[] arr){..}      // Error
+
+Java Reflaction     ::
+            Java Reflaction API allows developer to inspect and manipulate classes, interfaces, fields, methods at runtime.
+            We can retrive class name, methods name that class have, fields name that class have, etc.
+            We can also create new instance of class, invoke methods, get and set fields value.
+
+            ex.,
+                Class<?> c= Class.forName("java.lang.String");
+                Method[] methods= c.getDeclaredMethods();
+                Field[] fields= c.getDeclaredFields();
+
+
 ----------------------------------------------------------------------------------------------------------------
 Assertion       ::
                     Assertion is a mechanism to check if the code is working as expected. 

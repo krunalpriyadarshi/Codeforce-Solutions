@@ -48,6 +48,33 @@ Why SpringBoot better to use for microservices?
             Additionally, production-ready features health check, admin etc.
             Last but not least, smooth cloud integration and containerization.
 
+YAML V/S properties file:
+            YAML file is lightweight and easy to read.
+            Mainly used for configuration and automation.
+            YAML is used for springboot configuration, Docker, Kubernets, CI/CD pipeline etc.
+
+            properties file:
+                // application.properties
+                    server.port=8080
+                    spring.datasource.url=jdbc:h2:mem:testdb
+                    spring.datasource.username=sa
+                    spring.datasource.password=password    
+                    app.user[0]=Krunal
+                    app.user[1]=kruz
+
+            yml file:
+                // application.yml
+                    server:
+                        port: 8080
+                        datasource:
+                            url: jdbc:h2:mem:testdb
+                            username: sa
+                            password: password
+                    app:
+                        user:
+                            -Krunal
+                            -kruz
+
 Implement REST services:
             REST service entry points
                 CRUD operations
@@ -57,6 +84,25 @@ Implement REST services:
                     Update  ->  HttpMethod.PATCH/PUT
             Error/Exception handling   
             Document Rest services
+
+DTO (Data Transfer Object)  :
+            DTOs are used to fetch only required data instead of fetching entire entity object.
+
+            Advantages of DTOs:
+                ->  Encapsulate Entity   ::  
+                        DTOs decouple the database layer from the API layer, preventing direct exposure of entity models.
+                        Here, DTOs hide sensitive data such as Id, password from client application. 
+                        DTOs do not update entity object.
+                ->  Performance ::
+                        DTOs send only required fields which reduce overall payload of server.
+                        DTOs combine data from multiple entities and send single response object.
+                ->  Security    ::
+                        DTOs allow custom validations before processing request.
+                        DTOs hide/filter sensitive information while sending response to presentation layer.
+
+Response V/S ResponseEntity :
+            Response will send only data retrieved from data access layer.
+            Response entity will not only have response but also error code, error message and body.
 
 Create REST webApplication:
             Step 1
@@ -88,4 +134,120 @@ Create REST webApplication:
                         }
                     }
                 Access endpoint by http://localhost:8080/hi address
-                    
+
+            Step 3
+                Create H2DATABASE and table inside:
+
+                Step 3.1
+                    Configure H2 in application.yml        
+                        # application will run on port number 8080.
+                        server:
+                            port: 8080
+
+                        # jdbc h2 setting up username, password and url
+                        spring:
+                            datasource:
+                                url:  jdbc:h2:mem:testdb        #   testdb will be created in server memory.
+                                username: sa                    #   default h2database id/password.
+                                password: ''
+                            
+                        # setting up H2's web based console:
+                        spring:
+                            h2:
+                                console:
+                                    enabled: true               #   With enable console, dev can open web-based H2-console and execute SQL query.
+                                                                #   If H2-console is disable, dev can't open it. Only way to validate query is through operation or log in application.
+
+                        # Dialect which will act as translator to communicate between spring application and h2database.
+                        spring:
+                            jpa:
+                                driverClassName: org.h2.Driver  #   H2 Driver will be used as translator between application and h2 database. where translator knows how to handle request like connecting, querying and updateing data.
+                                hibernate:
+                                    ddl-auto: update            #   for development
+                                show-sql: true                  #   show sql query on console during run-time
+
+            Step 4
+                Create DATABASE and Entity class:
+                Step 4.1
+                    Create Database in .sql file:
+                        // schema.sql
+                        CREATE TABLE IF NOT EXISTS `customer` ();
+                        CREATE TABLE IF NOT EXISTS `accounts` ();
+                Step 4.2
+                    Entity class:
+                        // Customer.java
+                        @Entity
+                        @Table(name = "customer")
+                        @Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor
+                        public class Customer extends BaseEntity{
+                            @Id
+                            private long customerId;
+
+                            @Column(name = "name");
+                            private String name;
+                        }
+                Step 4.3
+                    JPA Repository:
+                        // AccountRepository.java
+
+validated on @pathVariable and @requestParams
+valid on @RequestBody
+
+audit ->
+    baseEntity -> @CreatedBy @CreatedAt @LastModifiedBy @LastModifiedAt
+    auditOrAware class  ->  override method AuditOrAware<String> and give component name to it.
+    main file   ->  @EnableJpaAuditing(auditOrAwareRef = beanComponentNameFrmAoveStep) 
+
+Swagger API -> for documentation...
+    add dependency
+    go to...
+         localhost:8080/swagger-ui/index.html
+
+    NOTE:
+        make sure getter is available for schema/DTO/EntityClass
+
+    For entityClass/ DTO:
+        @Schema(
+            name = "",
+            description = ""
+        )
+        public class Table{
+            
+            @Schema(
+                description =""
+            )
+            private String name;
+        
+        }
+
+    For RestAPI controller:
+        @Tag(
+            name = "",
+            description = ""
+        )
+        public class AccountContoller{
+            @Operation(
+                summary ="",
+                description = ""
+            )
+            @APIREsponses({
+                @ApiResponse(
+                    responseCode = "",
+                    description=""
+                ),
+                @ApiResponse(
+                    responseCode = "",
+                    description ="",
+                    content = @Content(
+                        schema = @Schema(implementation = .class)
+                    )
+                )
+            })
+        }
+
+@RestController     -->     @Controller + @ResponseBody
+new ResponseEntity<?>
+RequestEntity<?>    |    @RequestBody   |    @requestHeader
+@requestParams
+
+

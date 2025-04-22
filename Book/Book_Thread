@@ -1,0 +1,94 @@
+Thread.start()          :   Start executing thread.
+Thread.sleep(1000)      :   It will sleep the thread for given miliseconds.
+Thread.join()           :   Wait for thread to complete. Before executing next line in main code.
+Thread.join(100)        :   Wait for shortest duration between execution of thread or 100ms.
+Thread.currentThread().getName()    :   Get current thread name.
+
+
+Basic method to execute Threads:
+            Class method:
+                    class Runner extends Thread{
+                        public void run(){
+                            // logic for thread.
+                        }
+                    }
+            
+            Interface method:
+                    class Runner implements Runnable{
+                        @Override
+                        public void run(){
+                            // logic for thread.
+                        }
+                    }
+
+Atomicity:
+            In thread environment, an operation is atomicity if it executes without any interruption.
+
+            For example:
+                count++ operation read values from memory and increment it by 1 and save back to memory.
+                
+                In multi-thread environment, it is possible that thread1 read value and tread2 just reached to read value. but thread1 need to increment value and save back to memory. 
+
+                Here, thread2 might read old value before thread1 process it completely. 
+
+                Hence, it is not atomic operation.
+
+
+Approach	    Visibility       Atomicity	   Thread-Safe
+volatile	    ✅ Yes	        ❌ No	    ❌ No
+synchronized	✅ Yes	        ✅ Yes	    ✅ Yes
+AtomicInteger	✅ Yes	        ✅ Yes	    ✅ Yes
+
+Volatile:
+            In Tread environment, Treads stores variable in cache memory. Instead of reading from main memory.
+            This is not thread-safe. Because, if one thread is updating the value of variable, other thread may not get updated value.
+            Hence, in multi-thread environment, volatile keyword is used to make variable visibility to all threads.
+            So each time when thread tries to read volatile variable, it will read from main memory instead of cache memory.    
+
+            NOTE, volatile keyword is not used for atomicity. When multiple threads try to update counter/variable, it creats race-condition. 
+
+Synchronized:
+            When multiple threads create race condition to update variable, the thread become non-thread-safe.
+
+            To make thread-safe, synchronized keyword is used.
+            It will ensure that only one thread can access the variable at a time. Or put lock on variable until thread completes its operation.
+
+            It is used to make method or block of code thread-safe.
+
+            ex.,
+                count++ is not atomic operation.
+                So often value of count is not updated correctly in multi-thread environment.
+                Hence, create a method increment() and make it synchronized and call it to increment count.
+
+                this makes sure that only one thread can access increment() method at a time and update count value correctly.
+
+            Code Block:
+                public class Counter {
+                    private int count = 0;
+
+                    public synchronized void increment() {
+                        count++;
+                    }
+
+                    public synchronized int getCount() {
+                        return count;
+                    }
+                }
+
+Lock:
+            Lock is a mechanism that ensures only one thread can access the block of code.
+            It is better than typical synchronized method/block as it only locks the block of code instead of whole method/block.
+            
+            ex.,
+                class Solution{
+                    private final Object lock = new Object();
+
+                    public void transferFunds(){
+                        synchronized(lock){
+                            // logic to transfer funds.
+                        }
+                    }
+                }
+
+Wait, Notify, NotifyAll:
+            
