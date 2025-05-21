@@ -248,6 +248,103 @@ Swagger API -> for documentation...
 @RestController     -->     @Controller + @ResponseBody
 new ResponseEntity<?>
 RequestEntity<?>    |    @RequestBody   |    @requestHeader
-@requestParams
+@RequestParams
 
+Strangler Fig pattern   ::
+            It is an approach to replace monolithic application with Microservices. 
+            A existing domain of monolethic application is being replced by an microservice once it is availble for production. 
+            But 100% of traffic is not being moved directly but on some ration is moved for test and validation purposes. 
+            Later one by one, components are being replaced by microservices.
 
+Docker  ::
+            docker version 
+                Try above command on terminal to view information about OS name of given Client and Server.
+
+            Generate Docker image   :
+                        DockerFile  -
+                            Write layer of instructions.
+                            Once build command is executing, this DockerFile is used to generate a docker image on a Docker Server.
+
+                            NOTE:
+                                If Layer of DockerFile is not changed, cache is being used by server.
+                                If Layer of DockerFile is canged, all following layers will be executed.
+
+                            Example :
+                                    Step 1:
+                                        packing can be done either in jar or war version.
+
+                                        Add this line to POM.xml:
+                                            <packaging>jar</packaging>
+
+                                        Now, Let's compile application from scratch. And rebuild Jar files for CI/CD.
+
+                                        Run commnad to clean and re-install all dependencies:
+                                            mvn clean install 
+
+                                            This command made of 2 commands.
+                                            mvn clean   -   deletes target folder which contains all caches, complied files
+                                            mvn install -   Install dependencies from POM.xml, compile code, run test classes, package application (jar file)
+
+                                        Run application and Test it using Postman:
+                                            Way 1 using Maven:
+                                                To run application from console use mvn command:
+                                                    mvn spring-boot:run
+
+                                                    NOTE:
+                                                        You need Maven to run this command so make sure it is installed to system.
+                                                        In POM.xml file has maven plugin added to build. 
+                                                        Else you can't run application from terminal.
+
+                                            Way 2 using Java:
+                                                Java command to run application from console:
+                                                    syntex:
+                                                        java -jar PATH_TO_FILE
+                                                    
+                                                    java -jar target/accounts-0.0.1-SNAPSHOT.jar
+
+                                            Run all APIs from postman.
+
+                                    Step 2:
+                                        Generate Docker image:
+                                            Create Dockerfile which is blueprint to create container. 
+                                            It has layers and each layer has instruction in order to build container.
+
+                                            We have to install all dependency and perform all steps before running application. 
+                                            From installing java dependency, coping all jar files, and executing run command.
+
+                                            Dockerfile:
+                                                FROM openjdk:17-jdk-slim
+                                                MAINTAINER easybytes.com
+                                                COPY target/accounts-0.0.1-SNAPSHOT.jar accounts-0.0.1-SNAPSHOT.jar
+                                                ENTRYPOINT ["java", "-jar", "accounts-0.0.1-SNAPSHOT.jar"]
+
+                                            Run docker build command:
+                                                syntex:
+                                                    docker build . -t DOMAIN_NAME/SERVICE_NAME:VERSION
+
+                                                    docker build . -t eazybytes/accounts:s4
+
+                                            View Docker image by command:
+                                                docker images
+
+                                    Step 3:
+                                        Generate Container:
+                                            syntex:
+                                                docker run -p 8080:8080 DOCKER_IMAGE_NAME
+
+                                                docker run -p 8080:8080 eazybytes/accounts:s4
+
+                                            Generate Container in detached mode so that you can access terminal to run other commands.
+                                            syntex:
+                                                docker run -d -p 8080:8080 DOCKER_IMAGE_NAME
+
+                                                docker run -d -p 8080:8080 eazybytes/accounts:s4
+
+                                            Go to Docker Desktop to view container to verify it is running. Or use postman to test apis.
+
+                        BuildPack   :
+                            Simplifies the process, we do not need to write a low-level dockerfile.
+
+                        Google Jib  :
+                            Maintained by Google, For building Docker images of Java applications.
+                            Simplifies the process, we do not need to write a low-level dockerfile.
