@@ -257,9 +257,6 @@ Strangler Fig pattern   ::
             Later one by one, components are being replaced by microservices.
 
 Docker  ::
-            docker version 
-                Try above command on terminal to view information about OS name of given Client and Server.
-
             Generate Docker image   :
                         DockerFile  -
                             Write layer of instructions.
@@ -345,6 +342,50 @@ Docker  ::
                         BuildPack   :
                             Simplifies the process, we do not need to write a low-level dockerfile.
 
+                            Step 1:
+                                Add docker image name into POM.xml file.
+                                    <plugin>
+                                        <groupId>org.springframework.boot</groupId>
+                                        <artifactId>spring-boot-maven-plugin</artifactId>
+                                        <configuration>
+                                            <image>
+                                                <name>eazybytes/${project.artifactId}:s4</name>
+                                            </image>
+                                        </configuration>
+                                    </plugin>
+
+                            Step 2:
+                                Generate docker image without dockerfile by using buildpacks:
+                                    Run command:
+                                        mvn spring-boot:build-image
+
+                            Step 3:
+                                Create docker container:
+                                    docker run -d -p 8090:8090 DOCKER_IMAGE_NAME
+
                         Google Jib  :
                             Maintained by Google, For building Docker images of Java applications.
-                            Simplifies the process, we do not need to write a low-level dockerfile.
+                            
+                            Step 1:
+                                Add plugin jib to POM.XML file:
+                                    Go to website and copy the xml code.
+                                    Make sure to give proper name to image.
+
+                                Add <packaging>jar</packaging> to POM.xml file.
+                            
+                            Step 2:
+                                Generate docker image:
+                                    mvn compile jib:dockerBuild
+
+                            Step 3:
+                                Build docker container  
+                                    docker run -d -p 9000:9000 DOCKER_IMAGE_NAME
+
+Port mapping/ Port forwarding/ Port publishing  :
+            In docker, containers are in isloated network.
+            We need access to external port to access this isloated network. 
+
+            During "docker run -d -p 8081:8080 DOCKER_IMAGE_NAME", 
+            we are creating container at 8080 port number which is isloated. 
+            While 8081 port is external port from where user can access APIs and application features.
+
