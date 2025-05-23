@@ -381,6 +381,33 @@ Docker  ::
                                 Build docker container  
                                     docker run -d -p 9000:9000 DOCKER_IMAGE_NAME
 
+Docker compose ::
+            Instead of creating one by one, docker images and container for each microservice. Use Docker compose to create all containers.
+
+            Create "docker-compose.yml" file:
+            // This file will create Account-ms container but we already need image created inside docker to run application.
+                services:
+                    accounts:
+                        image: "eazybytes/accounts:s4"
+                        container_name: accounts-ms
+                        ports:
+                        - "8080:8080"
+                        deploy:
+                        resources:
+                            limits:
+                            memory: 700m
+                        networks:
+                        - eazybank
+                networks:
+                    eazybank:
+                        driver: "bridge"
+
+            Commands::
+                docker compose up -d    --> To create containers out of docker images
+                docker compose stop     --> To stop containers from executing requests
+                docker compose start    --> To continue executing upcoming requests to container
+                docker compose down     --> To delete containers 
+
 Port mapping/ Port forwarding/ Port publishing  :
             In docker, containers are in isloated network.
             We need access to external port to access this isloated network. 
