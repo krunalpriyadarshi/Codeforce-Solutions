@@ -381,6 +381,41 @@ Docker  ::
                                 Build docker container  
                                     docker run -d -p 9000:9000 DOCKER_IMAGE_NAME
 
+            Commands::
+                docker built . -t DOCKER_IMAGE_NAME         --> Creates docker image based on Docker file.
+                docker run -p 8080:8080 DOCKER_IMAGE_NAME   --> Creates container based on Docker image.
+
+                docker login
+                docker image push krunal1k/accounts:s4
+                docker image pull krunal1k/accounts:s4
+                docker logout
+
+                docker images           --> Shows list of Docker images
+                docker search STRING    --> Shows matched named Docker images
+                docker image rm [id]    --> Removes Docker image with given id.
+                docker rmi [id]         --> Removes Docker image with given id.
+                docker image prune      --> Removes all unused images. Which does not have container.
+
+                docker ps       --> Shows running containers.
+                docker ps -a    --> Shows all available containers (even with stopped status).
+                docker rm [id]  --> Removes Docker containers of given id.
+                docker system prune --> Removes unused Docker container. 
+
+                docker container start [id]     --> 
+                docker container stop [id]      -->
+                docker contianer kill [id]      -->
+                docker container pause [id]
+                docker container unpause [id]
+
+                docker container restart [id]
+                
+                docker container logs [id]
+
+                docker compose up -d    --> To create containers out of docker images
+                docker compose stop     --> To stop containers from executing requests
+                docker compose start    --> To continue executing upcoming requests to container
+                docker compose down     --> To delete containers 
+
 Docker compose ::
             Instead of creating one by one, docker images and container for each microservice. Use Docker compose to create all containers.
 
@@ -402,12 +437,6 @@ Docker compose ::
                     eazybank:
                         driver: "bridge"
 
-            Commands::
-                docker compose up -d    --> To create containers out of docker images
-                docker compose stop     --> To stop containers from executing requests
-                docker compose start    --> To continue executing upcoming requests to container
-                docker compose down     --> To delete containers 
-
 Port mapping/ Port forwarding/ Port publishing  :
             In docker, containers are in isloated network.
             We need access to external port to access this isloated network. 
@@ -415,4 +444,36 @@ Port mapping/ Port forwarding/ Port publishing  :
             During "docker run -d -p 8081:8080 DOCKER_IMAGE_NAME", 
             we are creating container at 8080 port number which is isloated. 
             While 8081 port is external port from where user can access APIs and application features.
+
+Cloud-native application    V/S     Native application  ::
+            OS abstraction/ independent while natives are OS dependent.
+            Resizing bacause of containerization but it is not possibel for native applications.
+            CD (Continuous Delivery) while native application needs to be delivered using waterfall approach.
+            Rapid recovery and automated scalability bacause of kubernative while native applications have slow recovery.
+
+15 factor methodologies to build Cloud-native application  ::
+            Codebase    --> Each microservice has its own codebase. Only configuration files are differenet from environment to environment.
+            ├── Build Phase methodologies:
+            │      ├── Dependencies --> All dependencies should be tracked in POm.xml/ gradle file. Do not relay on OS or system package. 
+            │      ├── Config   --> Config stored on env or external files. It should not be hard coded.
+            │      ├── Backing Services (Redis, etc.)   --> Any service (DB, Cache, queue) should be treated as external service which can be changed easily.
+            │      ├── Authorization & Authentication   --> Each service should be protected by Authorization and authentication.
+            │      ├── API First    --> Design APIs first by OpenAPI/ SWaggerAPI so other team can uses APIs and develop their features.
+            │      └── Logs --> Treat logging as event streams. Don't handle log files in the app. Instead use stdout/err. 
+            │
+            ├── Deployment Phase methodologies:
+            │      ├── Dev/Prod Parity  --> Avoid "it-works-on-my-machine" situation, by using same codebase for all environment except configuration files for each environment.
+            │      ├── Processes (stateless)    --> One or more stateless processes. No in-memory session or data, use Radis or DB to save it.
+            │      ├── Concurrency  --> Each service able to handle multiple request in order it can be scale up when needed. Concurrent is a process when one CPU unit can works on multiple request one after another.
+            │      └── Port Binding --> Each service has its own port to run on. Avoid use of external services like apache.
+            │
+            └── Post-Deployment Phase methodologies:
+                    ├── Admin Processes --> Admin tasks (data migration, batch processing, data seeding) as additional process. exclude from app's run time.  
+                    ├── Telemetry (Monitoring)  --> Monitor your applications through external tools to check health and other stuffs.
+                    └── Disposability   --> Fast start up but graceful/ smooth shutdown. Application should close all connections and save all files before shutting down.
+
+
+
+
+
 
