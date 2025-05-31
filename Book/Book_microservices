@@ -454,7 +454,7 @@ Cloud-native application    V/S     Native application  ::
 15 factor methodologies to build Cloud-native application  ::
             Codebase    --> Each microservice has its own codebase. Only configuration files are differenet from environment to environment.
             ├── Build Phase methodologies:
-            │      ├── Dependencies --> All dependencies should be tracked in POm.xml/ gradle file. Do not relay on OS or system package. 
+            │      ├── Dependencies --> All dependencies should be tracked in Pom.xml/ gradle file. Do not relay on OS or system package. 
             │      ├── Config   --> Config stored on env or external files. It should not be hard coded.
             │      ├── Backing Services (Redis, etc.)   --> Any service (DB, Cache, queue) should be treated as external service which can be changed easily.
             │      ├── Authorization & Authentication   --> Each service should be protected by Authorization and authentication.
@@ -472,8 +472,341 @@ Cloud-native application    V/S     Native application  ::
                     ├── Telemetry (Monitoring)  --> Monitor your applications through external tools to check health and other stuffs.
                     └── Disposability   --> Fast start up but graceful/ smooth shutdown. Application should close all connections and save all files before shutting down.
 
+Configuration setting   ::
+            yml or property file    :   (Lowest priority)
+                        Create yml file to do configuration of application:
+                            // application.yml
+                            spring:
+                                config:
+                                    activate:
+                                        on-profile: "dev"
+                                profiles:
+                                    active: "qa"
 
+                            server:
+                                port: 8080
+                            
+                            build:
+                            version: "1.0"
 
+                            # contact-info
+                            accounts:
+                            message:  "information about accounts API"
+                            contactDetails:
+                                name: "Krunal"
+                                email: "k@gmail.com"
+                            onCallSupport:
+                                - (416)880-2323
+                                - (416)880-2323
 
+        Environment configuration   :   (Higher than yml configuration)
+                    Providing configuration at Environment during runtime.
 
+                    IDE ->  Click on "More run" -> Add Environment pathVariable
+
+                    NOTE:
+                        Seperate values by adding ";" 
+                            build.version = 1.0 
+                            turns into
+                            BUILD_VERSION = 1.0
+
+        Add to VM   :   (Higher priority than Environment variable)
+                    ex.,
+                        -Dspring.profiles.active=qa -Dbuild.version=5.5.5
+
+        Add to CLI  :   (Highest Priority)
+                    ex.,
+                        --spring.profiles.active=prod --build.version=6.6.6.6
+
+Show Configuration values at API end point  :
+        Best Way    :
+            Show all values in single API call:
+                    Create yml file :
+                        # contact-info
+                            accounts:
+                            message:  "information about accounts API"
+                            contactDetails:
+                                name: "Krunal"
+                                email: "k@gmail.com"
+                            onCallSupport:
+                                - (416)880-2323
+                    Create record file  :
+                        step 1: add final variable to parameter of class as Record class will handle all getter and declaring final variable.
+                        step 2: Since all properties are part of "accounts" root. use it on @ConfigurationProperties() on top of Record class:
+                            @ConfigurationProperties(prefix = "accounts")
+                                public record AccountsContactInfoDto(String message, Map<String, String> contactDetails, List<String> onCallSupport) {
+                            }
+                        Step 3: Enable configuration properties at Application file:
+                            @EnableConfigurationProperties(value = {AccountsContactInfoDto.class})
+                            @SpringBootApplication
+                            class AccountApplication{...}
+                        Step 4: Autowire record class and use it inside API Get method:
+                            @Autowired
+                            public AccountsContactInfoDto accountsContactInfoDto;
+
+                            @GetMapping("/contact-details")
+                            public ResponseEntity<AccountsContactInfoDto> getAccountContactInfo(){
+                                return ResponseEntity
+                                        .status(HttpStatus.OK)
+                                        .body(this.accountsContactInfoDto);
+                            }
+        
+        Access it by Property varible name  :
+            Create a varibable and add @Value() on top of it. and use it inside API get method:
+                ex.,    
+                    @Value("${build.version}")
+                    private String build_info;
+
+            Or use Environment variable and access it thorugh that:
+                ex.,
+                    @Autowired
+                    public Environment environment;
+
+                    // use it like environment.getProperty("VARIABLE_NAME")
+                    inside api method:
+                        return environment.getProperty("JAVA_HOME");
+
+Spring Cloud    ::
+            Spring project often needs to restart when we update properties in order to view new changes...
+
+            To overcome this drawback, we can use spring cloud.
+            Spring cloud pulls configurations from centralized repo and all microservices pull configurations from Spring cloud in real time.
+
+            Types of loading configuration  :  
+                ->  native  :   Loads configuration files from given classpath.
+                ->  git     :   Loads from git repo
+                ->  svn     :   Loads from SVN repo
+
+            Set-up Cloud server :
+                Step 1  :   Create Spring configserver project. Make sure to add Spring cloud and Accurator (for monitor purposes) dependencies to the project.
+                Step 2  :
+                    -   Load maven changes
+                    -   (optional)  refactor application file to .yml
+                    -   Add cloud server name
+                        ex.,
+                            spring:
+                                application:
+                                    name: "configserver"
+                    -   Add method to retrieve centralized configurations (native/ git/ SVN)
+                        ex.,
+                            // Native way:
+                                spring:
+                                profiles:
+                                    active: native
+                                cloud:
+                                    config:
+                                    server:
+                                        native:
+                                        search: "classpath:/config"
+
+                            // Git way:
+                                profiles:
+                                    active: git
+                                cloud:
+                                    config:
+                                    server:
+                                        git:
+                                        uri: "https://github.com/krunalpriyadarshi/encryptedConfig.git"     # Http link from github repo.
+                                        default-label: main     # branch name where config files saved
+                                        timeout: 5
+                                        clone-on-start: true    # clone to Springcloud server to avoid unexpected errors
+                                        force-pull: true        # force pull incase it does not pull from remote branch
+
+                        NOTE: Add "classpath:/" as static text to local file location.
+                Step 3  :
+                    Add @EnableConfigServer annotation to the Application file to enable Cloud server.
+                Step 4  :
+                    Copy all configuration files from Microservices
+                    NOTE: Name of the files will be "microserviceName + "-" + environmentName"
+                        ex.,
+                            accounts.yml
+                            accounts-prod.yml
+                            accounts-qa.yml
+
+                            cards.yml
+                            cards-prod.yml
+                            cards-qa.yml
+
+                    Remove unneccessory information like profile name, location, H2 database setup etc
+                Step 5  :
+                    Test cloud server
+                    NOTE:   address of each request will be at "localhost:8071/" + microserviceName + "/" + "environmentName" 
+                    ex.,
+                        localhost:8071/accounts/native
+                        localhost:8071/accounts/qa
+                        localhost:8071/accounts/prod
+
+                        localhost:8071/cards/native
+                        localhost:8071/cards/qa
+                        localhost:8071/cards/prod
+                    
+            Set-up Microservices    :
+                Step 1  :   Update application.yml file by removing profile activation and import lines as it will be handle by cloud upon request. And info that is part of centralized configuration files.
+                Step 2  :   Give application name
+                            ex.,
+                                spring:
+                                    application:
+                                        name: "accounts"
+                                    
+                            NOTE:   Spring cloud will match this name will configuration files so make sure to have same name.
+                                Name on client side == Name on configuration file
+                Step 3  :   Add dependency "Cloud client"
+                            -   spring-cloud-version
+                            -   dependency
+                            -   dependencyManagement
+                Step 4  :   import congiuration from centralized already
+                            spring: 
+                                config:
+                                    import: "configserver:http://localhost:8071/"
+
+                            NOTE:   "configserver:" is constant string needs to be added as prefix.
+
+                            (optional)
+                            give profile activation property:
+                            spring:
+                                profiles:
+                                    active: "qa"
+
+            Fetch all Latest configurations from Git without reload of microservice :
+                Actuator api is going to fetch all details from Configuration by calling Management Refresh API.
+                
+                NOTE:
+                    Configuration-server will fetch new details from Git if git set up is done.
+
+                // Add Actuator dependency and enable Refresh API:
+                    Step 1: Add dependency of Actuator
+                        Valid go to "http://localhost:8080/actuator"
+                    Step 2: Enable Management Refresh API for each microservice by adding this to configuration file.
+                        management:
+                            endpoints:
+                                web:
+                                    exposure:
+                                        include: "refresh"
+                    Step 3: Make sure all @ConfigurationProperties have Setter method inside as Spring will set these values when refresh API is called.
+                    Step 4: Make Actuator Refresh API call to fetch all new configuration files from Configuration Server for rach microservice.
+                        http://localhost:****/actuator/refresh
+
+                        NOTE:
+                            This Refresh API is POST method. Use POSTMAN to call this API.
+                            It is not good practise to call APIs for each microservice as We might have 500 microservices for a project.
+
+            Spring Cloud Bus    ::
+                        Spring cloud Bus broadcast state change like configuration changes to all nodes of distributed service/ microservice with one request.
+
+                        Earlier we need to call Actuator Refresh API for each microservice. 
+                        With Cloud Bus, we need to call once BusRefresh API and it will broadcase to all distributed nodes of microservice to fetch new changes from Configuration-Server.
+
+                        NOTE:
+                            Install RabbitMQ from offical website 
+                            Or 
+                            Use Doocker install command.
+
+                        Set-up:
+                            Step 1: Add dependency of Cloud Bus and Actuator to all Microservices and Config-Server.
+                                <dependency>
+                                    <groupId>org.springframework.boot</groupId>
+                                    <artifactId>spring-boot-starter-amqp</artifactId>
+                                </dependency>
+                            Step 2: Expose CloudBus Management API link
+                                management:
+                                    endpoints:
+                                        web:
+                                            exposure:
+                                                include: busrefresh
+                            Step 3: Set up RabbitMQ creds
+                                spring:
+                                    rabbitmq:
+                                        host: "localhost"
+                                        port: 5672
+                                        username: "guest"
+                                        password: "guest"
+                            Step 4: Run RabbitMQ Docker image in Docker CLI.
+                            Step 5: Run Config-server and then all microservice:
+                                Run POST request --> localost://****/actuator/busrefresh
+
+            Sprinig Cloud Monitor + GitHub WebHook  ::
+                        To automate whole process, we can use Spring cloud monitor and GitHub WebHook.
+                        AS we commit our changes to Github, all new changes will be broadcasted by it.
+
+            Test With Docker    :
+                        Create images of each component :
+                            Step 1: Use Google Jib and create images for each microservice.
+                            Step 2: Verify it exist by checking on docker desktop/ images or use command "docker images"
+                            Step 3: use tag command to create relavent docker image to push it to docker hub.
+                                docker tag eazybytes/accounts:s6 userName/accounts:s6
+
+                                then, push it to hub by.,
+                                docker push docker.io/krunal1k/accounts:s6
+
+MySQL setup :
+            step 1  :   Create MySQL container by calling below docker command.
+                        ex.,
+                             docker run -p 3308:3306 --name loandb -e MYSQL_ROOT_PASSWORD=root2 -e MYSQL_DATABASE=loansdb -d mysql
+
+                             You are creating Database so make sure to remember the name of database.
+                             Here mysql is Docker Image that will be downloaded from Docker Hub.
+
+            Step 2  :   Setup MySQL client.
+                        ->  Give Database Type  :   MySQL
+                        ->  server address  :   localhost
+                        ->  port    :   from Docker command on left side
+                        ->  Use username/ password from given docker command.
+
+            Step 3  :   Setup Microservice.
+                        -> Remove H2 dependency
+                        -> Add SQL dependency
+                        -> application.yml file, add mysql creds and url to connect:
+                            ex.,
+                                  datasource:
+                                        # syntex: jdbc:mysql://<host>:<port>/<database_name>
+                                        url: jdbc:mysql://localhost:3308/loansdb
+                                        username: root
+                                        password: root2
+                                    sql:
+                                        init:
+                                            mode: always
+                                    jpa:
+                                        show-sql: true      
+            Step 4  :   Test application by calling APIs and check entry in MySQL Client.
+
+            NOTE:
+                If you delete contianer while application is running. 
+                You just deleted database so when you try to execute POST APIs, it will result in database error.
+                Also, application will create database on initial running phase so we need to re-run application in order to create database.
+
+Traditional Load Balancer   :
+            Mainly used for Monolithics and SOA based application as number of servers are fixed as manually Routing table needs to be created.
+
+            Drawbacks
+                -   High cost
+                -   Manual setup for Routing table
+                -   Complex configuration
+                -   Can not be used for cloud native applications as their IPs changes with their instances
+
+Service Discovery   :
+            To over come drawbacks of Traditional Load Balancer, Service Discovery and Service registry were introduced.
+
+            Service registry make entry or remove it, based on either server is created or removed.
+            If multiple instances are created, load Balancer is placed.
+
+            Types:
+                -   Client-side Service Discovery
+                -   Server-side Service Discovery
+
+    Client-side Service Discovery   :
+                Client side application is responsible to find and connect.
+                where Service Registry will IPs of running instances and it might return list of IPs.
+
+                Drawbacks
+                    -   Client side application will work as load Balancer resulting in more responsibility on developers.
+                    -   Custom algorithm needed for LB like Round-robin and Weighted Round-robin...
+                
+                Fix:
+                    -   Use Server side Service Discovery.
+
+                How it works:
+                    -   Services will register themselves to Service Registry. A system can have multiple Service Registry and they will communicate with broadcast. So each service has to send details once to Service Registry and all Service Registries will hava data about new service instance.
+                    -   If client application wants to send a request. It will first check valid cache and if it has entry, it will send request direct to that service instance.
+                    -   Service Registry will invalid cache of client application if changes occured to service registry.
+                 
 
