@@ -809,4 +809,67 @@ Service Discovery   :
                     -   If client application wants to send a request. It will first check valid cache and if it has entry, it will send request direct to that service instance.
                     -   Service Registry will invalid cache of client application if changes occured to service registry.
                  
+Set-up Eureka Server    :
+            Step 1  :   Add dependencies
+                        -   Eureka server   :   To host as server which will work as Service Registry
+                        -   Actuator        :   To get heartbeat of services in spam of 30 secounds
+                        -   Config Client   :   To fetch configuration files from Centralized config-Server
+            Step 2  :   Create Application.yml
+                        -   Add server port and name
+                            server:
+                                port: 8070
+                            spring:
+                                application:
+                                name: "eurekaserver"
+                        -   Fetch details from Centralized configserver
+                            spring:
+                              config:
+                                import: "optional:configserver:http://localhost:8071/"
+                        -   Host endpoint of Eureka using management and health reading to check heartbeat of services
+                            management:
+                                endpoints:
+                                    web:
+                                    exposure:
+                                        include: "*"
+                                health:
+                                    readiness-state:
+                                    enabled: true
+                                    liveness-state:
+                                    enabled: true
+                                endpoint:
+                                    health:
+                                    probes:
+                                        enabled: true
 
+Set-up Eureka Client on Services    :
+            Step 1  :   Add dependency
+                        -   Eureka client   -   To register service to Service Registry that this server is available to use.
+                        eureka:
+                            instance:
+                                preferIpAddress: true
+                        client:
+                            fetchRegistry: true
+                            registerWithEureka: true
+                            serviceUrl:
+                            defaultZone: http://localhost:8070/eureka/
+            Step 2  :   Expose Service information thorugh Eureka
+                        management:
+                            info:
+                                env:
+                                    enabled:    true
+                        info:
+                            app:
+                                name: "accounts"
+                                description: "Eazy Bank Accounts Application"
+                                version: "1.0.0"
+            Step 3  :   Close server by calling "/actuator/shutdown" API 
+                        management:
+                              endpoint:
+                                shutdown:
+                                access: unrestricted
+                        ex.,
+                            Visit localhost:8080/actuator/shutdown --> to Stop current running microservice
+            Step 4  :   Run application and Visit Eureka server to Validate Microservice is registed.
+                        Call Shutdown api to stop executing microservice and validate on Eureka server that it is removed from list.
+
+            NOTE:   Every 30 sec by default, Microservices will send Health status to ServiceRegistry- Eureka server.
