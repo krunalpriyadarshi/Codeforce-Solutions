@@ -783,6 +783,28 @@ Traditional Load Balancer   :
                 -   Complex configuration
                 -   Can not be used for cloud native applications as their IPs changes with their instances
 
+Readiness V/S Liveness Probe    :
+    Readiness Probe -
+        Question:   Am I ready to take request?
+        purposes:   Checks if application is ready to accept traffic.
+        Example :   DB is connected or not.
+        Effect  :   Traffic won't be sent to App until it is marked as READY.
+    Liveness Probe  -   
+        Question:   Am I alive?
+        purposes:   Checks if application is still alive.
+        Example :   JVM is running, no deadlocks, no unresponsiveness.
+        Effect  :   App will be restarted or killed if it is not ALIVE.
+
+    Configuration steps -
+        Step 1  -   Add Actuator dependency
+        Step 2  -   expose health probe by setting true
+        Step 3  -   enable health readiness and liveness
+
+    NOTE:
+        The Configuration Server (Spring Cloud Config Server) must start first, as all other containers rely on it for configuration.
+
+        In application.yml, ensure the readiness and liveness checks for the Config Server are set up before dependent services (like Accounts, Loans, GatewayServer) start.
+
 Service Discovery   :
             To over come drawbacks of Traditional Load Balancer, Service Discovery and Service registry were introduced.
 
@@ -873,3 +895,120 @@ Set-up Eureka Client on Services    :
                         Call Shutdown api to stop executing microservice and validate on Eureka server that it is removed from list.
 
             NOTE:   Every 30 sec by default, Microservices will send Health status to ServiceRegistry- Eureka server.
+
+Set-up Cross-site mapping   :
+            NOTE:
+                For microservices, it is hard to track IP address of services as new instances are being created once needed or deleted once no longer in use.
+                And To automate that, OpenFeignClient dependency is being used.
+                OpenFeign automatically bind allocated IP address to HttpRequest. 
+
+            Step 1  :   Add OpenFeign dependency
+            Step 2  :   Enable OpenFeignClient in Microservices
+                        @EnableFeignClients
+            Step 3  :   Create client Interface to consume other microservice Http Method.
+                        @FeignClient(SPRING_APPLICATION_NAME)
+                        interfave name{
+                            @GetMapping("/api/fetch")
+                            void method();
+                        }
+            Step 4  :   Now, consume api by calling above interface method.
+                        -   service layer, add new method and logic
+                        -   controller call repo's service layer method
+
+Euroka's Self pre-servation mode to avoid network issue :
+            In Euroka server, Server registry will maintain list of server instances.
+            If one of server does not send HeartBeat, it means instance is either stopped or restarting. 
+            Server Registry will not remove entry right away. 
+
+            Instead, it will keep entry for 90s duration. 
+            If heartbeat from same instance is not recieved, it will remove entry from Service Registry. 
+
+API Gateways/ Edge server    :
+            API Gateways are best for microservices as it's Simplifies communication, security, improved performance and management.
+
+            Benefits    
+            -   Single entry point: All client requests go through single gateway.
+            -   Load balancing and failover
+            -   Routing
+            -   Security & Authentication
+            -   Rate Limit
+            -   Caching
+            -   Monitor and logging
+
+Spring Cloud Gateway    :
+            - It is the preferred API Gateway for Spring applications.
+            - Provides integration with circuit breakers (e.g., Resilience4j, Hystrix).
+            - Supports service discovery (e.g., Eureka, Consul).
+            - Built on Reactor Netty, making it non-blocking and reactive.
+
+            Internal Architecture   :
+                Clients         -   Send HTTPs requests to the gateway
+                Gateway Handler -   Route request based on Routing configuration
+                Predicate       -   Defined conditions (path, header, method) must be met for route to be selected.
+                Pre Fillters    -   Business logic (authentication, auditing, logging, rate limiting)
+                microservices   -   Handles a request 
+                Post Fillters   -   Business logic (modifying response, logging)
+                Gateway Handler -   send response back to client
+
+Gateway server setup    :
+            Step 1  :   Dependencies
+                        -   actuator
+                        -   spring-cloud-starter-config
+                        -   spring-cloud-starter-gateway
+                        -   netflix-eureka-client
+            Step 2  :   application.yml file
+                    # making port for gateway server
+                    server:
+                        port: 8072
+                    
+                    # fetch files from centralized configuration server 
+                    spring:
+                        application:
+                            name: "gatewayserver"
+                        config:
+                            import: "optional:configserver:http://localhost:8071/"
+
+                    # Enables dynamic route discovery via Eureka: and lower case matching is allowed accounts and ACCOUNTS will be treated same.
+                    spring:
+                      cloud:
+                        gateway:
+                        server:
+                            webflux:
+                            discovery:
+                                locator:
+                                enabled: true
+                                lower-case-service-id: true
+
+                    # Adding to eureka
+                    eureka:
+                        instance:
+                            preferIpAddress: true
+                        client:
+                            fetchRegistry: true
+                            registerWithEureka: true
+                            serviceUrl:
+                                defaultZone: http://localhost:8070/eureka/
+
+                    # enable eureka and gateway 
+                    management:
+                        endpoints:
+                            web:
+                            exposure:
+                                include: "*"
+                        endpoint:
+                            gateway:
+                            enabled: true       # /actuator/gateway/routes will be exposed due to this setting.
+                        info:
+                            env:
+                            enabled: true
+
+
+
+
+
+
+
+
+
+
+
