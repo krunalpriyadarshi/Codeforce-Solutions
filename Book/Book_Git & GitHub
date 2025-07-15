@@ -7,6 +7,10 @@
         $ git config --global user.name "Krunal Priyadarshi"
                             --> to setup git
                             --> Don't use global if you want to set differnet user for current repo.
+
+        git config --global init.defaultbranch master
+                Sets default branch "master" during git init call. 
+                To rename it to "main", re-run the command but pass main name instead of master name.
 ____________________________________________________________________________________________________________
 //  Linux commands:
         mkdir       --> to make folder
