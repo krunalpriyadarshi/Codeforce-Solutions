@@ -1,0 +1,42 @@
+static cehcking
+TS is superset to Js Or wrapped around JS.
+
+TypeScript file can be converted into JS file by using 'tsc fileName.ts'
+NOTE:
+    Use --watch to avoid calling tsc command repetatively.
+    command: 'tsc fileName.ts --watch'
+
+
+Data Types:
+    number
+    boolean
+    String
+    null
+    undefined
+    void
+    object
+    array
+    tuple
+    
+    syntex:
+        let variableName: number = 23;
+
+noImplicitAny :
+    When data type is not assigned, it is by default set to 'any'.
+    But 'any' is not type checked and it could lead to errors.
+
+    To avoid that, use 'noImplicitAny' configuration to flag any implicit 'any' as an error.
+
+    By enabling it in configration file:
+    ex.,
+        {
+            "compilerOptions": {
+                "noImplicitAny": true,
+                // Other options...
+            }
+        }
+
+    By passing it in command line:
+    ex.,
+        tsc --noImplicitAny main.ts
+
