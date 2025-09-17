@@ -1,8 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function add(a, b) {
-    return a + b;
+function val() {
+    // Simulating a function that returns one of the specified string literals
+    return "k";
 }
-var message = "hi";
-var additional = "there";
-console.log(add(message, additional.toUpperCase()));
+var data = val();
+switch (data) {
+    case "k":
+        console.log("This is k");
+        break;
+    case "l":
+        console.log("This is l");
+        break;
+    case "m":
+        console.log("This is m");
+        break;
+    default:
+        console.log("This is default");
+}

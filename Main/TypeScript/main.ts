@@ -1,11 +1,21 @@
 export {};
+function val(): "k" | "l" | "m" {
+    // Simulating a function that returns one of the specified string literals
+    return "k";
+}       
 
+let data: "k" | "l" | "m" = val();
 
-function add(a: string, b: string){
-        return a + b;
+switch(data){
+        case "k":
+                console.log("This is k");
+                break;
+        case "l":
+                console.log("This is l");
+                break;
+        case "m":
+                console.log("This is m");
+                break;
+        default:
+                console.log("This is default");
 }
-
-let message : string = "hi";
-let additional : string = "there";
-
-console.log(add(message, additional.toUpperCase()));
