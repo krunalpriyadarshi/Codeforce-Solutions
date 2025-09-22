@@ -1002,9 +1002,56 @@ Gateway server setup    :
                             env:
                             enabled: true
 
+RESILIENCE :
+            Resilience is the ability of a system to overcome challenges and continue functioning smoothly.
 
+            In microservices, sometimes a service may go down temporarily due to network issues or faults.
 
+            Circuit Breaker pattern :
+                        Resilience4j - the circuit breaker monitors the fault rate of requests to that service.
 
+                        ex.,
+                            When the fault rate crosses a certain threshold, the circuit breaker changes state from CLOSED to OPEN.
+                            In the OPEN state, all requests to the faulty service fail immediately, preventing wasted resources and cascading failures.
+                            After a configured cooldown period, the circuit breaker transitions to HALF_OPEN state to test if the service has recovered.
+                            If the service responds successfully during this state, the circuit breaker closes the circuit again. Otherwise, it reopens and the cycle repeats.
+
+Auto-Scaling    :
+            Vertical Scaling    :
+                Giving more resources (like CPU, Memory) of running instance to handle more requests.
+                Example.,
+                    An instance has 2 core CPU and 2 GB RAM. You scale up it to 4 cores and 8GB RAM to handle more requests.
+                
+                Use:
+                ->  Useful for Thighly coupled applications
+                ->  For Test and Dev instances
+                
+                Pros:
+                ->   Easy to implement. No need to change Architecture of application.
+                ->   Good for Monolithic applications or non-distributed applications.
+                
+                Cons:
+                ->   Downtime   -   During scaling, application instance is temporarily unavailbale as restart needed.
+                ->   Resource limit -   Sizing depends on Cloud service provider. As AWS does not provide more than certain RAM to each instance of running server.  
+                ->   Cost inefficent    -   High computing processor charges are higher than regular.
+            
+            Horizontal Scaling  :
+                Add or remove instance to handle traffic.
+                Example.,
+                    During high load scenario, we can clone existing instance of application and direct some traffic to new instance for better performance.
+
+                Use:
+                ->  Best for Microservices. 
+                ->  Production environments where traffic is not constant.
+                
+                Pros:
+                ->  Better Fault Tolerant   -   If one server dies, others handle load.
+                ->  Support distributed services (microservices)
+                ->  Auto-scaling    -   Cloud services automatically scale up or down to handle load.
+                
+                Cons:
+                ->  Complex Architecture - To handle Load Balancer, distributed data
+                ->  Not Optimal for single thread databases -   As database is locked by one instance. Adding more instance won't be helpful at all as process is not Concurrent for database like SQLite.
 
 
 

@@ -67,22 +67,84 @@ Voice-based Transport Enquiry System
 
 make a website like "https://10015.io/"
 
-
-text tiffin to deliver food in morning
-no ride from monday to friday.
 aws services
-reactjs
-css flow grid
-website re-touch
-
 java 8
+    jre jvm jit
+    multiple class inheriatance
+    Memory allocation
 java 11
-spring boot
-how to write test classes
-api information -> what postman body etc -> response code and use
 
-project 
-docker 
-microservice
+
+
+
+spring boot
+Casching in spring
+Sql 
+mysql
+nosql - mongodb
+graphql
+reactjs
+how to write test classes
+- where cicd used in project?
+
+
+hotfix bugfix feature
+
+
+
+
+1. Technical Questions
+2. Behavioral Questions Use the STAR Method:
+3. Situational/Scenario-Based Questions Use Problem-Solution-Outcome structure:
+4. General/HR Questions
+5. Aptitude and Logical Reasoning Questions
+6. Cultural Fit/Values Questions
+
+
+
+about carfax company what they do and list of products.
+
+
 
 management round interview questions
+Behavioral questions (STAR method)
+Architecture scenarios (e.g., high availability, disaster recovery, security)
+
+
+
+
+api information -> what postman body etc -> response code and use
+project 
+All aws services
+{
+    Common AWS interview questions (theory + scenario-based)
+    Ecr
+    Ecs
+    Cdk
+    Api gate way 
+    Lambda
+    Sevrets managers
+    Cloudfront
+    Cloud formation
+    Event bridge
+}
+
+
+
+docker 
+microservice 
+
+Js
+Nodejs
+
+
+Most doiplicared words
+Palimdrom
+Max diff 
+No syntwx issue
+Solution should be done
+Sorting 
+Os related questions
+Cicd
+Gitlab cicd
+

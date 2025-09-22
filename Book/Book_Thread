@@ -33,7 +33,6 @@ Atomicity:
 
                 Hence, it is not atomic operation.
 
-
 Approach	    Visibility       Atomicity	   Thread-Safe
 volatile	    ✅ Yes	        ❌ No	    ❌ No
 synchronized	✅ Yes	        ✅ Yes	    ✅ Yes
