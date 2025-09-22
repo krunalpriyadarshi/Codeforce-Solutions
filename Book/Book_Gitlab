@@ -1,18 +1,5 @@
-gitlab Architecture: 
-    GitLab Server:
-        - Manages Projects, repositories, users and permissions.
-        - Knows which jobs/ tasks needs to be executed.
-    GitLab Runner:
-    - Receives jobs/ tasks from GitLab servers.
-    - Executes the jobs/ tasks.
-    - Uses different executors to run the jobs/ tasks. (docker, shell, kubernetes etc)
-        - Docker executor:
-            - Creates a fresh docker container for each job/ task.
-            - Runs all job scripts: command inside the container.
-            - Destroys the container after job is done.
-    Reporting:
-    - Gitlab runner sends logs, artifacts and job status back to gitlab server.
+Pre-release building
+CI/CD Testing       - JFrog, Jenkins
+Infrastructure
+Monitaring  - Grafana
 
-Artifacts: Mechanism to pass files between jobs.
-
-Linux shell commands: ??? learn about it.
