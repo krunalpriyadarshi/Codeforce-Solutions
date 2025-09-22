@@ -1,0 +1,37 @@
+Improper Authentication :
+            Improper Authentication occues due to invalid authentication mechanisum when it is poorly configured or missing checks resulting in vulnerabilities.
+
+            To prevent,
+                Appropriate Authetication checks.
+                Use @PreAuthorize() in spring.
+                Ensure Authorized user has sufficient access to perform current action.
+
+Mass Assignment/ Over-posting :
+            This security flaw occurs when an attacker is able to set or overwrite sensitive field of an object. Like "role" field in "user" class.
+
+            To prevent,
+                use DTO (Data transfer object)
+                use @JSONignore as spring uses Jackson for serialization and deserialization.
+
+Rate limit & Lack of resource   :
+            This vulnerabilities occur when application isn't properly limit access to expensive operations.
+            Like.,
+                Attacker sends too many requests that exhaust CPU, memory or DB connections.
+                Public url that generate PDFs, resize images or send emails without limits. (this are expensive operation as it takes time to perform.)
+
+            To prevent,
+                Add rate limit to urls on Gateway
+                CAPTCHA - Throttle automated scripts
+                Async operation on Expensive operations
+
+
+Jaeger UI -> trace each request. Gives detailed information about each request on how much time it took and give more info about errors and trace.
+GlooMash platform -> gateway -> route to service/RestAPI/external-service, add policies like retry/manipulate-Headers, shows info about cluster/destination/graph. -> Mash over allows us to perform failover for each request coming from different domains.
+OpenSearch -> review logs from Gateway, Trigger alerts on events like sending Slack message based on threshold API requests
+ArgoCD -> auto-mate CD step, creates new container or K8 resource if new changes are performed.
+
+
+
+
+
+

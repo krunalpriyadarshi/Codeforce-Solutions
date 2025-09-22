@@ -456,6 +456,20 @@ Java Reflaction     ::
                 Method[] methods= c.getDeclaredMethods();
                 Field[] fields= c.getDeclaredFields();
 
+Serialization and Deserialization   ::
+            Serialization is the process of converting an object into a byte stream.
+                Java objects converted into byte stream can be saved to a file or sent over a network. 
+                
+            Deserialization is the process of converting a byte stream back into an object.
+
+            NOTE:
+                In java, "transient" keyword is used to indicate that a field should not be serialized or deserialized.
+                In spring-boot, "@JSONIgnore" annotation is used for same purpose.
+
+                In springboot, ResponseEntity is serialized into JSON format by default.
+                While RequestBody is deserialized from JSON format into Java object.
+
+
 
 ----------------------------------------------------------------------------------------------------------------
 Assertion       ::

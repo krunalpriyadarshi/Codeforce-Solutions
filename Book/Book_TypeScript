@@ -1,0 +1,128 @@
+static cehcking
+TS is superset to Js Or wrapped around JS.
+
+TypeScript file can be converted into JS file by using 'tsc fileName.ts'
+NOTE:
+    Use --watch to avoid calling tsc command repetatively.
+    command: 'tsc fileName.ts --watch'
+
+Data Types:
+    number
+    boolean
+    String
+    null
+    undefined
+    void
+    never
+    object
+    array
+    tuple
+    
+    syntex:
+        let variableName: number = 23;
+
+never :
+    It is used to indicate that a function will never return. It either throws an error or has infinite loops.
+
+    syntex:
+        function throwError(): never {
+            throw new Error("This function always throws an error.");
+        }
+
+type alias:
+    It is used to create a custom name for a type to improve code readability.
+        syntex:
+            type newName = existingType;
+
+        ex.,
+            type userName = string;
+            let name: userName = "krunal";  // Allows to rename existing type
+            console.log(name);
+
+    It is used to create Object or complex types.
+        ex.,
+            type User = {
+                id: number;
+                name: string;
+            };
+            let user: User = { id: 1, name: "Krunal" };
+            console.log(user);
+
+    It is used to perform union types.
+        ex.,
+            type ID = number | string;
+            let userId: ID = 123;
+            userId = "abc";  // Allowed
+
+    It is used to create intersection types.
+        ex.,
+            type Admin = {
+                id: number;
+                role: string;
+            };
+            type User = {
+                id: number;
+                name: string;
+            };
+            type AdminUser = Admin & User;
+            let adminUser: AdminUser = { id: 1, role: "admin", name: "Krunal" };
+            console.log(adminUser);
+
+    It is used for tuple creation.
+        ex.,
+            type StringNumberPair = [string, number];
+            let pair: StringNumberPair = ["Krunal", 1];
+            console.log(pair);
+
+interface:
+    It is used to define the shape of an object.
+        syntex:
+            interface InterfaceName {
+                propertyName: propertyType;
+            }
+
+        ex.,
+            interface User {
+                id: number;
+                name: string;
+            }
+            let user: User = { id: 1, name: "Krunal" };
+            console.log(user);
+
+noImplicitAny :
+    When data type is not assigned, it is by default set to 'any'.
+    But 'any' is not type checked and it could lead to errors.
+
+    To avoid that, use 'noImplicitAny' configuration to flag any implicit 'any' as an error.
+
+    By enabling it in configration file:
+    ex.,
+        {
+            "compilerOptions": {
+                "noImplicitAny": true,
+                // Other options...
+            }
+        }
+
+    By passing it in command line:
+    ex.,
+        tsc --noImplicitAny main.ts
+
+Functions   :
+    For strict type check, define data type of parameters and return type.
+
+    syntex:
+        // Function adding two numbers
+        function add(a: number, b: number): number {
+            return a + b;
+        }
+
+        // Function returning an Object
+        function getObj(): Object {
+            return { id: 1, name: "Krunal" };
+        }
+
+        // Function returning a specific Object shape
+        function getObject(): { id: number; name: string } {
+            return { id: 1, name: "Krunal" };
+        }
