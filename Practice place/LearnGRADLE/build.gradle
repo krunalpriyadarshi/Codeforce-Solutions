@@ -1,6 +1,5 @@
-def a = 10
-def b = 12
-
-println a + b
-
-println 'This is 30 sec project=============='
+task sayHello {
+    doLast {
+        println "Hello from Gradle!"
+    }
+}
