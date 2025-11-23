@@ -29,6 +29,9 @@ ________________________________________________________________________________
         $ git add -p index.html
                 --> this will start patch level staging. When you want to only push certain line of code from a file. you can use this.
 
+// Difference between branches:
+        $ git diff origin/master        --> remote master VS (your branch + uncommitted changes)
+        $ git diff origin master        --> remote master VS your local committed changes only
 //  Unstage all files
         $ git reset
         $ git reset fileName

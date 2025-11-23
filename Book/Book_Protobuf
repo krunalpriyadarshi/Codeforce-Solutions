@@ -1,0 +1,33 @@
+Protocol Buffers was created by Google to lower cost and increase speed for data transfer.
+    ***             Protobuf        vs JSON     vs XML
+    Size            -   Smallest    -   Medium  -   Largest
+    Speed           -   Fastest     -   Medium  -   Slowest
+    Human Readable  -   No          -   Yes     -   Yes
+    Schema Requiredq-   Yes         -   No      -   No
+    Browser Support -   Limited     -   Yes     -   Yes
+    Debugging       -   Harder      -   Easy    -   Easy
+
+Use Protobuf when you need
+    -   Compact size : Binary format, smaller than JSON/ XML
+    -   Fast serialization : Efficient encoding and decoding
+    -   Type safety : Define object or schema 
+    -   Backword compatibility : Easy updates without breaking anything
+    -   Cross-language compatibility : Works across different languages
+
+Disadvantage    
+    -   Need compiler to encrypt or decrypt the data.
+    -   Not human readable and fewer inspection tools.
+    -   
+
+When JSON is better fit than ProtoBuf?
+    -   When you want data in human readable format.
+    -   Server side application is written in JavaScript.
+    -   If data is consumed by Web browser directly.
+    -   When data is not tied to schema.
+    -   the operational burden of running a different kind of network service is too great.
+
+Install ProtoBuf compiler:  "brew install protoc"
+
+
+
+
