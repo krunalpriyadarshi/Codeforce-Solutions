@@ -1,15 +1,63 @@
 # 📘 Learn Gradle
 
-## My findings
+## Project layout
 
-- Gradle Build = Gradle Project
-- gradle build file -> the instruction manual to build application
-- .java files -> actual application
-- `gradle` V/S `gradlew`
+- `.gradle` Gradle's private workspace and cache directory
+- `gradle` Gradle system files
+- `gradlew` Gradle runner (Mac/ Linux)
+- `gradlew.bat` Gradle runner (Windows)
+- `build` Generated files from `.gradlew build` command
+- `build.gradle` Main build configuration
+- `gradle.properties` Project specific properties
+- `settings.gradle` Project setting
+
+> Always use the Gradle wrapper!
+
+- `gradle` v/s `gradlew`
   - `gradle` is for System-wide command.
   - `gradlew` AKA `gradle wrapper`. Each project can have its own gradle version. Used in collaborative project, to avoid issues or version mismatch.
 
-> **⚠️ NOTE:** Always use the Gradle wrapper!
+> `Groovey` language is being used to write `build.gradle` file.
+
+## Build Lifecycle phases
+
+1. **Initialization** - What projects take part in build
+2. **Configuration** - Executes Build-script and Maps model for project
+3. **Execution** - Execute project based on command
+
+### Commands
+
+- `gradle init` will automatically install gradle wrapper.
+- `./gradlew -v` To check Gradle version
+- `./gradlew tasks` - Shows only tasks who are part of atleast one Group
+- `./gradlew tasks --all` - Shows all tasks
+- `./gradlew --help`
+
+> ⚠️ NOTE: Abbreviated task names : Use first letter of each word Instead of whole task-name. `./gradlew gD` -> `./gradlew generateDescriptions`
+
+> ⚠️ NOTE: "UP-TO-DATE" means Gradlew skipped task since last compile, nothing has changed.
+
+## Gradle Daemon
+
+Daemon is long-running background process after initial build. It helps to execute application faster.
+
+`./gradlew --status` Shows which daemons are running. (IDLE = Ready and waiting for command; BUSY = Currently running a build; STOPPED = Daemon has stopped.)
+
+`./gradlew --stopped` All Daemons will stop running.
+
+```bash
+# Cold start (first build of the day)
+$ ./gradlew clean build
+BUILD SUCCESSFUL in 45s
+
+# Hot builds (daemon running)
+$ ./gradlew build
+BUILD SUCCESSFUL in 3s    # 15x faster!
+```
+
+- It is adviced, not to disable darmon but it can be disable from properties file `org.gradle.daemon = false` or from command line `./gradlew build --no-daemon`.
+
+- If project is big, you can increase memory usage for deamon by providing this property: `org.gradle.jvmargs=-Xmx8g -XX:+UseG1GC` - Adds more memory for daemon usage
 
 ## build.gradle file
 
@@ -58,30 +106,5 @@ plugins{
     id 'application'    // Core-gradle plugin; for CLI and server apps.
 }
 
-// Run `gradle tasks` to check new tasks.
+// Run `gradle tasks` to check new tasks imported by Plugins
 ```
-
-## Gradle
-
-`gradle init` will automatically install gradle wrapper.
-If project uses different version than `.gradlew build` will use right version.
-
-`./gradlew -v` To check Gradle version
-
-### Project layout
-
-#### (Auto-generated)
-- `.gradle` Gradle's private workspace and cache directory
-- `gradle` Gradle system files
-- `gradlew` Gradle runner (Mac/ Linux)
-- `gradlew.bat` Gradle runner (Windows)
-- `build` Generated files from `.gradlew build` command
-
-#### (Configuration files)
-- `build.gradle` Main build configuration
-- `gradle.properties` Project specific properties
-- `settings.gradle` Project setting
-
-`./gradlew tasks` - Shows only tasks who are part of atleast one Group
-`./gradlew tasks --all` - Shows all tasks
-
