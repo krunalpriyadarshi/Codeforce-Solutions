@@ -17,7 +17,39 @@
   - `gradle` is for System-wide command.
   - `gradlew` AKA `gradle wrapper`. Each project can have its own gradle version. Used in collaborative project, to avoid issues or version mismatch.
 
-> `Groovey` language is being used to write `build.gradle` file.
+> Gradle supports `Groovey` and `Kotlin` DSL (Domain Specific Language).
+
+NOTE: In Gradle, the order matters inside `build.gradle` file. `plugin {}` must come first, before any other statements like `description`, `version`, `group`, or custom code.
+
+### Groovey V/S Kotlin
+
+### Groovey
+
+- Groovey is JVM language hence all java-library can be used.
+- It is loosely type language where brackets and pre-defined variable is optional.
+- Less boilerplate code.
+
+#### Closure in Groovy
+
+A closure is similar as lambda function. You can also call it by using call() method.
+
+- def lambda = { println("...processing...) }
+  - lambda()
+  - lambda.call()
+- def lambda = { int num -> return num * 2 }
+  - lambda(10)
+  - lambda.call(10)
+- def lambda = { a, b -> return a + b }
+  - lambda(2, 4)
+  - lambda.call(2, 4)
+
+⚠️ ⚠️ TODO: Learn variables, strings, collections in groovy!!
+
+### Kotlin
+
+- Kotlin is also JVM labguage.
+- It is statically typed language. And more IDE support.
+- Kotlin uses lambda functions instead of closures.
 
 ## Build Lifecycle phases
 
@@ -51,7 +83,7 @@ $ ./gradlew clean build
 BUILD SUCCESSFUL in 45s
 
 # Hot builds (daemon running)
-$ ./gradlew build
+$ ./gradlew build 
 BUILD SUCCESSFUL in 3s    # 15x faster!
 ```
 
@@ -85,13 +117,36 @@ Tasks are individual jobs that Gradle can run.
 
 - **Custom tasks**
 
-  - ```gradle
-    task sayHello {
+  - Ad-hoc Tasks (Simple custom tasks)
+
+    - ```gradle
+       task sayHello {
         doLast {
             println "Hello from Gradle!"
         }
-    }
-    ```
+      }
+      ```
+
+  - Class-based Tasks (Typed tasks)
+
+    - Class-based tasks are Plugin tasks which need developer configuration prior using it.
+    - ex., `copy` task has it's implementation but it doesn't know what to copy and where. Hence Class-based task is defined which provides these configuration. 
+
+    - ```gradle
+        // uses `Copy` class:
+        task copyConfigs(type: copy){
+          from 'config
+          into 'build/config'
+        }
+      ```
+
+  - Ad-hoc V/S Class-based Tasks:
+
+    - Ad-hoc tasks are written from scratch hence it requires `more code` while Class-based tasks require `less code`.
+    - Error handling requires for Ad-hoc task while Class-based tasks have built-in error handling.
+    - Incremental build is tough to implement by Ad-hocs but it is already done for Class-based.
+
+    *(NOTE) Incremental build - Where all files don't need to recompile but only those changed need to compile. Which is harder to implement in Ad-hocs.*
 
 ### Plugins
 
