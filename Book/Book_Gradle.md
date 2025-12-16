@@ -130,7 +130,7 @@ A closure is similar as lambda function. You can also call it by using call() me
   /** OUTPUT: 
   
   ./gradlew taskB
-  
+
   > Configure project :
   [Configuration] Phase A
   [Configuration] Phase B
@@ -299,7 +299,7 @@ Tasks are individual jobs that Gradle can run.
   
 - **Locating tasks**
 
-  - tasks.named(): Used to adjust existing behaviour of a task.
+  - tasks.named(): Adjust or extend the behavior of an existing task. Note: tasks.named() can't be used for non-existing task.
 
     - Modify behaviour of ad-hoc task:
 
@@ -316,12 +316,27 @@ Tasks are individual jobs that Gradle can run.
         }
 
         /** OUTPUT:
+
+        ./gradlew sayHello
+
         > Configure project :
         Hello world!
         modification of sayHello task!
+
+        > Task :sayHello
         end of sayHello task!
         */
         ```
+
+    - Modify behaviour of tasks from plugins:
+
+      - ```gradle
+        tasks.named("build") {
+            dependsOn("integrationTest")  // ensures `integrationTest` runs whenever `build` runs
+        }
+        ```
+
+      - To change behaviour of task from plugin, we can use `tasks.named()` and it adds extra functionality to built in tasks.
 
 - dependsOn()
   - `taskA.dependsOn(taskB)` : Before Task A runs, you must finish Task B.
