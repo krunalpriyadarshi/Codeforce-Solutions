@@ -53,9 +53,9 @@ A closure is similar as lambda function. You can also call it by using call() me
 
 ## Build Lifecycle phases
 
-1. **Initialization** - What projects take part in build
-2. **Configuration** - Executes Build-script and Maps model for project
-3. **Execution** - Execute project based on command
+1. **Initialization** - What projects take part in build.
+2. **Configuration** - Executes Build-script and Maps model for project.
+3. **Execution** - Execute project based on command.
 
 ### Commands
 
@@ -96,7 +96,7 @@ BUILD SUCCESSFUL in 3s    # 15x faster!
 It is BUILD SCRIPT.
 When you run `gradle` command. Output is visible in Configure project section inside the terminal.
 
-### Gradle tasks
+## Gradle tasks
 
 Tasks are individual jobs that Gradle can run.
 
@@ -148,7 +148,77 @@ Tasks are individual jobs that Gradle can run.
 
     *(NOTE) Incremental build - Where all files don't need to recompile but only those changed need to compile. Which is harder to implement in Ad-hocs.*
 
-### Plugins
+- **Task configuration properties**:
+
+  - group:
+
+    - Create separate group for task and it is visible when you run `./gradlew tasks --all` command or on gradle task list on IDE.
+
+  - description:
+
+    - Defines definition of task for better readibility when you run `./gradlew tasks --all`.
+
+  - doFirst and dolast:
+
+    - Closures which run either prior or post execution of the task. Self-explaining.
+
+  - eabled:
+
+    - By default it is `True` but you can set it to false by `enabled: False`.
+
+    - ```gradle
+      tasks.register('sayHello'){
+        enabled: false  // Task will be Skipped.
+        
+        doLast{
+          println 'This won't run...'
+        }
+      }
+      ```
+
+  - onlyIf - conditional clouser:
+
+    - Same as `enabled` but you can define logic here.
+
+    - ```gradle
+      tasks.register('sayHello'){
+        onlyIf{
+          1 == 2 - 2
+        }
+
+        doLast{
+          println '... runs only when expression is true else Skipped'
+        }
+      }
+      ```
+
+- **Lazy V/s Eager Initialization**
+
+  - `Eager tasks` are created during Configuration time While `Lazy Tasks` are only created when needed. Large build slow down the system commands hence Lazy tasks are usually preferred over Eager tasks.
+
+  - ```gradle
+    // Eager Initialization (Slower)
+    task sayHello{
+      doLast{
+        println("Hello!")
+      }
+    }
+    ```
+
+  - ```gradle
+    // Lazy Initialization (Faster)
+    tasks.register("sayHello"){
+      doLast{
+        println("Hello!")
+      }
+    }
+    ```
+  
+- **Locating tasks**
+
+  - abc
+
+## Plugins
 
 Plugins are additional resource. It adds extra functionality and capabilities.
 
