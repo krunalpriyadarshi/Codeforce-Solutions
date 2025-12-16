@@ -69,6 +69,89 @@ A closure is similar as lambda function. You can also call it by using call() me
 
 > ⚠️ NOTE: "UP-TO-DATE" means Gradlew skipped task since last compile, nothing has changed.
 
+### Execution Order
+  > `doFirst` is Stack-like (LIFO) while `doLast` is Queue-like (FIFO).
+
+- During configuration, Gradle evalutes all build scripts and prints logs from:
+
+  - Top-level code in `build.gradle`
+  - All logs (Except logs from doFirst and doLast) from `Eagerly` initialized tasks
+  - If commands runs `Lazy` initialized task then their logs (But not from doFirst and doLast closure)
+
+- During Execution
+
+  - logs from doFirst() closure but in LIFO format.
+  - logs from doLast{} closure but in FIFO format.
+  - NOTE: If a task is skipped, its execution will not take place, so any logs inside doFirst {} and doLast {} will not be printed. However, configuration-phase logs are always executed and displayed, even for skipped tasks.
+
+- ```gradle
+  plugins {
+      id 'java'
+  }
+
+  description = 'Learn Execution Phases'
+  println '[Configuration] Phase A'
+
+  task ("taskA") {
+      println "[Configuration] Phase B"
+      doFirst {
+          println "[Execution] Phase C" // doFirst uses stack for all doFirst log from same task hence it is printed below Phase F log.
+      }
+      doLast {
+          println "[Execution] Phase D"
+      }
+  }
+
+  tasks.named("taskA"){
+      println "[Configuration] Phase E"
+      doFirst {
+          println "[Execution] Phase F"
+      }
+
+      doLast {
+          println "[Execution] Phase G"
+      }
+  }
+
+  tasks.register('taskB'){  // This create new section on CLI
+      dependsOn('taskA')
+      println "[Configuration] Phase H" // Since this is LAZY initialized task, logs from printed once whole script is configured.
+      doFirst {
+          println "[Execution] Phase I"
+      }
+
+      doLast {
+          println "[Execution] Phase J"
+      }
+  }
+
+  println '[configuration] Phase K'
+  
+  /** OUTPUT: 
+  
+  ./gradlew taskB
+  
+  > Configure project :
+  [Configuration] Phase A
+  [Configuration] Phase B
+  [Configuration] Phase E
+  [configuration] Phase K
+  [Configuration] Phase H
+
+  > Task :taskA
+  [Execution] Phase F
+  [Execution] Phase C
+  [Execution] Phase D
+  [Execution] Phase G
+
+  > Task :taskB
+  [Execution] Phase I
+  [Execution] Phase J
+
+  BUILD SUCCESSFUL
+  */
+  ```
+
 ## Gradle Daemon
 
 Daemon is long-running background process after initial build. It helps to execute application faster.
@@ -216,7 +299,29 @@ Tasks are individual jobs that Gradle can run.
   
 - **Locating tasks**
 
-  - abc
+  - tasks.named(): Used to adjust existing behaviour of a task.
+
+    - Modify behaviour of ad-hoc task:
+
+      - ```gradle
+        tasks.register("sayHello") {
+          println "Hello world!"
+          doLast {
+              println "end of sayHello task!"
+          }
+        }
+
+        tasks.named("sayHello"){
+          println "modification of sayHello task!"
+        }
+
+        /** OUTPUT:
+        > Configure project :
+        Hello world!
+        modification of sayHello task!
+        end of sayHello task!
+        */
+        ```
 
 - dependsOn()
   - `taskA.dependsOn(taskB)` : Before Task A runs, you must finish Task B.
@@ -225,7 +330,6 @@ Tasks are individual jobs that Gradle can run.
 
   - ```gradle
     // Here Integration task will execute prior to Build task.
-
     tasks.register('integrationTest'){
       println 'performing integration test'
     }
