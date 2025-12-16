@@ -218,6 +218,24 @@ Tasks are individual jobs that Gradle can run.
 
   - abc
 
+- dependsOn()
+  - `taskA.dependsOn(taskB)` : Before Task A runs, you must finish Task B.
+
+  - For better readability, Always define such tasks which are not depends on others. Later define such task which depends on others.
+
+  - ```gradle
+    // Here Integration task will execute prior to Build task.
+
+    tasks.register('integrationTest'){
+      println 'performing integration test'
+    }
+
+    tasks.register('build'){
+      dependsOn('integrationTest')
+      println 'performing build task'
+    }
+    ```
+
 ## Plugins
 
 Plugins are additional resource. It adds extra functionality and capabilities.
