@@ -338,20 +338,174 @@ Tasks are individual jobs that Gradle can run.
 
       - To change behaviour of task from plugin, we can use `tasks.named()` and it adds extra functionality to built in tasks.
 
-- dependsOn()
-  - `taskA.dependsOn(taskB)` : Before Task A runs, you must finish Task B.
+  - tasks.getByName(): Same as tasks.named() but this initializes task as EAGER TASK.
 
-  - For better readability, Always define such tasks which are not depends on others. Later define such task which depends on others.
+    - ```gradle
+      tasks.getByName('clean'){
+        doLast{
+          println 'Eager initilizes clean task by tasks.getByName() method.'
+        }
+      }
+      ```
+
+    > NOTE: Shorthand syntex: tasks.TaskName{...}
+
+    - ```gradle
+      tasks.clean{
+        doLast{
+          println 'Eager initilizes clean task by short-hand method.'
+        }
+      }
+      ```
+  
+  - Groovey shorthand method: Define by directly using name of task. And initialization will be EAGER type as well.
+
+    - ```gradle
+      description = 'Learn Execution Phases'
+      println '[Configuration] Phase A'
+
+      tasks.register("taskA") {
+          println "[Configuration] Phase B"
+          doFirst {
+              println "[Execution] Phase C"
+          }
+          doLast {
+              println "[Execution] Phase D"
+          }
+      }
+
+      taskA{
+          println "[Configuration] Phase E"
+      }
+
+      println '[configuration] Phase O'
+
+      // OUTPUT
+      /**
+      ./gradlew clean
+
+      > Configure project :
+      [Configuration] Phase A
+      [Configuration] Phase B
+      [Configuration] Phase E
+      [configuration] Phase O
+      */
+      ```
+  
+- **Task dependencies & ordering**
+
+  - dependsOn()
+    - `taskA.dependsOn(taskB)` : Before Task A runs, you must finish Task B.
+
+    - For better readability, Always define such tasks which are not depends on others. Later define such task which depends on others.
+
+    - ```gradle
+      // Here Integration task will execute prior to Build task.
+      tasks.register('integrationTest'){
+        println 'performing integration test'
+      }
+
+      tasks.register('build'){
+        dependsOn('integrationTest')
+        println 'performing build task'
+      }
+      ```
+
+  - mustRunAfter()
+    - It defines order of execution if multiple tasks are inside dependsOn() block.
+
+    - ```gradle
+      tasks.register('task1'){
+        mustRunAfter(task2) // Overwrites default execution order. Task2 will run first then task1.
+        println 'configuration: task1'
+      }
+
+      tasks.register('task2'){
+        println 'configuration: task2'
+      }
+
+      tasks.register('mainTask'){
+        dependsOn(task1, task2) // Default order of execution is task1 then task2
+        println 'configuration main task'
+      }
+
+      /** OUTPUT
+
+      configuration: task2
+      configuration: task1
+      configuration main task
+      > Task :task2 UP-TO-DATE
+      > Task :task1 UP-TO-DATE
+      > Task :mainTask UP-TO-DATE
+      */
+      ```
+
+  - finalizedBy()
+    - Finalized blocks always run during execution phase even if task fails or exception occurs. NOTE: If exception thrown during configuration phase, Finalized block will not execute.
+
+    - ```gradle
+      tasks.register('cleanUp'){
+        println 'Configuration: clean up'
+        doLast{
+          println 'Execution: clean up done.'
+        }
+      }
+
+      tasks.register('mainTask'){
+        println 'configuration: main task'
+        finalizedBy 'cleanUp'
+        doLast{
+          throw new Exception('custom error')   // Since Exception occurs during Execution phase, it will execute finalized block.
+          println 'Execution: main task done.'
+        }
+      }
+
+      tasks.register('failTask'){
+        println 'configuration: fail task'
+        throw new execption('custom error') // Since execption occues during configuration phase, it won/'t execute finalized block.
+        doLast{
+          println 'execution: fail task'
+        }
+      }
+      ```
+
+- **Inputs & Outputs**
+  - Inputs + Outputs tell Gradle when a task needs to run; without them, Gradle always runs it. If Input is changed or Output is missing, Gradle will execute the task else task will be skipped. - This logic is used for Incremental Build.
+
+  - Task A (producer)
 
   - ```gradle
-    // Here Integration task will execute prior to Build task.
-    tasks.register('integrationTest'){
-      println 'performing integration test'
+    tasks.register("generateData") {
+      outputs.file("$buildDir/data.txt")
+      doLast {
+          file("$buildDir/data.txt").text = "Generated"
+      }
+    }
+    ```
+  
+  - Task B (consumer)
+
+  - ```gradle
+    tasks.register("readData") {
+      inputs.file("$buildDir/data.txt")
+      doLast {
+          println file("$buildDir/data.txt").text
+      }
+    }
+    ```
+
+  - Another example of Producer-consumer linking:
+  
+  - ```gradle
+    tasks.register('copyTask', Copy){ 
+      from 'temp.txt'
+      into "$buildDir/workspace"
     }
 
-    tasks.register('build'){
-      dependsOn('integrationTest')
-      println 'performing build task'
+    tasks.register('zipTask', Zip){ 
+      from copyTask
+      archiveFileName = 'workspace.zip'
+      destinationDirectory = file("$buildDir")
     }
     ```
 
@@ -370,3 +524,70 @@ plugins{
 
 // Run `gradle tasks` to check new tasks imported by Plugins
 ```
+
+## Java Project
+
+### Dependency
+
+- Group:Name:version of dependency is required before implementation.
+
+- ```groovey
+  // Make sure to define repository from where dependencies can be downloaded.
+  repository{
+    mavenCentral()
+  }
+
+  dependencies{
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+  }
+  ```
+
+### Phases & ClassPath
+
+- **ClassPath**: Classpath are locations of Jar files, modules or directories.
+
+- There're different phases:
+  - *Compile time phase*: It type checks and generate byte codes.
+  - *Runtime phase*: Execute byte codes.
+  - *Test compile phase*: Compile test code.
+  - *Test runtime phase*: Execute tests.
+
+- Each phases need different dependencies.
+
+  - ```groovey
+    dependencies {
+      implementation 'org.springframework:spring-core'
+      compileOnly 'org.projectlombok:lombok'
+      runtimeOnly 'ch.qos.logback:logback-classic'
+
+      testImplementation 'org.junit.jupiter:junit-jupiter-api'
+      testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    }
+    ```
+
+- **Why different phases exist?**: To fails early. (Means find issues in early stage rather than finding issue later on and debugging it.)
+
+  - Can be easily understand by TestCompileTime and TestRunTime example:
+
+    - Test compile classpath: junit-jupiter-api
+    - Test runtime classpath: junit-jupiter-engine
+    - Here, Needs:
+      - `@Test` annotation -> compile time
+      - Test engine -> runtime
+    - Hence,
+      - testImplementation junit-jupiter-api
+      - testRuntimeOnly junit-jupiter-engine
+
+## TIPS
+
+- `./gradlew assemble` task is same as `build` task but it doesn't run `check` task. Usecase of this task is to save time when you just want to build jar but not want to test your application. s
+
+- Run application by JAR files:
+
+  - JAR is bundle of class files, resources, and metadata which can be shared, deployed or run across systems.
+  - Thin Jar has only code while Fat Jar has code + dependencies.
+
+  - ```command
+    // run application by
+    java -jar location_of_jar_file/JarName.jar
+    ```
