@@ -45,7 +45,7 @@ A closure is similar as lambda function. You can also call it by using call() me
   - lambda(2, 4)
   - lambda.call(2, 4)
 
-⚠️ ⚠️ TODO: Learn variables, strings, collections in groovy!!
+⚠️ ⚠️ TODO: testing.suits from gradle. Also, Learn variables, strings, collections in groovy!!
 
 ### Kotlin
 
@@ -549,23 +549,23 @@ Since `soureceCompatibility` and `targetCompatibility` assume that correct java 
 
 ⚠️ `Java toolChain` forces gradle to use specific java version to avoid mismatch of java version. ✅ Gradle will download the JDK automatically if missing.
 
-```gradle
-java{
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(11)  // Java 11 will be used by JVM.
-    }
-}
-```
+- ```gradle
+  java{
+      toolchain {
+          languageVersion = JavaLanguageVersion.of(11)  // Java 11 will be used by JVM.
+      }
+  }
+  ```
 
 - Individual Gradle tasks can override and use a different Java version if needed.
 
-```gradle
-tasks.withType(JavaExec).configureEach{
-  javaLauncher = javaToolchains.auncherFor{
-    languageVersion = JavaLanguageVersion.of(11)    // Application will run on java 11.
-  }
-}
-```
+  - ```gradle
+    tasks.withType(JavaExec).configureEach{
+      javaLauncher = javaToolchains.auncherFor{
+        languageVersion = JavaLanguageVersion.of(11)    // Application will run on java 11.
+      }
+    }
+    ```
 
 ### Dependency
 
@@ -706,18 +706,48 @@ tasks.withType(JavaExec).configureEach{
 
   - Used to verify the smallest units of code like methods or classes work as expected.
   - Used to check business logic or validation rule after the change.
-  - Fast feedback during development.
+  - It is quick to runFast and provides feedback during development.
 
 - Integration Testing:
 
-  - To verify Integration of DB, REST Apis, file systems and configuration or system.
+  - To verify Integration of DB, REST Apis, file systems and configuration or external resources which makes `Integration testing` slower than `Unit testing`.
   - To check if components work together as expected after change.
   - ex., @SpringBootTest file can be used to check Controller, Service, Repository and Database integration.
+
+#### Integration Testing
+
+- Step 1: Create integration test classes on src/integrationTest/java/.. directory
+- Step 2: Use testing.suites{} block to define testing setup.
+
+  - ```gradle
+    testing {
+      suites {
+          integrationTest(JvmTestSuite) {
+              useJUnitJupiter()   // Import dependencies for testing phase
+              dependencies {
+                  implementation project  // Additional testing dependencies
+              }
+          }
+      }
+    }
+    ```
+
+- Step 3: (optional) Modify to run Integration testing for `Check` or `test` task.
+
+  - ```gradle
+    tasks.named('check'){
+      dependsOn testing.suites.integrationTest  // Before `check` task runs, `IntegrationTest` will always run.
+    }
+    ```
 
 #### Testing Plugins
 
 - JVM Test Suite plugin (Gradle 7.3+)
 - TestSets plugin (Custum plugin for less than Gradle 7.3)
+
+### Publichsing to Maven
+
+
 
 ## TIPS
 
