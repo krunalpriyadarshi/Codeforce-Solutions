@@ -67,11 +67,10 @@ A closure is similar as lambda function. You can also call it by using call() me
 - `./gradlew tasks --all` - Shows all tasks
 - `./gradlew --help`
 
-> ⚠️ NOTE: Abbreviated task names : Use first letter of each word Instead of whole task-name. `./gradlew gD` -> `./gradlew generateDescriptions`
-
-> ⚠️ NOTE: "UP-TO-DATE" means Gradlew skipped task since last compile, nothing has changed.
+> NOTE: "UP-TO-DATE" means Gradlew skipped task since last compile, nothing has changed.
 
 ### Execution Order
+
   > `doFirst` is Stack-like (LIFO) while `doLast` is Queue-like (FIFO).
 
 - During configuration, Gradle evalutes all build scripts and prints logs from:
@@ -529,6 +528,16 @@ plugins{
 
 ## Java Project
 
+⚠️ Java toolChain forces gradle to use specific java version to avoid mismatch of java version.
+
+```gradle
+java{
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+```
+
 ### Dependency
 
 - Group:Name:version of dependency is required before implementation.
@@ -656,9 +665,36 @@ plugins{
   - `./gradlew cleanTest` Deletes only test outputs.
   - `./gradlew cleanTest test --console=verbose` Force delete test outputs then re-runs tests.
 
+#### Testing Types
+
+- Manual Testing:
+
+  - Known as Human testing or Exploratory testing.
+  - A testing performed by human without automated scripts to validate UI/UX behaviour or making sure business flows make sense from a user's perspective.
+  - verifing logs, error handling, data consistency, and calling APIs.
+
+- Unit Testing:
+
+  - Used to verify the smallest units of code like methods or classes work as expected.
+  - Used to check business logic or validation rule after the change.
+  - Fast feedback during development.
+
+- Integration Testing:
+
+  - To verify Integration of DB, REST Apis, file systems and configuration or system.
+  - To check if components work together as expected after change.
+  - ex., @SpringBootTest file can be used to check Controller, Service, Repository and Database integration.
+
+#### Testing Plugins
+
+- JVM Test Suite plugin (Gradle 7.3+)
+- TestSets plugin (Custum plugin for less than Gradle 7.3)
+
 ## TIPS
 
 - `./gradlew assemble` task is same as `build` task but it doesn't run `check` task. Usecase of this task is to save time when you just want to build jar but not want to test your application. s
+
+- ⚠️ NOTE: Abbreviated task names : Use first letter of each word Instead of whole task-name. `./gradlew gD` -> `./gradlew generateDescriptions`
 
 - Run application by JAR files:
 
