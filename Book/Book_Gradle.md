@@ -745,9 +745,40 @@ Since `soureceCompatibility` and `targetCompatibility` assume that correct java 
 - JVM Test Suite plugin (Gradle 7.3+)
 - TestSets plugin (Custum plugin for less than Gradle 7.3)
 
-### Publichsing to Maven
+### Publising Maven
 
+- Step 1: Import plugin `id 'maven-publish'`.
 
+  - ```gradle
+    plugins{
+      id 'maven-publish'
+    }
+    ```
+
+  - `publish` task publishes all publications according to defined configuration.
+  - While `publishToMavenLocal` task, publishes to local directory: `~/.m2/repository`.
+
+- Step 2: Publishing configuration
+
+  - ```gradle
+    publishing {
+      publications {
+          mavenJava(MavenPublication) {
+              from components.java
+
+              // Co-ordinates:
+              groupId = 'com.example'
+              artifactId = 'my-library' 
+              version = '1.0.0'
+          }
+      }
+
+      repositories {
+          mavenLocal()    // Stores locally on `~/.m2/repository` directory.
+          // can be stored in remote location like mavenRepository and AWS Repository.
+      }
+    }
+    ```
 
 ## TIPS
 
