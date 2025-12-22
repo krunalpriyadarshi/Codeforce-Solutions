@@ -1,5 +1,7 @@
 # 📘 Learn Gradle
 
+Gradle is incremental means if a task is not modified, it will not execute it.
+
 ## Project layout
 
 - `.gradle` Gradle's private workspace and cache directory
@@ -556,16 +558,26 @@ plugins{
 
   - ```groovey
     dependencies {
-      implementation 'org.springframework:spring-core'
-      compileOnly 'org.projectlombok:lombok'
-      runtimeOnly 'ch.qos.logback:logback-classic'
+      implementation 'org.springframework:spring-core'          // Avaliable for all phases (availbale for test phases)
+      compileOnly 'org.projectlombok:lombok'                    // Available only for compile time phase
+      runtimeOnly 'ch.qos.logback:logback-classic'              // Available only for runtime phase
 
-      testImplementation 'org.junit.jupiter:junit-jupiter-api'
-      testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+      testImplementation 'org.junit.jupiter:junit-jupiter-api'  // Available only for test compile and runtime phase
+      testCompileOnly 'com.example.library:library:0.0.0'       // Available only for test-compile time phase
+      testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'  // Available only for test runtime phase
     }
     ```
 
 - **Why different phases exist?**: To fails early. (Means find issues in early stage rather than finding issue later on and debugging it.)
+
+  - **Why can't put everything in one classpath**
+
+    - Because:
+
+      - One classpath feels simpler, but it hides bugs, breaks encapsulation, slows builds, and causes production failures.
+      - Bigger, slower and messier builds: Compiler will scan every JARs and build time will be high. Also, Runtime will take longer to startup and large memory footprint.
+      - Bloated artifact (Fat JARs)
+      - Version conflicts
 
   - Can be easily understand by TestCompileTime and TestRunTime example:
 
@@ -577,6 +589,72 @@ plugins{
     - Hence,
       - testImplementation junit-jupiter-api
       - testRuntimeOnly junit-jupiter-engine
+
+  - Usage example:
+
+    - `compileOnly`: A library needed only during compilation, not at runtime.
+      - Lombock library (@Data, @Getter, @Setter...) needed during compile time. Once it is compiled we don't need it during runtime since getter-setter were created by Lombok and included in byte code.
+    - `implementation`: A library needed both at compile time and at runtime.
+      - Spring library: Compiler needs the classes and method signatures. While JVM needs the same library to execute logic at runtime.
+    - `runtimeOnly`: A library needed only at runtime, not during compilation.
+      - Database drivers `runtimeOnly 'org.postgresql:postgresql:42.6.0'`; Driver classes are loaded via reflection at runtime. Compiler doesn’t need the driver classes.
+      - Junit engine is another exampel where engine only needed during runtime to execute annotations while for compilation junit-jupiter lib is used to define annotation and it is being checked during compilation.
+
+### Extra Properties
+
+- A block where you can define custom properties for project like springVersion or junitJupiterVersion.
+
+  - Extra veriable can be used by "${propertyName}".
+
+  - ```gradle
+    ext{
+      junitJupiterVersion = '5.7.2'
+    }
+
+    dependencies {
+      testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+      testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
+      testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+    }
+    ```
+
+### run application
+
+- One way is to create JAR file by `./gradlew jar` and run application from CLI by `java -jar fileLocation/fileName.jar`. 
+
+- Or setup application plugin and define main class:
+
+  - ```gradle
+    plugin{
+      id 'application'  // Application plugin automatically imports Java plugin.
+    }
+
+    application{
+      mainClass = 'com.krunal.themepark.RideStatusService'  // format: "Package name + entry point class name"
+    }
+    ```
+
+### Debug application
+
+- Via IDE: In gradle task list (on right side), right-click on any task and choose `debug` option.
+
+### Testing application
+
+- Implement test class using Junit4, Junit5 or TestNG library.
+
+#### How to run test classes
+
+- **Via IDE**:
+  - Manually running `check` or `test` task to execute all test classes from application.
+  - Go to any testClass and right click on it which opens menu with `run testClass` or `debug testClass` option.
+
+- **Via CLI**:
+  - `./gradlew test` or `./gradle check` runs all test classes.
+  - `./gradlew test --console=verbose`: Detailed log in command line.
+  - `./gradlew test --tests SomeTestClass` Runs specific test file
+  - `./gradlew test --tests SomeTestClass.someMethod` Runs specific method of a class
+  - `./gradlew cleanTest` Deletes only test outputs.
+  - `./gradlew cleanTest test --console=verbose` Force delete test outputs then re-runs tests.
 
 ## TIPS
 
