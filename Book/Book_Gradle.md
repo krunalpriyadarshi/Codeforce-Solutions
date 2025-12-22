@@ -528,13 +528,42 @@ plugins{
 
 ## Java Project
 
-⚠️ Java toolChain forces gradle to use specific java version to avoid mismatch of java version.
+- `soureceCompatibility` tells Which java version used to write codebase.
+
+  - ```gradle
+    sourceCompatibility = 11
+    // Java 11 -> ✅
+    // Java 17 -> ❌ (compiler error if 17 features were used.)
+    ```
+
+- `targetCompatibility` tells which java version is expected to run during execution.
+
+  - ```gradle
+    targetCompatibility = 11
+    // Java 11 JVM → ✅ 
+    // Java 17 JVM → ✅ (JVM backward compatibility)
+    // Java 8 JVM → ❌ fails
+    ```
+
+Since `soureceCompatibility` and `targetCompatibility` assume that correct java version is setup for machine and it creats issue during build or run phase; `toolChain` was introduced.
+
+⚠️ `Java toolChain` forces gradle to use specific java version to avoid mismatch of java version. ✅ Gradle will download the JDK automatically if missing.
 
 ```gradle
 java{
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+        languageVersion = JavaLanguageVersion.of(11)  // Java 11 will be used by JVM.
     }
+}
+```
+
+- Individual Gradle tasks can override and use a different Java version if needed.
+
+```gradle
+tasks.withType(JavaExec).configureEach{
+  javaLauncher = javaToolchains.auncherFor{
+    languageVersion = JavaLanguageVersion.of(11)    // Application will run on java 11.
+  }
 }
 ```
 
