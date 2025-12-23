@@ -211,6 +211,24 @@ Tasks are individual jobs that Gradle can run.
       }
       ```
 
+  - In gradle, An abstract class can be created as a Custom task class and can be used to register a task.
+
+    - ```gradle
+      abstract class CompareNumbersTask extends DefaultTask {
+        @Input int a  // Get values from Task
+        @Input int b  // Get values from Task
+
+        @TaskAction // Custom task logic
+        void compare() { 
+            print (a == b)? "same" : (( > b)? "A is big" : "B is big")
+        }
+      }
+      tasks.register('compareNumbers', CompareNumbersTask) {
+          a = 1000
+          b = 200
+      }
+      ```
+
   - Class-based Tasks (Typed tasks)
 
     - Class-based tasks are Plugin tasks which need developer configuration prior using it.
@@ -901,6 +919,180 @@ plugins{
     ```
 
 - ⚠️ Remember, Application is available on `localhost:defined-port-number/webApp-name/endpoint`. Here, it will be `http://localhost:8080/theme-park-api`
+
+### Advance Dependencies Management
+
+- Types of Dependencies
+
+  - Direct dependency
+    - Your application use it directly
+  - Transitive dependency
+    - A dependency using another dependencies are Transitive dependency.
+
+- Version Conflict Resolution in gradle will automatically use highest version dependency if there're multiple versions are being fetched.
+
+- Manage Dependency
+
+  - Exclude transitive dependency
+
+    - ```gradle
+      implementation('org.springframework.boot:spring-boot-starter-web'){
+        // Exclude single dependency.
+        exclude(group: 'com.fasterxml.jackson.core', module:'jackson-core')
+
+        // Exclude by group only - All modules in the group will be excluded.
+        exclude(group: 'org.springframework')
+      }
+      ```
+
+    - ⚠️ Exclude Rule is avoided if another library pulls same library as transitive dependency. But `configuration.all` or `configuration.implemnetation` is used if particular library you wish not to use at all.
+
+    - ```gradle
+      // Brings `logging` library as Transitive dependency.
+      implementation('org.springframework.boot:spring-boot-starter-web')
+
+      // `logging` library will be excluded for all `implementation` block. And `logging` will not be visible on dependencyTree.
+      configurations.implementation {
+          exclude(group: 'org.springframework.boot', module:'spring-boot-starter-logging')
+      }
+      ```
+
+    - Configuration Exclude is useful when developer is confident that particular library isn't needed at all.
+
+  - Replace transitive dependency
+
+    - ```gradle
+      implementation('org.springframework.boot:spring-boot-starter-web')
+
+      modules {
+          module('org.springframework.boot:spring-boot-starter-logging'){
+            // Raplces `logging` lib with `log4j2` lib:
+              replacedBy 'org.springframework.boot:spring-boot-starter-log4j2'
+          }
+      }
+      ```
+
+  - Constraint transitive dependency
+
+    - Constraint doesn't pull library. It replaces a library if some other library tries to pull same constraint library will defined version.
+
+    - ```gradle
+      implementation('org.springframework.boot:spring-boot-starter-web')
+
+        constraints {
+            // Fetch 1.5.3 logback library only if some other library pulls logback else it will not be pull.
+            implementation('ch.qos.logback:logback-classic:1.5.3') {
+                because('Security vulnerability fix')
+            }
+        }
+      ```
+
+## Multi-project builds (Modulization)
+
+- Monolithic Gradle project takes more time to execute each tasks while sub-project takes less time as specific codebase is target for execution.
+
+### Create multi-project
+
+- Execute `gradle init`
+- Add subproject inside `settings.gradle` file.
+
+  - ```gradle
+    rootProject.name = 'multi-project-example'
+    include('subProject1')
+    include('subProject2')
+    ```
+
+  - Remeber, `./gradlew taskName` command from main directory executes same name task from main project and executes same task from all subProjects if exists.
+
+    - ```gradle
+      // Execute command for from Main directory
+      ./gradlew sayHello
+
+      /** OUTPUT
+      > Task :sayHello
+      Hi from Main project!
+
+      > Task :subProject1:sayHello
+      Hi but from 1
+
+      > Task :subProject2:sayHello
+      Hi but from 2
+      */
+      ```
+
+  - To run specific task from a subproject: `./gradle :subProject:taskName`
+
+    - `./gradlew :subProject1:hello`
+
+### Use method of another subProject
+
+- Make sure `setings.gradle` file includes new subProjects.
+
+  - ```gradle
+    rootProject.name = 'theme-park-manager'
+    include('api')
+    include('service')
+    ```
+
+- Declare subproject as java-library whose gonna provide methods to other subProject.
+
+  - ```gradle
+    plugins{
+      id 'java-library'
+    }
+    ```
+
+- Now add subProject as dependency to use methods of it. Add it to `build.gradle` file of subProject who wants to use methods.
+
+  - ```gradle
+    dependencies {
+      implementation project(':service')
+    }
+    ```
+
+### Conventional Plugin
+
+- Gradle way to centralize and consistent build logic so you don't have to repeat configuration across multiple projects or subProjects.
+
+- Example: For 3 subProjects, we've common dependencies, plugins and a custom task which can be centralized.
+
+  - Create directory `buildSrc` and add `'groovy-gradle-plugin'` plugin to build.gradle file.
+  - Add this `buildSrc` folder to setting.gradle file at root directory to tell gradle that there's a centraizlied build folder.
+
+    - ```gradle
+      includeBuild('buildLogic')
+      ```
+
+  - At buildSrc/src/main/groovy/conventional.gradle file and write script:
+
+    - ```gradle (buildSrc/src/main/groovy/conventional.gradle)
+      plugins{
+        id 'java'
+      }
+
+      repositories {
+        mavenCentral()
+      }
+
+      java{
+          toolchain{
+              languageVersion.set(JavaLanguageVersion.of(17))
+          }
+      }
+
+      // Task modifier - make sure `clean` task run prior to `build` task.
+      tasks.named('build'){
+          dependsOn tasks.named('clean')
+      }
+      ```
+
+  - At subproject, add newly created plugin by fileName. In this case, file name is `conventional`.
+
+    - ```gradle (subproject/build.gradle)
+      plugins{
+        id 'conventional'
+      }
+      ```
 
 ## TIPS
 
