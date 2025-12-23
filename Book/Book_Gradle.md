@@ -779,6 +779,76 @@ Since `soureceCompatibility` and `targetCompatibility` assume that correct java 
       }
     }
     ```
+  
+### SpringBoot project
+
+```gradle
+plugins{
+  id 'org.springframework.boot' version '2.5.4'     // Can't fetch version value dynamic way from ext{..} because plugin initilized before ext{..} block.
+}
+```
+
+- Plugin automatically finds entry point of application which is decalred in `@SpringBootApplication` annotation in `src/main/..` directory.
+
+- All `boot*` related tasks are being brought by springBoot plugin.
+
+- `bootJar` task creates JAR file. To run, `java -jar filePath/fileName.jar` use command.
+
+- `id 'io.spring.dependency-management' version '1.0.11.RELEASE'` plugin used to manage dependencies.
+
+#### ABI (Application Binary Interface)
+
+- ABI = the rules that define how programs and libraries communicate at the compiled/binary level.
+
+- Benefits:
+  - cleaner classpaths
+  - faster compilation
+
+- `api` dependencies are being added during compile & runtime classpaths. While `implementation` dependencies are only for runtime classpath.
+
+#### Example of ABI impact
+
+- Library A:
+
+  - ```gradle
+    dependencies {
+        api 'com.google.guava:guava:31.1-jre'           // exposed to consumers
+        implementation 'org.slf4j:slf4j-api:1.7.36'     // internal only
+        compileOnly 'org.projectlombok:lombok:1.18.26'  // compile-time only
+        runtimeOnly 'mysql:mysql-connector-java:8.1.0'  // runtime only
+    }
+    ```
+  
+  - When published, a Slim JAR is created, only `api` dependencies are added to JAR.
+  - Slim JAR hides implementation & compileOnly deps from consumer (Application which import or implement `library A`)
+  - Consumer does not need to redeclare compileOnly or implementation deps if they never call those libraries directly.
+  - Runtime-only dependencies must be present on consumer’s runtime classpath → otherwise runtime fails.
+
+  - Result will be:
+    - Consumer compileClasspath → LibraryA.class (SLF4J hidden, Lombok code already there)
+    - Consumer runtimeClasspath → LibraryA.class + runtimeOnly deps (MySQL) must be present
+
+### Deploy application
+
+- `.war` file can be used for deployment to run on Tomcat server.
+- How to create WAR files:
+
+  - Add plugin `war` which import `java` plugin as default.
+  - main class must extend `SpringBootServletInitializer`
+
+    - ```spring
+      @SpringBootApplication
+      public class ThemeParkAplication extends SpringBootServletInitializer{
+        ...
+      }
+      ```
+
+  - Use `bootWar` task to create WAR file.
+  - Run `.war` file same way we run JAR files.
+
+    - ```command
+      java -jar fileLocation/fileName.war
+      ```
 
 ## TIPS
 
