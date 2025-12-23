@@ -850,6 +850,58 @@ plugins{
       java -jar fileLocation/fileName.war
       ```
 
+#### Deployment using Docker
+
+- A WAR file can't be run itself. It needs JAVA environment + Tomcat server.
+
+  - Http request -> TomcatServer -> WAR application -> output
+
+- Dockerfile replaces a physical server by packaging Java, Tomcat, and your WAR into one reproducible runtime.
+
+  - ```DockerFile
+    FROM tomcat:9.0-jdk17
+
+    # Remove default apps (Best practise) for clean directory. Easy for tomcat to locate WAR and no url conflicts after deployment.
+    RUN rm -rf /usr/local/tomcat/webapps/*
+
+    # Copy your WAR to TOMCAT folder so that tomcat knows which webapps exist.
+    COPY build/libs/theme-park-api.war /usr/local/tomcat/webapps/theme-park-api.war
+
+    # TOMCAT listens on 8080 port
+    EXPOSE 8080
+
+    # Boot up TOMCAT server and make sure it listens for HTTP request
+    CMD ["catalina.sh", "run"]
+    ```
+  
+- Create docker image by `docker build -t theme-park-api .`
+
+- Check image created succesfully by `docker images`
+
+- Create docker container and run it: `docker run -p 8080:8080 theme-park-api`.
+  
+  - ```chart
+      Docker container starts
+              ↓
+      CMD executes: `catalina.sh` run so that TOMCAT starts and listen on predefined port.
+              ↓
+      Tomcat server boots (JVM initializes)
+              ↓
+      Tomcat scans /usr/local/tomcat/webapps
+              ↓
+      theme-park-api.war is detected
+              ↓
+      WAR is unpacked (exploded) into a directory
+              ↓
+      Servlets / Controllers are initialized
+              ↓
+      Application becomes available
+              ↓
+      Access via: http://localhost:8080/theme-park-api
+    ```
+
+- ⚠️ Remember, Application is available on `localhost:defined-port-number/webApp-name/endpoint`. Here, it will be http://localhost:8080/theme-park-api
+
 ## TIPS
 
 - `./gradlew assemble` task is same as `build` task but it doesn't run `check` task. Usecase of this task is to save time when you just want to build jar but not want to test your application. s
