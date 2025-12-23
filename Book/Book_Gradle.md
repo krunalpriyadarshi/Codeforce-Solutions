@@ -900,7 +900,7 @@ plugins{
       Access via: http://localhost:8080/theme-park-api
     ```
 
-- ⚠️ Remember, Application is available on `localhost:defined-port-number/webApp-name/endpoint`. Here, it will be http://localhost:8080/theme-park-api
+- ⚠️ Remember, Application is available on `localhost:defined-port-number/webApp-name/endpoint`. Here, it will be `http://localhost:8080/theme-park-api`
 
 ## TIPS
 
