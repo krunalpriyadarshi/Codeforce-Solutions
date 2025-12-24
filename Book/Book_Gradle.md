@@ -296,6 +296,8 @@ Tasks are individual jobs that Gradle can run.
 
 - **Lazy V/s Eager Initialization**
 
+> When running `./gradlew help`, during the configuration phase, eager tasks are fully created (task objects are created), while lazy tasks are only registered as metadata. However, configuration code for both eager and lazy tasks is executed during the configuration phase.
+
   - `Eager tasks` are created during Configuration time While `Lazy Tasks` are only created when needed. Large build slow down the system commands hence Lazy tasks are usually preferred over Eager tasks.
 
   - ```gradle
