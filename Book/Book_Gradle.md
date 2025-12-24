@@ -433,7 +433,10 @@ Tasks are individual jobs that Gradle can run.
       ```
 
   - mustRunAfter()
-    - It defines order of execution if multiple tasks are inside dependsOn() block.
+    - It defines order of execution. It controls the order if both are call same time.
+    - For ex., dependsOn(task1, task2) -> here both tasks are called -> now mustRunAfter() defines the order (Which needs to run first) -> as per below code task2 will execute first -> then task1.
+    - (we usually run `./gradle clean build` - here 2 commands are called)
+    - We can force ordering like `./gradle task1 task2` but as per build script it will run task2 first. 
 
     - ```gradle
       tasks.register('task1'){
