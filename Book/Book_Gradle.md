@@ -995,6 +995,7 @@ plugins{
 ## Multi-project builds (Modulization)
 
 - Monolithic Gradle project takes more time to execute each tasks while sub-project takes less time as specific codebase is target for execution.
+- A subProject can use another subProject's method by declaring `include project(":api")`. However, Gradle doesn't allow Circular dependency hence A can inherit B but later on B can't inherit A.
 
 ### Create multi-project
 
