@@ -1066,7 +1066,7 @@ plugins{
   - Add this `buildSrc` folder to setting.gradle file at root directory to tell gradle that there's a centraizlied build folder.
 
     - ```gradle
-      includeBuild('buildLogic')
+      includeBuild('buildSrc')
       ```
 
   - At buildSrc/src/main/groovy/conventional.gradle file and write script:
