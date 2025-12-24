@@ -494,7 +494,7 @@ Tasks are individual jobs that Gradle can run.
       ```
 
 - **Inputs & Outputs**
-  - Inputs + Outputs tell Gradle when a task needs to run; without them, Gradle always runs it. If Input is changed or Output is missing, Gradle will execute the task else task will be skipped. - This logic is used for Incremental Build.
+  - This is used for Incremental Build. -> input-output tells if something is modified or not. Based of metadata it tell gradle to run particular task or not.
 
   - Task A (producer)
 
