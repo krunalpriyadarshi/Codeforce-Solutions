@@ -10,7 +10,7 @@ Gradle is incremental means if a task is not modified, it will not execute it.
 - `gradlew.bat` Gradle runner (Windows)
 - `build` Generated files from `.gradlew build` command
 - `build.gradle` Main build configuration
-- `gradle.properties` Project specific properties
+- `gradle.properties` Project specific properties (Gradle properties like `org.gradle.daemon = true` or Global variable like `javaVersion = 17`)
 - `settings.gradle` Project setting
 
 > Always use the Gradle wrapper!
