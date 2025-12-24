@@ -11,7 +11,7 @@ Gradle is incremental means if a task is not modified, it will not execute it.
 - `build` Generated files from `.gradlew build` command
 - `build.gradle` Main build configuration
 - `gradle.properties` Project specific properties (Gradle properties like `org.gradle.daemon = true` or Global variable like `javaVersion = 17`)
-- `settings.gradle` Project setting
+- `settings.gradle` Project setting (rootProject name,  `include subProject`, and `includeBuild buildSrc`) 
 
 > Always use the Gradle wrapper!
 
