@@ -60,3 +60,60 @@
     - Cost can grow rapidly
     - Less physical control
 
+## Scaling
+
+- Scaling is the process of adjusting resources (RAM, ROM, CPU, Storage) to handle system workload.
+
+  - Scale up = Increasing resources when workload increased
+  - Scale down = Decreasing resources when workload decreased
+
+### Vertical scaling (Scale up)
+
+- Make existing server more powerful by adding more resources (RAM, ROM, CPU, Storage).
+
+  - ```text
+    Before Scaling:  Server → handles 1,000 users
+    After Scaling:   Server → handles 2,000 users
+    ```
+
+- Simple to implement. No code change needed.
+- Disadvantages:
+
+  - Has limit to add resources (Can't add RAM forever) and expensive.
+  - Single point of failure (System dies then everything dies)
+  - Downtime expected during scaling.
+
+### Horizontal scaling (Scale out)
+
+- Adding more servers instead of upgrading current one.
+
+  - ```text
+    Before Scaling:  1 server  → handles 1,000 users
+    After Scaling:   5 servers → handles 5,000 users
+    ```
+
+- Complex architecture to implement but It is more cost effective, no downtime expected and no single point of failure.
+
+- Disadvantages:
+
+  - Complex architecture (Need load balancer) and planning needed.
+
+## Auto-scaling
+
+- Auto-scaling only performs Horizontal scaling (Scale out) approach. More practical in daily life since traffic is highly volitile.
+
+- Set of rules are created to add more servers and to remove newly added servers.
+
+- Advantages:
+
+  - Cost effective
+  - High availability and Fault tolerance (if one server dies, it adds one more to handle traffic automatically)
+  - Better performance
+  - No manual monitoring requries
+
+- Disadvantages:
+
+  - Complex to implement
+  - Configuration overhead
+  - Hard to debug while unexpected prodution issue rises
+  - Not applicable for all application (like local storage systems, database and log-running batch jobs). It is useful for web servers and APIs.
