@@ -7,11 +7,12 @@
 | Physical server | Shared         | Shared     | Single tenant    | Pooled        |
 | OS isolation    | ❌ No          | ✅ Yes     | ✅ Yes           | ✅ Yes        |
 | Root access     | ❌ No          | ✅ Yes     | ✅ Yes           | ✅ Yes        |
-| Scalability     | ❌ No          | ⚠️ Limited | ❌ No            | ✅ Yes        |
+| Vertical Scaling| ❌ No          | ⚠️ Limited | ⚠️ Limited       | ✅ Yes        |
+| Horizontal Scaling| ❌ No        | ⚠️ Limited | ⚠️ Very slow     | ✅ Yes        |
 | Auto scaling    | ❌ No          | ❌ No      | ❌ No            | ✅ Yes        |
 | Fault tolerance | ❌ No          | ❌ No      | ❌ No            | ✅ Yes        |
 | Cost            | Very low       | Low        | High             | Variable      |
-| Maintenance     | Provider       | You        | You              | Mostly provider |
+| Maintenance     | Provider       | You        | You              | Mostly provider|
 | Performance     | Low            | Medium     | High             | Variable      |
 | Compliance      | ❌ No          | ⚠️ Partial | ✅ Yes           | ✅ Yes        |
 
