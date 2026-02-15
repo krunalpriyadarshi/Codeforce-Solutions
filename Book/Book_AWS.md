@@ -1,120 +1,250 @@
-# Cloud computing
+# AWS (Amazon Web Service)
 
-## Hosting Types Comparison
+- Provides cloud services like storage, security, networking and many more.
+- AWS is Pay-As-You-Go service, meaning no upfront cost. Pricing are based on computation power use, data storage, number of requests handled etc.
 
-| Feature         | Shared Hosting | VPS        | Dedicated Server | Cloud Hosting |
-|-----------------|----------------|------------|------------------|---------------|
-| Physical server | Shared         | Shared     | Single tenant    | Pooled        |
-| OS isolation    | ❌ No          | ✅ Yes     | ✅ Yes           | ✅ Yes        |
-| Root access     | ❌ No          | ✅ Yes     | ✅ Yes           | ✅ Yes        |
-| Vertical Scaling| ❌ No          | ⚠️ Limited | ⚠️ Limited       | ✅ Yes        |
-| Horizontal Scaling| ❌ No        | ⚠️ Limited | ⚠️ Very slow     | ✅ Yes        |
-| Auto scaling    | ❌ No          | ❌ No      | ❌ No            | ✅ Yes        |
-| Fault tolerance | ❌ No          | ❌ No      | ❌ No            | ✅ Yes        |
-| Cost            | Very low       | Low        | High             | Variable      |
-| Maintenance     | Provider       | You        | You              | Mostly provider|
-| Performance     | Low            | Medium     | High             | Variable      |
-| Compliance      | ❌ No          | ⚠️ Partial | ✅ Yes           | ✅ Yes        |
+Note: Since Root user have all the permissions, it is wise to create Custom User to access AWS console.
 
-### Dedicated Hosting
 
-- A physical server that is being used by a single client or an application.
-  - Companies who wants High performance, and low-stable latency prefers `Dedicated hosting` like Gaming, Trading, and High Data processing companies. Also, Government, HealthCare, and Banking prefer this server since it provides full control, security and compliance.
-  - Disadantages:
-    - Expensive  
-    - No auto-scaling since it is one fixed machine. Hence, performance of application is impacted when number of requests are increased by a lot.
-    - Less fault tolerence. Hardware, disk or CPU fault affect whole system.
-    - Less portability: To create new instance, it requires new machine, resources and manual efforts for setup.
-    - Engineers need to setup CPU+RAM, If overestimated --> Charge more else underestimated --> Performance issue.
 
-### VPS (Virtual Private Server)
+## rework below:
 
-- A virtual machine created by dividing one physical server into multiple isolated virtual servers using Virtulization.
+Policy V/S Permission   :
+    Policies are JSON documents defining what can be done and what can not.
+    Permissions are results of these policies. 
+        ex.,
+            A developer has a policy.
+            According to policy, developer can read data.
+            So, permission would be he can read data. 
 
-  - An Individual business is using this type of hosting because it is more cost effective and easy to manage than Dedicated hosting server. Additionally, It provides isolation and security through Virtualization.
-  - Disadvantages:
+    Policies are rules while permissions are results (requests are denied or accepted).
 
-    - Still shared Hardware result in `noisy neighbour problem`. Sudden traffic to an app will affect performance of other apps.
-    - Limited scaling, fixed resources, and no support for auo-scaling.
-    - Single point of failure means all apps are affected if main server is down.
+IAM (Identity Access Management) Policy
+S3 Bucker policy
 
-### Shared Hosting
+Storage Service :
+    Block Storage   :
+        EBS (Elastic Block Storage) 
+        Instance Storage
+    Object Storage  :
+        S3 (Simple Storage Service) :
+            S3 bucket can provide versioning, policies, permissions etc.
+            S3 bucket is used to save objects like images, videos, backups, files and logs.
 
-- A single physical machine shared by multiple hosts to host multiple applications.
+            example :
+                If application is running on EC2 instance, we need to save logs on S3 bucket.
+                We can backup our SQL/NoSQL database to S3 bucket.
 
-  - Individuals and small businesses, who have limited budgets to host portfolios or websites. Additionally, Maintability of server is taken care by Hosts hence it requires less maintanence.
-  - Disadvantages:
+            S3 can have versions. 
+            It does not overwrite same file but create a version of it. Which is visible on Version history.
+    File Storage    :
+        EFS -   For Linux
+        FSX -   For Windows
 
-    - Poor performance. (Noisy neighbour problem exist)
-    - No control. Can't install new softwares to virtual machine.
-    - Security risk and weak isolation
-    - Not scalable
+Inbound V/s OutBound    :
+    Inbound -
+        It is traffic coming to your server.
+        ex.,
+            Incoming Traffic that server will accept.
+            0.0.0.0/0 redirect to port 43 of server.
+            
+    Outbound -
+        It is traffic going out of server.
+        ex.,
+            Server sent request to other website or APIs to process request.
 
-### Cloud Hosting
+EC2 (Elastic Cloud Computing)   :
+    Service responsible to launching and managing VMs (Virtual Machines) in servers.
 
-- Multiple physical servers creates one server to maintain and host multiple application.
+    On EC2 you can config.,
+    -   OS like linux, Windows
+    -   Instance type like CPU, memory
+    -   Storage type like EBS volumn, EC2 instance store
+    -   SSH for secure connection
+    -   Firwall like Security Groups
 
-  - Industries, Enterprise, and startups prefers because it provides High availablility, elastic scaling, Pay-as-you-go service, and multiple cloud native services like load balancer, monitoring, logging etc.
-  - Disadvantages:
+IP addresses and subnet masks   :
+    An IP address consists of two parts:
+        Network address — identifies the network segment
+        Host address — identifies the specific device within that network
 
-    - High Complexity
-    - Cost can grow rapidly
-    - Less physical control
+    A subnet mask is used to distinguish the network portion from the host portion of an IP address.
+        24  ->  255.255.255.0   
+        16  ->  255.255.0.0     
+        8   ->  255.0.0.0       
+    
+    Example.,
+        192.168.1.10/24     IPv4 (IP Address with CIDR)
+        192.168.1.10        IP Address
+        255.255.255.0       Subnet mask
 
-## Scaling
+        192.186.1.0         Network Address
+        0.0.0.10            Host Address
 
-- Scaling is the process of adjusting resources (RAM, ROM, CPU, Storage) to handle system workload.
+        NOTE:
+            HOW TO CALCULATE NETWORK AND HOST ADDRESS:
+            To get Network address, Perform a bitwise AND operation between the IP address and the subnet mask.
+            To get Host address, Perform a bitwise AND operation between the IP address and the inverted subnet mask (bitwise NOT of the subnet mask).
 
-  - Scale up = Increasing resources when workload increased
-  - Scale down = Decreasing resources when workload decreased
+    REAL WORLD Example.,
+        An office has a Network address 192.168.1.10 and devices have their own IP address like.,
+        
+        Network: 192.168.10.0/24
+            ├── 192.168.10.1 (Router)
+            ├── 192.168.10.10 (Printer)
+            ├── 192.168.10.20 (Desktop 1)
+            ├── 192.168.10.21 (Desktop 2)
 
-### Vertical scaling (Scale up)
+VPC (Virtual Private Cloud) :
+    It is private network for an application.
+    Where you control network by setting IP range, subnets, routing and security settings.
 
-- Make existing server more powerful by adding more resources (RAM, ROM, CPU, Storage).
+    Here., network IP address, subnetting, Security Groups and NACLs are configured.
 
-  - ```text
-    Before Scaling:  Server → handles 1,000 users
-    After Scaling:   Server → handles 2,000 users
-    ```
+Security Groups V/S NACLs (Network Access Control Lists)    :
+    Security Groups are applied at instance level.
+    While NACLs are applied at subnet level.
 
-- Simple to implement. No code change needed.
-- Disadvantages:
+    example.,
+        Request coming to the EC2 instance are being filter by inbound security groups.
+        Later same requests are getting filter agained by NACLs for database access.
 
-  - Has limit to add resources (Can't add RAM forever) and expensive.
-  - Single point of failure (System dies then everything dies)
-  - Downtime expected during scaling.
+    NACLs add extra firewall.
 
-### Horizontal scaling (Scale out)
+OSI Model Layers    :
+    Layer	Layer Name	Function
+    7	Application	    Interfaces with user applications (e.g., web browsers, email clients)
+    6	Presentation	Translates, encrypts, and compresses data
+    5	Session	        Manages connections and sessions between applications
+    4	Transport	    Provides reliable data transfer (TCP/UDP)
+    3	Network	        Routes data across networks (IP addressing, routing)
+    2	Data Link	    Transfers data between adjacent network nodes (MAC addressing, switches)
+    1	Physical	    Deals with the transmission of raw bits over the physical medium (cables, electrical signals)
 
-- Adding more servers instead of upgrading current one.
+AWS Load Balancer :
+    Distribute load evenly to EC2 instances for fault tolrant and availability.
+    Checks health of instance and route traffic based on that. 
+    Auto-scaling can be achieved by Load Balancer.
 
-  - ```text
-    Before Scaling:  1 server  → handles 1,000 users
-    After Scaling:   5 servers → handles 5,000 users
-    ```
+    Types:
+        Classic Load Balancer       -   Work on OSI Layer 4 (Transport) and Layer 7 (Http)
+        Application Load Balancer   -   Works on OSI Layer 7 (Application)
+        Network Load Balancer       -   Works on OSI Layer 4 (Transport) 
 
-- Complex architecture to implement but It is more cost effective, no downtime expected and no single point of failure.
+Lambda Function :
+    It is also known as SERVERLESS COMPUTE SERVICE.
 
-- Disadvantages:
+    Allows developers to run script/ code without managing servers.
+    It is triggered on certain events like S3 upload, api gateway call etc.,
 
-  - Complex architecture (Need load balancer) and planning needed.
+    example.,
+        Lambda with DynamoDB and S3 bucket for SERVERLESS DATA PROCESSING:
 
-## Auto-scaling
+        Set up steps:
+        ->  S3 bucket, IAM, DynamoDB and lambda function.
+        ->  S3 event trigger to launch Lambda function.
+        ->  Lambda handler script to process data and sent dynamoDB put_item request.
+        ->  Monitor using CloudWatch service.
+        ->  Batch proceessing to reduce num of API calls to reduce pricing.
 
-- Auto-scaling only performs Horizontal scaling (Scale out) approach. More practical in daily life since traffic is highly volitile.
+RDS (Relational Database Service)   :
+    Manages SQL-like realtionship databases like SQL, SQL-server, Oracle etc.
 
-- Set of rules are created to add more servers and to remove newly added servers.
+    Set up steps:
+        ->  Create DB instance.
+        ->  Make sure to make publicly availble.
+        ->  Config Securty groups and VPC groups. Add public IP for inbound IP address.
+        ->  Make SQL connection using MySQL client or CLI.
 
-- Advantages:
+    Pros:
+        ->  Support Realtional database features like joins, complex realtionship, advance query
+        ->  Automated backups by AWS
+    Cons:
+        ->  Vertical scaling rather than Horizontal scaling 
+        ->  Costly for scaling 
+        ->  Limited concurrent requests
 
-  - Cost effective
-  - High availability and Fault tolerance (if one server dies, it adds one more to handle traffic automatically)
-  - Better performance
-  - No manual monitoring requries
+AWS DynamoDB (NoSQL Database)   :
+    Manages DynamoDB databases.
 
-- Disadvantages:
+    Pros:
+        ->  Low latency (1-9 ms of response time)
+        ->  Default Auto-scaling feature
+        ->  Flexible schema (No predefined schema)
+        ->  serverless
+    Cons:
+        ->  Limited query 
+        ->  No joins or transaction
+        ->  Design complexity (Needs to define partition-keys and sort-keys)
 
-  - Complex to implement
-  - Configuration overhead
-  - Hard to debug while unexpected prodution issue rises
-  - Not applicable for all application (like local storage systems, database and log-running batch jobs). It is useful for web servers and APIs.
+AWS KMS (Key Management Service)    :
+    It manages the creation, control and management of cryptographic key.
+
+    Flow:
+        Key generated with policies and permissions.
+        Data in RDS or files in S3 bucket are being encrypted by KMS.
+        When user want to decrypt, KMS provides decryption mechanism/
+            But KMS checks for policy and permission for user.
+            If invalid then data will be encrypted.
+            If valid then data will be decrypted text (plain text).
+    
+    AWS KMS integrated with CloudTrail. User activities are being tracked by loggin and auditing.
+
+AWS SQS (Simple Query Service)  :
+    Just name suggest it is a queue. 
+    It is introduced for Decoupling.
+
+    Lets see a system without SQS.,
+        Web app has Order service and Payment service.
+        Payment service need to perform various steps hence it is slow.
+        If number of requests spiked, Payment server overloads.
+        Resulting in auto-scaling which was not required as process itself was slow.
+
+    With SQS.,
+        Each request goes to queue and FIFO rule, each request gets processed.
+        Sudden spike to requests will be added to queue. 
+        Here Payment service will not overload and auto-scaling won't triggered.
+        Auto-scaling will triggered only if queue size get bigger.
+
+AWS SNS (Simple Notification Service)   :
+    SNS is decoupling service.
+
+    example.,
+        When order is shipped, application has to send messages to Client email, message and Admin update.
+        Each step is different request and each step needs its own fault tolrant and retry logic.
+
+        Now, new messaging way are introduced then it will become overhead as we need to perform all same operations for new messaging method.
+
+        Hence, SNS is introduced. Which will accpet request from Order.
+        Other messaging service will subscribe to it and SNS will send message to these subscribed services.
+        SNS will handle fault tolrant and retries.
+        
+AWS Step function   :
+    Step function is serverless workflow. 
+
+    Pros:
+        Decoupling of services.
+        Clean code.
+        Error and fault tolrant built-in.
+
+    Example.,
+        A system which takes an image -> resize it -> save it to dynamoDB -> send confirmation email to User.
+
+        Normal way:
+            Upload image to S3 bucket.
+            Lambda will resize it.
+            Save metadata to DynamoDB.
+            Send confirmation email via SNS.
+        
+        In Step function, automate it by lambda -> dynamoDB -> SNS step.
+
+AWS Route 53    :
+    AWS Route 53 is Domain Name Service (DNS).
+    It is responsible to redirect request to the nearest server.
+    Since AWS end points distributed to edge locations, it is easy to re-route to matching server which result in low latency.
+    It also works as Gateway. Hence, it checks health of all server and take decision to make resilient service.
+
+CloudWatch???
+AMI ??
+EC2 instance store?
+Security Groups?
