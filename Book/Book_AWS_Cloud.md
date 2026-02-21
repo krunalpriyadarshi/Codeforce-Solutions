@@ -376,4 +376,4 @@ Primary Region:
 
 ### AWS SDK
 
-# 03:12:40 Management and Developer Tools
+# SDK -> create gradle project on cloud9 and typescript project - simple s3 bucker read !
