@@ -24,9 +24,26 @@
 - Global Service V/S Regional Service: In simple words, `AWS Billing`, `IAM`, `Route53` services are Global services as you don't need to set region to use them. However, for Regional Services (`AWS EC2`), you need to determine which region's service do you wish to use.
 
 - Data center : It is a secured building that contains millions of computers. Data centers will be isolated from each other but they have a low-latency of (< 10ms).
-- Availability Zone (AZ) : It is a physical location made up of one or more datacenter. 
+- Availability Zone (AZ) : It is a physical location made up of one or more datacenter.
 - AZ identifier : For `us-east-1`, there are different AZ subnets which are like `us-east-1a`, `us-east-1b`, `us-east-1c` ... `us-east-1f`.
 - Region : They're geographiucally distinct locations consisting of multiple AZs.
+
+- Amazon Resource Name (ARNs) :  Unique identifier to locate AWS resource.
+  - Format: `arn:partition:service:region:account-id:resource-type:resource-id`.
+  - ex., `arn:aws:s3:::big-csv-uploads-project` - note: S3 is global resource.
+  - ex., `arn:aws:lambda:us-east-1:891376960399:function:ProcessCSVToDynamoDB`
+- Partition : Defines Environment like `aws`, `aws-china` & `aws-gov`
+- Service : Defines Service like `s3`, `lambda`, `ec2`, `iam`, `dynamo-db` etc.
+- Region : Defines AWS Resource where resource exist like `us-east-1`.
+- Account ID : 12 digit AWS account number.
+- Resource Type : Identifies specific resource.
+
+- Access Key : It is used to access AWS services.
+  - It is a long term credential that consist of two parts:
+    - Public key (Access Key Id): It has `AKIRA + 16 digit alphanumeric characters` format.
+    - Private key (Secret Access Key): It has `40 characters` format.
+  - ‼️ Access keys are long term credentials so avoid creating Access key from Root User.
+  - 🚧 🚧 🚧 LEARN DIFFERENT WAY TO INTERACT WITH AWS SERVICES.
 
 ## Benefits of clouds
 
@@ -332,5 +349,31 @@ Primary Region:
 
 - Shared Infrastructure among organizations which shares similar requirements.
 - Government agencies, research institutions, healthcare networks
+
+## Interact with AWS service
+
+### AWS Management console (AWS webApp)
+
+- It's a centralized way to interact and manage all AWS services using web user interface.
+
+- It is useful for Monitoring, Debugging & Administrative tasks.
+
+### AWS CloudShell/ AWS CLI
+
+- AWS CloudShell is a browser-based shell environment that provides pre-authenticated access to AWS resources directly from the AWS Management Console.
+
+- It is useful for Automative script, Bulk tasks, & Infrastrcture management.
+
+```cloudshell
+  # Check configuration:
+  aws sts get-caller-identity
+  
+  # Check pre-installed tools
+  aws --version          # AWS CLI v2
+  git --version          # Git
+  cdk --version          # AWS CDK (if installed)
+```
+
+### AWS SDK
 
 # 03:12:40 Management and Developer Tools
