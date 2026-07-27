@@ -1,0 +1,62 @@
+# K8s
+
+A system, K8s, is needed to execute an image on the platform and scale up or down depending on the traffic. This also manages your containers as well.
+
+```Architecture
+┌─────────────────────────────────────────────────────────────────────┐
+│                          K8s CLUSTER                                │
+│                                                                     │
+│          ┌──────────────────────┐                                   │
+│          │    Control Plane     │  ← Decides where Pods go          │
+│          │    (Master Node)     │                                   │
+│          └──────────┬───────────┘                                   │
+│                     │  gives instructions                           │
+│          ┌──────────┴───────────┐                                   │
+│          ▼                      ▼                                   │
+│                                                                     │
+│ ┌───────────────────────┐  ┌───────────────────────┐                │
+│ │      Worker Node 1    │  │      Worker Node 2    │                │
+│ │                       │  │                       │                │
+│ │  ┌─────────────────┐  │  │  ┌─────────────────┐  │                │
+│ │  │      Pod 1      │  │  │  │      Pod 2      │  │                │
+│ │  │                 │  │  │  │                 │  │                │
+│ │  │  ┌───────────┐  │  │  │  │  ┌───────────┐  │  │                │
+│ │  │  │    App    │  │  │  │  │  │    App    │  │  │                │
+│ │  │  │ (Main Ctr)│  │  │  │  │  │ (Main Ctr)│  │  │                │
+│ │  │  └───────────┘  │  │  │  │  └───────────┘  │  │                │
+│ │  │                 │  │  │  │                 │  │                │
+│ │  │  ── Sidecars ── │  │  │  │  ── Sidecars ── │  │                │
+│ │  │                 │  │  │  │                 │  │                │
+│ │  │  ┌───────────┐  │  │  │  │  ┌───────────┐  │  │                │
+│ │  │  │  Logger   │  │  │  │  │  │  Logger   │  │  │                │
+│ │  │  └───────────┘  │  │  │  │  └───────────┘  │  │                │
+│ │  │  ┌───────────┐  │  │  │  │  ┌───────────┐  │  │                │
+│ │  │  │   Proxy   │  │  │  │  │  │  Monitor  │  │  │                │
+│ │  │  └───────────┘  │  │  │  │  └───────────┘  │  │                │
+│ │  └─────────────────┘  │  │  └─────────────────┘  │                │
+│ └───────────────────────┘  └───────────────────────┘                │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+## Nodes
+
+A node in a k8s is a machine or server where an application is running.
+
+### Master Node or Control Plane Node
+
+K8s' brain where makes decision such as where to load app, how many copies to run, and what to do when something crashes.
+
+### Worker Node
+
+It is a place where an application runs. It follows commands from the Control plane.
+
+#### Sidecars / helper containers
+
+Implementing infrastructure related changes to code-base raises serveral issues, like:
+
+- Repeat the same logging logic across all services, including Auth-service, User-service, Order-service, and Payment-service, would increase LOE.
+- A Bug in logging code can crash the main application.
+- Updating to logger requires re-deploying the main app.
+- Tight-coupling to the logger. Moving to different logger requires great LOE.
+
+Instead of writing logging code, we could create container and attaches it to every services. This would create lossly coupling.
