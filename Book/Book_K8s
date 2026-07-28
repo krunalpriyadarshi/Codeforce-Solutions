@@ -18,6 +18,16 @@ A system, K8s, is needed to execute an image on the platform and scale up or dow
 │ │      Worker Node 1    │  │      Worker Node 2    │                │
 │ │                       │  │                       │                │
 │ │  ┌─────────────────┐  │  │  ┌─────────────────┐  │                │
+│ │  │     Kubelet     │  │  │  │     Kubelet     │  │                │
+│ │  │  ┌───────────┐  │  │  │  │  ┌───────────┐  │  │                │
+│ │  │  │  Probes   │  │  │  │  │  │  Probes   │  │  │                │
+│ │  │  │ liveness  │  │  │  │  │  │ liveness  │  │  │                │
+│ │  │  │ readiness │  │  │  │  │  │ readiness │  │  │                │
+│ │  │  └───────────┘  │  │  │  │  └───────────┘  │  │                │
+│ │  └────────┬────────┘  │  │  └────────┬────────┘  │                │
+│ │           │ manages   │  │           │ manages   │                │
+│ │           ▼           │  │           ▼           │                │
+│ │  ┌─────────────────┐  │  │  ┌─────────────────┐  │                │
 │ │  │      Pod 1      │  │  │  │      Pod 2      │  │                │
 │ │  │                 │  │  │  │                 │  │                │
 │ │  │  ┌───────────┐  │  │  │  │  ┌───────────┐  │  │                │
@@ -46,9 +56,64 @@ A node in a k8s is a machine or server where an application is running.
 
 K8s' brain where makes decision such as where to load app, how many copies to run, and what to do when something crashes.
 
+#### kube-api-server
+#### etcd
+#### controler-manager
+#### kube-scheduler
+
 ### Worker Node
 
 It is a place where an application runs. It follows commands from the Control plane.
+
+```workerNode
+┌─────────────────────────────────────────────────────────────────────┐
+│                          K8s CLUSTER                                │
+│                                                                     │
+│          ┌──────────────────────┐                                   │
+│          │    Control Plane     │  ← Decides where Pods go          │
+│          │    (Master Node)     │                                   │
+│          └──────────┬───────────┘                                   │
+│                     │  gives instructions                           │
+│                     ▼                                               │
+│                                                                     │
+│ ┌───────────────────────────────────────────────────────────────┐   │
+│ │                        Worker Node                            │   │
+│ │                                                               │   │
+│ │  ┌─────────────────────────────────────────────────────────┐  │   │
+│ │  │                        Kubelet                          │  │   │
+│ │  │          ┌──────────────────────────────┐               │  │   │
+│ │  │          │           Probes             │               │  │   │
+│ │  │          │    liveness  │  readiness    │               │  │   │
+│ │  │          └──────────────────────────────┘               │  │   │
+│ │  └─────────────────────────┬───────────────────────────────┘  │   │
+│ │                            │                                  │   │
+│ │                      CRI interface                            │   │
+│ │                   (standard gRPC calls)                       │   │
+│ │                            │                                  │   │
+│ │             ┌──────────────┼──────────────┐                   │   │
+│ │             ▼              ▼              ▼                   │   │
+│ │        ┌─────────┐   ┌─────────┐   ┌─────────┐                │   │
+│ │        │contain  │   │  podman │   │ Docker  │                │   │
+│ │        │  erd    │   │         │   │  shim   │                │   │
+│ │        └────┬────┘   └────┬────┘   └────┬────┘                │   │
+│ │             └─────────────┼─────────────┘                     │   │
+│ │                           │ OCI / runc                        │   │
+│ │                           ▼                                   │   │
+│ │  ┌─────────────────────────────────────────────────────────┐  │   │
+│ │  │                         Pod                             │  │   │
+│ │  │                                                         │  │   │
+│ │  │   ┌───────────────┐                                     │  │   │
+│ │  │   │      App      │                                     │  │   │
+│ │  │   │   (Main Ctr)  │                                     │  │   │
+│ │  │   └───────────────┘                                     │  │   │
+│ │  │   ─────────────────── Sidecars ───────────────────────  │  │   │
+│ │  │   ┌───────────────┐   ┌───────────────┐                 │  │   │
+│ │  │   │    Logger     │   │     Proxy     │                 │  │   │
+│ │  │   └───────────────┘   └───────────────┘                 │  │   │
+│ │  └─────────────────────────────────────────────────────────┘  │   │
+│ └───────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 #### Sidecars / helper containers
 
@@ -60,3 +125,22 @@ Implementing infrastructure related changes to code-base raises serveral issues,
 - Tight-coupling to the logger. Moving to different logger requires great LOE.
 
 Instead of writing logging code, we could create container and attaches it to every services. This would create lossly coupling.
+
+#### Kublet
+
+Kublet is an agent that runs on every worker node. It's the middle man between the Control Panel and the actual containers on that Worker Node.
+
+Kublet's responsibilities:
+
+- Gets Pod's specifications
+- Maintains the container's lifecycle
+- Run probes like liveness, rediness etc
+
+#### CRI (Container Runtime Interface)
+
+CRI is the standard gRPC interface that decouples Kublet from any specific container runtime, allowing runtimes like containerD or Docker shim to be swapped without changing Kublet code.
+
+- Here, Kublet send a request to CRI, CRI will call comments such as pull image, create container, start container or kill container.
+- CRI runtimes can be Docker shim, ContainerD etc.
+
+**CRI is introduced to decouple kublet from the any runtime.**
