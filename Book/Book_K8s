@@ -48,6 +48,9 @@ A system, K8s, is needed to execute an image on the platform and scale up or dow
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+- Imperative: You describe how to do something, step by step.
+- Declarative: You describe what you want to result to be, without specifying how to achieve it.
+
 ## Nodes
 
 A node in a k8s is a machine or server where an application is running.
@@ -61,7 +64,7 @@ K8s' brain where makes decision such as where to load app, how many copies to ru
 #### controler-manager
 #### kube-scheduler
 
-### Worker Node
+### Node (Worker Node)
 
 It is a place where an application runs. It follows commands from the Control plane.
 
@@ -144,3 +147,43 @@ CRI is the standard gRPC interface that decouples Kublet from any specific conta
 - CRI runtimes can be Docker shim, ContainerD etc.
 
 **CRI is introduced to decouple kublet from the any runtime.**
+
+## Kubectl (Kube Control)
+
+$`kubectl version`
+
+$`kubectl --help`
+
+$`kubectl get nodes`
+
+- Shows.
+
+$`kubectl run <pod-name> --image=<image-name>` Create a pod directly.
+
+$`kubectl run <pod-name> --image=<image-name> --dry-run=client -o yaml >  <pod-name>.yaml` This does not execute command but returns output in `yaml` file.
+
+$`kubectl create -f <file-name>.yaml` Here, -f stands for file-name. Declarative way to create a POD. Once created this command cannot be used for same pod otherwise exception is thrown at execution of command.
+
+$`kubectl apply -f <file-name>.yaml` Here, -f stands for file-name. Declarative way to create or update a POD. Prefer to use `apply` instead of `create` command.
+
+$`kubectl get pods` List of running POD(s)
+
+$`kubectl describe pod <pod-name>` In-depth description of the specified POD.
+
+$`kubectl delete pod <pod-name>` Delete the specified POD.
+
+## Declarative way to create a yaml file
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+    tier: frontend
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+```
