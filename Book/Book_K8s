@@ -193,7 +193,7 @@ $`kubectl create -f <replicaSetFile.yaml>`
 
 $`kubectl get all` List all the created kubernet objects
 
-$`kubectl get replicaset`
+$`kubectl get replicaset` or `kubectl get rs`
 
 $`kubectl get pods`
 
@@ -234,7 +234,13 @@ spec:
           image: nginx
 ```
 
+$`kubectl create deployment --help`
+
 $`kubectl create -f <deploymentFileName.yaml>`
+
+$`kubelet apply -f <deployemntFile.yaml>`
+
+$`kubectl set image deployment/<nameOfDeployment> <containerName>=<imageName>`
 
 $`kubectl get deployments`
 
