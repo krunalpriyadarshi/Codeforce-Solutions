@@ -172,7 +172,7 @@ $`kubectl describe pod <pod-name>` In-depth description of the specified POD.
 
 $`kubectl delete pod <pod-name>` Delete the specified POD.
 
-## Declarative way to create a yaml file
+### POD creation via Declarative way
 
 ```yaml
 apiVersion: v1
@@ -186,4 +186,83 @@ spec:
   containers:
   - name: nginx
     image: nginx
+```
+$`kubectl explain replicaset`
+
+$`kubectl create -f <replicaSetFile.yaml>`
+
+$`kubectl get all` List all the created kubernet objects
+
+$`kubectl get replicaset`
+
+$`kubectl get pods`
+
+$`kubectl scale -f <replicaSetFile.yaml> --replicas=6`
+
+$`kubectl scale replicaset <nameOfReplicaSetFromTheReplicaSetFile> --replicas=6`
+
+$`kubectl replace -f <replicaSetFile.yaml>`
+
+$`kubectl edit <nameOfReplicaset>` or `kubectl edit rs <nameOfReplicaset>`
+
+$`kubectl delete replicaset <nameOfReplicaSet>`
+
+### ReplicaSet creation via Declarative way
+
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-replicaset
+  labels:
+    app: myapp
+    type: front-end
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      type: front-end       // This should matcb with template -> metadata -> labels -> type field. This is how replicaset knows what to maintain.
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-end
+      spec:
+        containers:
+        - name: nginx-container
+          image: nginx
+```
+
+$`kubectl create -f <deploymentFileName.yaml>`
+
+$`kubectl get deployments`
+
+$'kubectl get replicaset`
+
+### Deployment creation via Declarative way
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment           // Replicaset and Deployment are same but Deployment objects provide more methods compared to Replicaset. Deployment objects are parent of Replicaset obejects.
+metadata:
+  name: myapp-deployment
+  labels:
+    app: myapp
+    type: front-end
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      type: front-end
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-end
+      spec:
+        containers:
+        - name: nginx-container
+          image: nginx
 ```
